@@ -1,0 +1,139 @@
+---
+title: "CLI Navigation & Basics"
+description: "Master the Claude Code CLI — commands, shortcuts, flags, and session management."
+order: 4
+duration: "9 min"
+videoUrl: ""
+quiz:
+  - question: "What flag runs a single Claude Code command without opening an interactive session?"
+    options:
+      - "--run"
+      - "--once"
+      - "-p or --print"
+      - "--no-session"
+    answer: 2
+  - question: "What does the /clear command do inside a session?"
+    options:
+      - "Deletes all your project files"
+      - "Clears the conversation history / context window"
+      - "Clears the terminal output only"
+      - "Resets your API key"
+    answer: 1
+  - question: "Which command shows all available slash commands inside Claude Code?"
+    options:
+      - "help"
+      - "/commands"
+      - "/help"
+      - "--list"
+    answer: 2
+  - question: "What is the purpose of the --model flag?"
+    options:
+      - "To rename your project"
+      - "To select which Claude model to use for the session"
+      - "To create a new AI model"
+      - "To view model pricing"
+    answer: 1
+---
+
+## The Claude Code CLI
+
+Claude Code has two modes:
+
+1. **Interactive session** — `claude` starts a back-and-forth conversation
+2. **One-shot mode** — run a single command and get output, then exit
+
+Knowing when to use each saves you time.
+
+## Interactive Session Commands
+
+Once inside a session (`claude`), you have access to slash commands:
+
+| Command | What it does |
+|---------|-------------|
+| `/help` | Show all available commands |
+| `/clear` | Clear context — start fresh without losing your files |
+| `/exit` | End the session |
+| `/compact` | Summarize the conversation to free up context space |
+| `/model` | Switch models mid-session |
+| `/cost` | Show how much the current session has cost |
+
+**Use `/clear` often.** When you've finished one task and are starting a new one, clearing context keeps Claude focused and saves money.
+
+## One-Shot Mode
+
+For quick tasks, use the `-p` flag (print mode):
+
+```bash
+claude -p "What does the package.json scripts section do?"
+```
+
+Claude reads your project, answers, and exits. No interactive session needed. Great for:
+
+- Quick questions while working in another tool
+- Running Claude Code from scripts or CI/CD
+- Automating code generation tasks
+
+## Useful Flags
+
+```bash
+# Specify a model
+claude --model claude-sonnet-4-5
+
+# Run in a specific directory
+claude -C /path/to/project
+
+# Disable file auto-scanning (faster startup for large repos)
+claude --no-auto-context
+
+# Show version
+claude --version
+
+# See all flags
+claude --help
+```
+
+## Working with Large Codebases
+
+For very large projects, Claude Code may not load every file by default. Guide it explicitly:
+
+```
+> Read the files in src/api/ and explain the route structure
+> Look at @package.json, @tsconfig.json, and @src/index.ts
+```
+
+Use `@` references to load specific files into context when they're relevant to your task.
+
+## Context Management
+
+Claude Code has a context window — it can only "see" so much at once. As conversations grow long:
+
+- Use `/compact` to summarize old turns and free up space
+- Use `/clear` when switching to a completely new task
+- Be precise about what files you're working on to avoid loading irrelevant context
+
+## Session History
+
+Claude Code doesn't keep a persistent history between sessions by default. Each `claude` command is a fresh start. This is intentional — it keeps you focused and avoids stale context causing bad suggestions.
+
+If you want to continue work from a previous session, briefly summarize what you were doing at the start of the new session:
+
+```
+> I was building a user auth system yesterday. The signup form is in 
+  src/components/SignUp.tsx and the API route is at src/api/auth.ts. 
+  I need to add email validation. Can you look at both files?
+```
+
+## Aliases & Shortcuts
+
+Speed up your workflow with shell aliases:
+
+```bash
+# Add to ~/.zshrc
+alias cc="claude"
+alias ccp="claude -p"
+alias ccnew="claude /clear"
+```
+
+Now `cc` opens a session, `ccp "question"` asks a quick question, and `ccnew` starts fresh.
+
+You now know everything you need to use Claude Code efficiently from the command line. Next up: the core concepts that make your prompts actually work.

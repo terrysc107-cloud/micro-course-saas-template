@@ -1,0 +1,136 @@
+---
+title: "Chaining Prompts"
+description: "Build complex workflows by chaining focused prompts sequentially."
+order: 2
+duration: "10 min"
+videoUrl: ""
+quiz:
+  - question: "What is prompt chaining?"
+    options:
+      - "Linking multiple Claude Code sessions together"
+      - "Breaking a complex task into a sequence of focused prompts where each builds on the last"
+      - "Using Claude to write prompts for another AI"
+      - "Saving prompts for later reuse"
+    answer: 1
+  - question: "Why is chaining better than one giant prompt for complex tasks?"
+    options:
+      - "It is faster"
+      - "Each step is reviewable, the context stays focused, and mistakes are caught before they compound"
+      - "It costs less"
+      - "Claude cannot handle long prompts"
+    answer: 1
+  - question: "What should you do between prompts in a chain?"
+    options:
+      - "Nothing — just keep prompting"
+      - "Review and accept or reject the output before giving the next prompt"
+      - "Clear the context"
+      - "Run git commit"
+    answer: 1
+  - question: "When is it appropriate to use a single large prompt instead of chaining?"
+    options:
+      - "Never — always chain"
+      - "When the task is inherently atomic and small enough to review in one go"
+      - "When you are in a hurry"
+      - "When working on a large project"
+    answer: 1
+---
+
+## Why Chain?
+
+Complex features cannot be built in a single prompt — at least not reliably. When you ask Claude to "build the entire notifications system," you get something that sort of works but has inconsistencies across files, skips error handling in some places, and follows your project patterns in some places but not others.
+
+Chaining solves this by making each step independently reviewable.
+
+## The Chain Pattern
+
+```
+Prompt 1 → Review → Accept/Reject
+Prompt 2 (builds on 1) → Review → Accept/Reject
+Prompt 3 (builds on 2) → Review → Accept/Reject
+...
+Final product assembled one solid piece at a time
+```
+
+## Example: Full Auth System Chain
+
+**Chain step 1 — Types:**
+```
+> Create @src/types/auth.ts with types for:
+  - UserProfile (id, email, role, createdAt)
+  - AuthState (user, loading, error)
+  - LoginCredentials (email, password)
+```
+
+**Chain step 2 — Server functions:**
+```
+> Create @src/lib/auth.ts with server-side auth helpers:
+  - getCurrentUser() — returns UserProfile or null from Supabase session
+  - requireAuth() — throws if not authenticated
+  - requireRole(role) — throws if user does not have the specified role
+  Use the types from @src/types/auth.ts
+```
+
+**Chain step 3 — Hook:**
+```
+> Create @src/hooks/useAuth.ts using the types from @src/types/auth.ts
+  Provides: user, loading, signIn(credentials), signOut(), error
+  Uses createClient() from @/lib/supabase/client
+```
+
+**Chain step 4 — Sign-in form:**
+```
+> Create @src/components/SignInForm.tsx that uses the useAuth hook 
+  we just created. Match the visual style of @src/components/SignUpForm.tsx
+```
+
+**Chain step 5 — Protected route wrapper:**
+```
+> Create @src/components/ProtectedRoute.tsx that checks useAuth().user 
+  and redirects to /sign-in if null. Show a loading spinner while 
+  auth state is being determined.
+```
+
+Each step is 10-30 lines. Each is reviewable. The chain produces a complete, consistent auth system.
+
+## Conditional Chains
+
+Sometimes the next prompt depends on the result of the previous:
+
+```
+Prompt 1: > Check if @src/lib/email.ts already has a sendNotification function
+
+Claude: Yes, it exists at line 45.
+
+Prompt 2a (if exists): 
+> Update the existing sendNotification to also accept a userId 
+  and save to the notifications table
+
+Prompt 2b (if does not exist):
+> Create sendNotification in @src/lib/email.ts that...
+```
+
+## Reusable Chain Templates
+
+For tasks you do repeatedly (new API route, new component, new hook), build a chain template:
+
+**New API route chain:**
+1. Create zod schema for request body
+2. Create route handler with auth check and input validation
+3. Create unit tests for the route
+4. Update API types file with the new endpoint
+
+Save this template in your CLAUDE.md under "## New File Checklists" so you can copy-paste the prompts every time.
+
+## When to Use One Prompt Instead
+
+Simple, atomic tasks do not need chaining:
+
+- "Add a className prop to this component" — one prompt
+- "Fix this TypeScript error" — one prompt
+- "Format this object as JSON" — one prompt
+
+Reserve chaining for tasks where one part depends on another part being correct first.
+
+## Summary
+
+Complex work = sequential chains. Each prompt is small, focused, and reviewable. The result is better than any single big prompt, and you stay in complete control throughout.

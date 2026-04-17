@@ -1,0 +1,117 @@
+---
+title: "When to Guide vs. When to Trust"
+description: "Learn when to let Claude run freely and when to give tight constraints."
+order: 4
+duration: "9 min"
+videoUrl: ""
+quiz:
+  - question: "For which type of task should you give Claude the most freedom?"
+    options:
+      - "Database migrations on production data"
+      - "Generating boilerplate like form components or utility functions"
+      - "Changing your authentication system"
+      - "Refactoring your entire codebase at once"
+    answer: 1
+  - question: "When should you give Claude tight constraints?"
+    options:
+      - "When writing simple utility functions"
+      - "When scaffolding a new project"
+      - "When touching security-sensitive code, public APIs, or core business logic"
+      - "When writing CSS styles"
+    answer: 2
+  - question: "What is 'scope creep' in the context of Claude Code?"
+    options:
+      - "When Claude charges more than expected"
+      - "When Claude makes changes beyond what you asked for"
+      - "When the project grows too large"
+      - "When the context window runs out"
+    answer: 1
+  - question: "What is a good signal that you should break a task into smaller pieces?"
+    options:
+      - "When the task takes less than a minute"
+      - "When Claude is producing perfect code"
+      - "When Claude would need to change more than 3-4 files to complete it"
+      - "When you are working in a new language"
+    answer: 2
+---
+
+## The Spectrum of Trust
+
+Not all coding tasks deserve the same level of oversight. Learning to calibrate this is what makes Claude Code feel effortless rather than risky.
+
+## High Trust — Let Claude Run
+
+These tasks are low risk and high routine. Give Claude the goal and let it go:
+
+- **Boilerplate components** — form fields, modal dialogs, loading spinners
+- **Utility functions** — formatters, validators, type helpers
+- **CSS and styling** — layout tweaks, color changes, responsive adjustments
+- **Documentation** — JSDoc, README sections, inline comments
+- **Type annotations** — adding TypeScript types to existing JS code
+- **Test scaffolding** — generating test file structure for a function you wrote
+
+For these tasks, review the diff but do not overthink it. The blast radius of a bad utility function is small and easily fixed.
+
+## Medium Trust — Review Carefully
+
+- **New API routes** — check the auth, input validation, and error handling
+- **Database queries** — ensure parameterization, correct table names, proper indexes
+- **Third-party integrations** — Stripe, Supabase, email providers — verify API calls match docs
+- **Component logic with side effects** — useEffect hooks, event handlers with mutations
+
+For these, read the diff line by line. Ask Claude to explain anything unclear.
+
+## Low Trust — Tight Constraints
+
+These tasks need your hand on the wheel:
+
+- **Authentication and authorization** — security bugs here are catastrophic
+- **Payment flows** — money is on the line, verify against Stripe/payment docs
+- **Public-facing APIs** — breaking changes affect real users
+- **Database migrations** — mistakes here can destroy data
+- **Environment and secrets handling** — never let Claude touch actual credential values
+
+For low-trust tasks, do not ask Claude to "just handle it." Instead, break it into tiny pieces and review each one independently.
+
+## Spotting Scope Creep
+
+Scope creep happens when Claude makes changes you did not ask for. It is almost always well-intentioned:
+
+```
+You: > Add a loading spinner to the Submit button
+
+Claude: [adds spinner, also refactors the form to use react-hook-form, 
+         changes the API call to use a new hook, updates three other components]
+```
+
+Reject the diff. Break it up:
+
+```
+You: > n — I only want the spinner. Do not change the form library 
+      or the API call. Just wrap the button text in a conditional 
+      that shows a spinner when isLoading is true.
+```
+
+Less is more. One focused change at a time.
+
+## Breaking Big Tasks Down
+
+If you catch yourself writing a prompt that starts with "Refactor the entire..." or "Rebuild the whole...", stop.
+
+A task that touches more than 3-4 files at once is a candidate for breaking down:
+
+1. "Update the data model in `@types/index.ts`"
+2. "Update the API routes in `@src/api/` to use the new type"
+3. "Update the components in `@src/components/` to match"
+4. "Update the tests"
+
+Each step is reviewable. Each step is reversible. The sum builds confidently toward the goal.
+
+## Summary
+
+- **Small, isolated changes**: trust Claude, review quickly
+- **Core logic, auth, payments**: stay tightly in control
+- **Big changes**: break them into small reviewable steps
+- **Scope creep**: catch it, reject it, redirect
+
+This calibration comes with practice. Start conservative — it is faster to loosen up once you trust the output patterns than to clean up a mess.

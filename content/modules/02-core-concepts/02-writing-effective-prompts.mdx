@@ -1,0 +1,156 @@
+---
+title: "Writing Effective Prompts"
+description: "Learn the prompting patterns that get great code on the first try."
+order: 2
+duration: "12 min"
+videoUrl: ""
+quiz:
+  - question: "Which prompt is more effective?"
+    options:
+      - "'Fix my code'"
+      - "'The login function returns undefined when the password has a special character. Look at @auth.ts and fix line 47'"
+      - "'Make the code better'"
+      - "'Help with authentication'"
+    answer: 1
+  - question: "What should you include when reporting a bug to Claude Code?"
+    options:
+      - "Just the error message"
+      - "The file name, expected behavior, actual behavior, and any error output"
+      - "A description of what you want it to do in the future"
+      - "Nothing — Claude figures it out"
+    answer: 1
+  - question: "What is the 'one task per prompt' principle?"
+    options:
+      - "You can only ask one question per day"
+      - "Each prompt should focus on a single, well-defined task rather than many tasks at once"
+      - "You must type prompts on one line"
+      - "Always use bullet points"
+    answer: 1
+  - question: "When Claude's output is not quite right, what is the best approach?"
+    options:
+      - "Start a brand new session"
+      - "Accept it and fix it manually"
+      - "Give specific feedback: 'That is close, but I need X instead of Y'"
+      - "Use a different AI tool"
+    answer: 2
+---
+
+## Why Prompting Matters
+
+Claude Code is powerful, but it is not a mind reader. The quality of what it produces is directly proportional to the clarity of what you ask. A vague prompt gets vague code. A precise prompt gets precisely what you need.
+
+## The Anatomy of a Great Prompt
+
+A strong prompt has four elements:
+
+1. **What** — what do you want built or fixed?
+2. **Where** — which file(s) or components are involved?
+3. **Why** — what is the goal or constraint?
+4. **Context** — relevant errors, expected behavior, existing patterns
+
+**Weak prompt:**
+```
+Fix the button
+```
+
+**Strong prompt:**
+```
+The "Submit" button in @components/CheckoutForm.tsx goes into a 
+loading state but never returns to normal after the API call fails.
+The API call is in @hooks/useCheckout.ts. The loading state is 
+controlled by the `isLoading` variable. Fix it so the button resets 
+when the fetch throws an error.
+```
+
+The strong version gives Claude everything it needs to make one precise, correct change.
+
+## One Task Per Prompt
+
+Do not chain five requests into one message:
+
+```
+> Refactor the auth module, add unit tests, update the README, 
+  fix the TypeScript errors, and also add dark mode support
+```
+
+This overwhelms Claude and produces mediocre output for each task. Instead:
+
+```
+Session 1 prompt 1: > Refactor the auth module in @src/auth/
+Session 1 prompt 2: > Now write unit tests for the refactored functions
+```
+
+One well-defined task per message. You can chain them sequentially once you accept each change.
+
+## Specifying Output Format
+
+Tell Claude what shape you want the output in:
+
+```
+> Create a React hook called usePagination. 
+  Return an object with: page, totalPages, nextPage(), prevPage(), goToPage(n).
+  Use TypeScript. No external dependencies.
+```
+
+Specifying the interface before the implementation ensures Claude builds exactly the API you plan to use.
+
+## Iterating on Output
+
+When the first response is not right, do not start over. Give specific feedback:
+
+```
+Claude: [writes function that fetches data on every render]
+
+You: > That is almost right, but the fetch should only run when 
+      the userId prop changes, not on every render. Use a dependency 
+      array in the useEffect.
+```
+
+Claude holds the entire conversation in context. Targeted corrections are faster and cheaper than starting fresh.
+
+## Prompts for Explanation
+
+Use Claude to understand code you did not write:
+
+```
+> Explain what @src/lib/scoring.ts does, specifically the 
+  calculateWeightedScore function. Explain it like I am 
+  a junior developer.
+```
+
+Or to understand a pattern:
+
+```
+> Why is @middleware.ts using a service role client instead of 
+  the regular Supabase client for the role check?
+```
+
+## Common Prompt Patterns
+
+**Build from scratch:**
+```
+> Create a new file @src/utils/currency.ts with a formatCurrency 
+  function that takes a number and currency code and returns a 
+  formatted string like "$1,234.56"
+```
+
+**Fix a specific bug:**
+```
+> @src/api/users.ts line 34 throws "Cannot read property 'id' of undefined" 
+  when the user is not logged in. Add a null check and return a 401 response.
+```
+
+**Refactor existing code:**
+```
+> Refactor @src/components/Table.tsx to accept a generic type T for its 
+  data prop instead of using `any`. Keep the same public interface.
+```
+
+**Add a feature:**
+```
+> In @src/hooks/useAuth.ts add a resetPassword(email) function that 
+  calls the existing supabase.auth.resetPasswordForEmail() method 
+  and returns { success, error }.
+```
+
+The more specific your prompts, the faster you ship. In the next lesson, you will learn the edit-review-accept loop — the workflow that keeps you in control while Claude does the heavy lifting.

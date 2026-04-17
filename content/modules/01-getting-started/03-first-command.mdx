@@ -1,0 +1,136 @@
+---
+title: "Your First Claude Code Command"
+description: "Run your first prompt, understand the output, and learn the interactive session flow."
+order: 3
+duration: "10 min"
+videoUrl: ""
+quiz:
+  - question: "What does Claude Code do when you type a message in the interactive session?"
+    options:
+      - "Sends your message to Claude, who responds in the terminal"
+      - "Opens a browser window to chat.anthropic.com"
+      - "Only works if you have files already open"
+      - "Requires you to specify a file first"
+    answer: 0
+  - question: "When Claude Code proposes a file edit, what should you do before accepting?"
+    options:
+      - "Accept immediately — Claude is always correct"
+      - "Read the diff carefully, then press y to accept or n to reject"
+      - "Copy the code to a separate file first"
+      - "Close the session and restart"
+    answer: 1
+  - question: "Which command lets you give Claude Code context about a specific file?"
+    options:
+      - "/file filename.ts"
+      - "@filename.ts"
+      - "read filename.ts"
+      - "context filename.ts"
+    answer: 1
+  - question: "What keyboard shortcut exits the Claude Code interactive session?"
+    options:
+      - "Ctrl+Q"
+      - "Escape"
+      - "Ctrl+C or type /exit"
+      - "Alt+F4"
+    answer: 2
+---
+
+## Starting Your First Session
+
+Navigate to a project — any project, even an empty folder works:
+
+```bash
+cd ~/my-project
+claude
+```
+
+You'll see the Claude Code interface load. It shows your project path and a prompt. Type anything:
+
+```
+> What files are in this project?
+```
+
+Claude Code will read your directory and respond with a breakdown of what it sees.
+
+## Your First Real Prompt
+
+Let's do something useful. Ask Claude Code to create a simple utility:
+
+```
+> Create a JavaScript function called formatDate that takes a Date object 
+  and returns a string in the format "Month DD, YYYY"
+```
+
+Watch what happens:
+
+1. Claude thinks through the problem
+2. Proposes creating or editing a file
+3. Shows you the **diff** — what it will add/change
+4. Waits for your approval
+
+You'll see something like:
+
+```
+I'll create a new file `utils/format-date.js` with this function.
+
+  + export function formatDate(date) {
+  +   return date.toLocaleDateString('en-US', {
+  +     year: 'numeric',
+  +     month: 'long',
+  +     day: '2-digit'
+  +   });
+  + }
+
+Accept this change? (y/n)
+```
+
+Press **y** to accept. The file is written to disk.
+
+## The Edit-Review-Accept Loop
+
+This is the core Claude Code workflow:
+
+1. **You prompt** — describe what you want
+2. **Claude proposes** — shows diffs of proposed changes
+3. **You review** — read the code, ask follow-up questions
+4. **You decide** — accept with `y`, reject with `n`, or ask for changes
+
+Never just smash `y` without reading. The review step is where you stay in control.
+
+## Referencing Specific Files
+
+Use `@` to point Claude at a specific file:
+
+```
+> Look at @src/components/Button.tsx and add a loading state prop
+```
+
+Claude reads that file, understands the existing code, and makes targeted edits that fit the existing style.
+
+## Asking Questions Without Making Changes
+
+Claude Code doesn't always have to write code. You can ask questions:
+
+```
+> Explain what the middleware.ts file does
+> Why is this function returning undefined?
+> What's the best way to handle this error?
+```
+
+It'll answer in plain English without touching your files.
+
+## Ending a Session
+
+When you're done:
+- Type `/exit` and press Enter
+- Or press `Ctrl+C`
+
+Your files stay exactly as they were (with any accepted changes written). Sessions don't auto-save a transcript — your code changes are your record.
+
+## Quick Tips for Your First Week
+
+- **Be specific.** "Fix the bug" is weak. "The login form submits but shows a 404 — check the API route" is strong.
+- **Review everything.** Claude is very good but not infallible. Your job is to stay the architect.
+- **Ask follow-ups.** If the first response isn't right, just say "That's not quite right — try X instead."
+
+In the next lesson you'll learn to navigate and use Claude Code's CLI features more efficiently.

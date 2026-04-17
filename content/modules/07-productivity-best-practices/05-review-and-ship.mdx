@@ -1,0 +1,146 @@
+---
+title: "Review, Polish & Ship"
+description: "The final checklist before you deploy — using Claude Code to polish your work."
+order: 5
+duration: "9 min"
+videoUrl: ""
+quiz:
+  - question: "What is the 'pre-ship checklist' approach with Claude Code?"
+    options:
+      - "A list of files to delete before deploying"
+      - "A structured prompt that asks Claude to review your changes for completeness, security, and quality before you push"
+      - "A manual checklist you fill out"
+      - "Running only unit tests"
+    answer: 1
+  - question: "What does 'polishing' code with Claude Code mean?"
+    options:
+      - "Deleting all comments"
+      - "Making it shorter"
+      - "Improving readability, adding missing error states, standardizing naming, and removing dead code"
+      - "Adding more features"
+    answer: 2
+  - question: "What should you ask Claude to check in the loading and error states review?"
+    options:
+      - "Only the happy path"
+      - "Every user-facing component has a loading state and every API call has an error state visible to the user"
+      - "Only 500 errors"
+      - "Only the first page"
+    answer: 1
+  - question: "What is a 'soft launch' checklist item for a new SaaS feature?"
+    options:
+      - "Deploying to production without telling anyone"
+      - "Verifying: the happy path works end-to-end, the sad path (failures) degrade gracefully, and you can monitor it"
+      - "Removing all tests"
+      - "Only testing with one user"
+    answer: 1
+---
+
+## Shipping with Confidence
+
+Claude Code helps you ship faster. But fast shipping means nothing if you ship broken code. Use these review patterns in the hour before every deploy.
+
+## The Pre-Ship Checklist Prompt
+
+```
+> I am about to deploy the notifications feature. Review these files:
+  @src/lib/notifications.ts
+  @src/app/api/notifications/route.ts
+  @src/components/NotificationBell.tsx
+  
+  Pre-ship checklist:
+  1. Every API route has auth check
+  2. Every write operation validates input
+  3. Every error is handled and returns an appropriate status code
+  4. No console.log statements left in
+  5. No hardcoded values that should be env vars
+  6. No TODO comments that block shipping
+  7. TypeScript compiles clean (no 'any' types masking errors)
+  8. Loading and error states are handled in the UI
+  
+  Report any issues found.
+```
+
+## Loading & Error State Review
+
+One of the most common polish items:
+
+```
+> Review @src/components/NotificationBell.tsx
+  
+  Check:
+  - Is there a loading state while notifications are fetching?
+  - Is there an error state if the fetch fails?
+  - What does the user see if they have zero notifications?
+  - What does the user see if the mark-as-read request fails?
+  
+  For any missing states, implement them.
+```
+
+## Accessibility Quick Pass
+
+```
+> Review @src/components/ for basic accessibility:
+  - All interactive elements have aria labels
+  - Images have alt text
+  - Form inputs have associated labels
+  - Keyboard navigation works (focus styles visible)
+  - Color contrast issues on text over backgrounds
+  
+  Report issues and fix the most critical ones.
+```
+
+## Performance Polish
+
+```
+> Before I deploy, check @src/app/dashboard/page.tsx for:
+  - Any data that could be cached (static or time-based)
+  - Unnecessary re-renders (missing useMemo, useCallback)
+  - Images that should be next/image instead of img
+  - Any obviously slow database queries
+```
+
+## Clean Up Dead Code
+
+```
+> Scan @src for:
+  - Unused imports
+  - Commented-out code blocks
+  - Variables declared but never used
+  - Functions defined but never called
+  
+  List them with file and line number. Do not delete yet — just report.
+```
+
+Review the list and tell Claude which ones to actually delete.
+
+## Documentation Pass
+
+```
+> For each exported function in @src/lib/, add JSDoc comments that:
+  - Describe what the function does (one sentence)
+  - Document each parameter with @param
+  - Document the return value with @returns
+  - Add an @example if the usage is not obvious
+  
+  Only add documentation — do not change any logic.
+```
+
+## The 5-Minute End-to-End Test Script
+
+Before deploy, ask Claude to write a manual test script:
+
+```
+> Write a manual QA checklist for the notifications feature.
+  Step-by-step instructions someone could follow to verify 
+  it works correctly end-to-end, including edge cases like:
+  - Zero notifications
+  - Many notifications (10+)
+  - Marking all as read
+  - The bell count updating after a new notification arrives
+```
+
+Run this yourself before pushing.
+
+## Summary
+
+Pre-ship review → loading/error states → accessibility → performance → dead code → docs → manual test. This hour of review prevents the kind of bugs that hurt users and wake you up at 3am.

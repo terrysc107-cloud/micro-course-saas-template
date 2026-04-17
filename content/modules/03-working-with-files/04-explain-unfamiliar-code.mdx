@@ -1,0 +1,136 @@
+---
+title: "Explain Unfamiliar Code"
+description: "Use Claude Code as your expert code reader — understand any codebase fast."
+order: 4
+duration: "8 min"
+videoUrl: ""
+quiz:
+  - question: "What is the fastest way to understand a complex function you did not write?"
+    options:
+      - "Read it line by line for 30 minutes"
+      - "Ask a colleague"
+      - "Point Claude at it and ask for a plain-English explanation"
+      - "Delete it and rewrite it from scratch"
+    answer: 2
+  - question: "What does 'explain like I am a junior developer' do to Claude's response?"
+    options:
+      - "Makes Claude condescending"
+      - "Makes Claude skip technical details entirely"
+      - "Makes Claude use simpler language and more analogies, fewer assumptions about background knowledge"
+      - "Makes the explanation shorter"
+    answer: 2
+  - question: "When you do not understand why code was written a certain way, what should you ask?"
+    options:
+      - "'Is this good code?'"
+      - "'Why was this done this way? What problem does this pattern solve?'"
+      - "'Can you rewrite this?'"
+      - "'Is this a bug?'"
+    answer: 1
+  - question: "How can Claude help you understand a complex data transformation chain?"
+    options:
+      - "It cannot — data transformations are too complex"
+      - "By tracing the data through each step and explaining what changes at each stage"
+      - "By deleting the chain and using a simpler approach"
+      - "By converting it to a diagram"
+    answer: 1
+---
+
+## Your On-Call Senior Developer
+
+One of the most underused features of Claude Code is using it purely for understanding. You do not have to be writing code to benefit from having Claude in your terminal. Use it to get smart fast.
+
+## Explaining a Function
+
+The simplest use case:
+
+```
+> Explain what this function does in plain English:
+  @src/lib/scoring.ts — specifically calculateWeightedScore()
+```
+
+Claude reads the function and explains it without jargon:
+
+"This function takes a raw scores object where each key is a category name and each value is a number from 0 to 100. It multiplies each category score by a weight factor — so technical skills count for 30% and reliability counts for 5%. It adds all the weighted scores together to get a final score out of 100."
+
+That is better than reading the code yourself, especially at the start of a new project.
+
+## Adjusting the Level of Detail
+
+```
+> Explain the middleware.ts file like I am a junior developer 
+  who does not know what middleware is.
+
+> Explain the authentication flow in technical depth — 
+  I am comfortable with JWT tokens and session management.
+
+> Give me a one-sentence summary of what each function 
+  in @src/lib/matching.ts does.
+```
+
+Claude calibrates its explanation to your level.
+
+## Understanding "Why"
+
+Comments tell you what. Claude can tell you why:
+
+```
+> In @src/middleware.ts, why does the auth check use the service role 
+  client instead of the regular anon client? What problem does this solve?
+```
+
+Claude explains the security reason (bypassing Row Level Security for server-side checks) rather than just describing what the code does.
+
+## Tracing Data Through a System
+
+For complex transformations:
+
+```
+> In @src/api/assessment/route.ts, trace what happens to the raw_responses 
+  object from when it arrives in the request body to when it gets 
+  stored in the database. What is the shape of the data at each step?
+```
+
+Claude follows the data through every function, showing you the exact shape changes along the way.
+
+## Finding Where Something Happens
+
+```
+> Where in the codebase does the email confirmation get sent?
+  Search @src for the relevant code and show me the exact function.
+
+> How does the app know whether a user is a student or a hospital?
+  Where is that role check happening?
+```
+
+Claude acts as a code search engine that understands intent, not just keywords.
+
+## Understanding Error Messages
+
+Paste an error and ask for an explanation:
+
+```
+> I am getting this error in production:
+  "TypeError: Cannot read properties of undefined (reading 'user_id')"
+  Stack trace: [paste trace]
+  
+  The relevant file is @src/api/applications/route.ts
+  Explain what is happening and where the undefined is coming from.
+```
+
+Claude diagnoses the null reference, points to the exact line, and explains why it is undefined under certain conditions.
+
+## Learning Patterns From the Codebase
+
+Use Claude to learn from good code:
+
+```
+> @src/api/externships/route.ts uses a pattern I have not seen before 
+  for handling multiple HTTP methods in one file. Explain the pattern 
+  and why it is used this way in Next.js App Router.
+```
+
+You are not just learning the codebase — you are learning to be a better developer.
+
+## Summary
+
+Explanation mode costs almost nothing (a few cents per session) and pays back enormously. Whenever you find yourself staring at code for more than two minutes, ask Claude. You will get the answer in ten seconds.

@@ -1,0 +1,153 @@
+---
+title: "Next.js & React"
+description: "Use Claude Code effectively with Next.js App Router, Server Components, and React patterns."
+order: 1
+duration: "13 min"
+videoUrl: ""
+quiz:
+  - question: "In Next.js App Router, when should a component be a Server Component vs. a Client Component?"
+    options:
+      - "Always use Client Components for everything"
+      - "Server Components for data fetching and static rendering; Client Components only when you need interactivity, browser APIs, or React hooks"
+      - "Always use Server Components for everything"
+      - "It does not matter — Next.js handles it automatically"
+    answer: 1
+  - question: "What does adding 'use client' at the top of a Next.js file do?"
+    options:
+      - "Enables TypeScript type checking"
+      - "Marks the component as a Client Component that runs in the browser and can use React hooks and browser APIs"
+      - "Disables server-side rendering"
+      - "Enables hot module replacement"
+    answer: 1
+  - question: "How should you ask Claude to create a Next.js API route that requires authentication?"
+    options:
+      - "Just say 'make an API route'"
+      - "Specify the route path, HTTP methods needed, auth requirement, input shape, and response shape"
+      - "Copy an existing route and ask Claude to change the names"
+      - "Describe only the database query"
+    answer: 1
+  - question: "What is the correct way to fetch data in a Next.js Server Component?"
+    options:
+      - "Use useEffect with fetch inside the component"
+      - "Use SWR or React Query"
+      - "Make the component async and await the data directly in the component body"
+      - "Only fetch data in API routes"
+    answer: 2
+---
+
+## Claude Code + Next.js App Router
+
+Next.js App Router has strong conventions — Server Components, Client Components, Route Handlers, and layouts. Claude Code knows these patterns well when you guide it correctly.
+
+## Server vs. Client Components
+
+The most important concept to communicate to Claude:
+
+```
+> Create a ProductList component in @src/components/ProductList.tsx
+  
+  This should be a SERVER component (no 'use client' directive).
+  It fetches products directly using the Supabase server client.
+  It receives a categoryId prop and returns a list of products as JSX.
+  No useState or useEffect — all async data fetching in the component body.
+```
+
+vs.
+
+```
+> Create an AddToCart button in @src/components/AddToCartButton.tsx
+  
+  This must be a CLIENT component ('use client' at top).
+  It uses useState for the loading state and calls 
+  POST /api/cart when clicked.
+```
+
+Claude will correctly use async/await at the top level for server components and hooks for client components.
+
+## Route Handlers
+
+```
+> Create @src/app/api/products/route.ts
+  
+  GET handler:
+  - Authenticate user with createClient() from @/lib/supabase/server
+  - Return 401 if not authenticated
+  - Query all active products from Supabase
+  - Return { products } JSON
+  
+  POST handler:
+  - Authenticate (same pattern)
+  - Validate body with zod: { name: string, price: number, categoryId: string }
+  - Insert new product to products table
+  - Return { product } with 201 status
+```
+
+## Dynamic Routes
+
+```
+> Create @src/app/products/[productId]/page.tsx
+  
+  Server component that:
+  - Receives params.productId
+  - Fetches the product from Supabase
+  - Returns notFound() if product does not exist
+  - Renders the product details
+  
+  Also export generateMetadata that sets the page title to the product name
+```
+
+## Layouts with Data
+
+```
+> Update @src/app/(course)/layout.tsx to:
+  - Be an async server component
+  - Fetch the current user from Supabase
+  - Redirect to /sign-in if no user
+  - Pass user email to the header component
+  - Render children inside a two-column layout (sidebar + main)
+```
+
+## Data Mutations with Server Actions
+
+```
+> Create a server action in @src/app/actions/cart.ts:
+  
+  export async function addToCart(productId: string) — 
+    validates auth, inserts to cart table, revalidates the path
+  
+  'use server' directive at the top of the file
+```
+
+## useSWR / React Query Integration
+
+```
+> Create @src/hooks/useProducts.ts using SWR
+  
+  Fetches from /api/products
+  Returns { products, loading, error, mutate }
+  Types based on the Product type from @src/types/index.ts
+```
+
+## Common Next.js + Claude Code Patterns
+
+**Loading states:**
+```
+> Add loading.tsx to @src/app/dashboard/ that shows 
+  a skeleton of the dashboard layout while data loads
+```
+
+**Error handling:**
+```
+> Add error.tsx to @src/app/learn/ that shows a friendly 
+  error message and a "Try Again" button that calls reset()
+```
+
+**Not found:**
+```
+> Add not-found.tsx to @src/app/learn/ for when a lesson 
+  slug does not match any content file
+```
+
+## Summary
+
+Always tell Claude whether each component is a Server Component or Client Component. Specify the data sources and mutation patterns. Next.js conventions are well-understood by Claude — just communicate the right constraints and it will produce idiomatic, production-ready App Router code.

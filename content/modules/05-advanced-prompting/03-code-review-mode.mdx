@@ -1,0 +1,161 @@
+---
+title: "Code Review Mode"
+description: "Use Claude as a rigorous code reviewer before you push to main."
+order: 3
+duration: "9 min"
+videoUrl: ""
+quiz:
+  - question: "What is Claude Code review mode best used for?"
+    options:
+      - "Replacing human code review entirely"
+      - "Getting a second set of eyes on your code before pushing — catching bugs, security issues, and style problems"
+      - "Automatically merging pull requests"
+      - "Writing code for you"
+    answer: 1
+  - question: "What type of issues is Claude especially good at catching in a code review?"
+    options:
+      - "Only syntax errors"
+      - "Business logic errors (those require domain knowledge)"
+      - "Security vulnerabilities, missing error handling, SQL injection, and common logic bugs"
+      - "Only TypeScript type errors"
+    answer: 2
+  - question: "How should you structure a code review request to Claude?"
+    options:
+      - "Just say 'review my code'"
+      - "Specify the file, what the code is supposed to do, and specific concerns you have"
+      - "Paste the code without any context"
+      - "Only ask about one line at a time"
+    answer: 1
+  - question: "What should you do with Claude's review feedback?"
+    options:
+      - "Accept every suggestion automatically"
+      - "Ignore it — AI reviews are not reliable"
+      - "Evaluate each suggestion with your own judgment — accept good ones, push back on ones that do not fit"
+      - "Only act on the first suggestion"
+    answer: 2
+---
+
+## Claude as Your Pre-Push Reviewer
+
+Before pushing to main or opening a PR, a quick Claude code review catches issues that are expensive to fix after merge. Think of it as a free senior engineer reviewing everything you write.
+
+## Basic Code Review
+
+```
+> Review @src/app/api/stripe/webhook/route.ts as a code reviewer.
+  
+  This handles incoming Stripe webhook events and writes purchases to the database.
+  
+  Look for:
+  - Security issues (especially around signature verification)
+  - Missing error handling
+  - Edge cases that could fail silently
+  - Any pattern inconsistencies with the rest of the codebase
+```
+
+Claude produces a prioritized review with specific issues and suggested fixes.
+
+## Security-Focused Review
+
+For auth, payments, and data handling:
+
+```
+> Security review of @src/proxy.ts
+  
+  This middleware checks if a user has purchased the course before 
+  allowing access to /dashboard and /learn routes.
+  
+  Specifically check:
+  - Can a user bypass the purchase check?
+  - Is the session validation secure?
+  - Could the redirect be used for an open redirect attack?
+  - Any sensitive data being exposed in error responses?
+```
+
+## Performance Review
+
+```
+> Performance review of @src/app/dashboard/page.tsx
+  
+  This is a server component that loads the user's progress.
+  Look for: unnecessary database queries, N+1 problems, 
+  data that could be cached, and anything that would slow 
+  down page load time.
+```
+
+## API Contract Review
+
+Before shipping a public API:
+
+```
+> Review the API contract for @src/app/api/quiz/route.ts
+  
+  This is a POST endpoint that takes quiz answers and returns results.
+  
+  Check:
+  - Is the request validation complete? Any fields that could cause issues if missing?
+  - Is the response shape consistent and documented?
+  - What happens with malformed JSON?
+  - What are the failure modes and are they handled correctly?
+  - Could any input cause a database error to be exposed to the client?
+```
+
+## Full Diff Review
+
+Before a big commit:
+
+```
+> Here is my git diff:
+  [paste the output of: git diff HEAD]
+  
+  Review these changes end to end. I am adding quiz result tracking.
+  Flag any issues before I commit.
+```
+
+## Asking for Severity Rating
+
+```
+> Review @src/lib/progress.ts and rate each issue as:
+  CRITICAL (breaks functionality or security), 
+  IMPORTANT (should fix before shipping),
+  NICE-TO-HAVE (style/preference improvements)
+```
+
+This helps you triage what to fix now vs. later.
+
+## Handling Disagreements
+
+Claude will sometimes flag things that are intentional:
+
+```
+Claude: "The service client is used without checking if the user 
+        is authenticated first — this could allow unauthorized access"
+
+You: > That function is only called from within authenticated API routes 
+     where auth is already verified upstream. Is that sufficient or 
+     should I add a redundant check?
+```
+
+Claude will explain the tradeoff and you make the final call.
+
+## Building a Review Checklist
+
+Create a reusable prompt template in your CLAUDE.md:
+
+```markdown
+## Code Review Checklist
+When asked to review code, always check:
+1. Auth: is every endpoint properly gated?
+2. Input validation: is all user input validated?
+3. Error handling: are all errors caught and returning proper status codes?
+4. SQL: no string interpolation in queries (SQL injection)
+5. Secrets: no hardcoded credentials
+6. N+1: no queries inside loops
+7. Types: no 'any' types that mask errors
+```
+
+Now every review request automatically applies your full checklist.
+
+## Summary
+
+Code review mode turns Claude into a rigorous pre-merge gate. Use it consistently and you will push far fewer bugs to production.

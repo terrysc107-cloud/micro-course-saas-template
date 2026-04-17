@@ -1,0 +1,152 @@
+---
+title: "Git Workflow with Claude Code"
+description: "Use Claude Code to write commit messages, review diffs, and manage branches cleanly."
+order: 4
+duration: "9 min"
+videoUrl: ""
+quiz:
+  - question: "What should you ask Claude to do before writing a commit message?"
+    options:
+      - "Nothing — just commit everything"
+      - "Review the staged diff and summarize what changed, then propose a commit message"
+      - "Create a new branch"
+      - "Run all tests"
+    answer: 1
+  - question: "What makes a good conventional commit message?"
+    options:
+      - "It is short and describes what files changed"
+      - "It follows format like 'feat: add quiz completion tracking' and describes the WHY not just the WHAT"
+      - "It includes the date and your name"
+      - "It is as long and detailed as possible"
+    answer: 1
+  - question: "What is the PR description workflow with Claude Code?"
+    options:
+      - "Claude cannot help with PR descriptions"
+      - "Ask Claude to read your branch diff and generate a PR description with summary, changes, and test plan"
+      - "Write the PR description manually always"
+      - "Just use the commit message as the PR description"
+    answer: 1
+  - question: "When should you NOT let Claude commit directly to main?"
+    options:
+      - "Never — Claude should never commit"
+      - "Always — Claude handles all commits"
+      - "When working on a team — always use feature branches"
+      - "Only when the commit is large"
+    answer: 2
+---
+
+## Claude Code as Your Git Assistant
+
+Claude Code cannot push to GitHub, but it is excellent at helping you write clear commit messages, review your changes before committing, and generate PR descriptions.
+
+## Writing Better Commit Messages
+
+After making changes and staging them:
+
+```bash
+git add -p   # or git add specific files
+```
+
+Then ask Claude:
+
+```
+> I have these staged changes (run: git diff --staged):
+  [paste the diff output]
+  
+  Write a conventional commit message that:
+  - Uses format: type(scope): description
+  - Describes WHY this change was made, not just what
+  - Is under 72 characters for the subject line
+  - Includes a brief body if there are multiple changes
+```
+
+Conventional commit types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`
+
+**Example output:**
+```
+feat(quiz): require quiz pass to unlock next lesson
+
+Previously lessons unlocked sequentially regardless of quiz score.
+Now the next lesson only unlocks after the current quiz is passed
+with 70%+ score. Lesson progress is written atomically with quiz pass.
+```
+
+## Pre-Commit Code Review
+
+Before committing anything important, ask Claude to review:
+
+```
+> Here is my git diff --staged output:
+  [paste diff]
+  
+  Review this as if you are a senior developer doing a code review.
+  Look for: bugs, missing error handling, security issues, 
+  style inconsistencies, anything that should not be committed.
+```
+
+Claude catches issues before they hit your repo.
+
+## Branch Naming
+
+```
+> I am building a notifications feature that adds a bell icon 
+  and a Supabase table for storing notifications.
+  What should I name this branch? Give me 3 options following 
+  conventional branch naming.
+```
+
+Output: `feat/notifications`, `feature/notification-bell`, `add-notifications`
+
+## Generating PR Descriptions
+
+After finishing a feature:
+
+```
+> Here is the output of git diff main...HEAD:
+  [paste diff]
+  
+  Write a PR description with:
+  - Summary (2-3 bullet points of what changed)
+  - Why this change was made
+  - Files changed and what each one does
+  - How to test it manually
+  - Any breaking changes or migration steps needed
+```
+
+This produces PR descriptions that your team will actually read.
+
+## Resolving Merge Conflicts
+
+When you hit a conflict:
+
+```
+> I have a merge conflict in @src/lib/progress.ts
+  
+  <<<< HEAD
+  [your version]
+  ====
+  [incoming version]
+  >>>> main
+  
+  Explain what both versions are trying to do and 
+  write the correct merged version that keeps both changes.
+```
+
+Claude understands both sides of the conflict and writes the merged version correctly.
+
+## Commit Grouping
+
+When you have a lot of unstaged changes:
+
+```
+> Here is git diff on my working directory:
+  [paste diff]
+  
+  These changes should be split into 2-3 logical commits.
+  Suggest how to group them using git add -p and 
+  what commit message to use for each group.
+```
+
+## Summary
+
+Use Claude for commit messages, pre-commit reviews, PR descriptions, and merge conflict resolution. Your git history becomes clean and descriptive without the effort of writing it manually.

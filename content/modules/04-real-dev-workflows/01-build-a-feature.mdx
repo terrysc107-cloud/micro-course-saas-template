@@ -1,0 +1,135 @@
+---
+title: "Build a Feature End-to-End"
+description: "Ship a complete feature from database to UI using Claude Code at every step."
+order: 1
+duration: "14 min"
+videoUrl: ""
+quiz:
+  - question: "What is the recommended order for building a full-stack feature with Claude Code?"
+    options:
+      - "UI first, then API, then database"
+      - "Database schema first, then API routes, then frontend components"
+      - "It does not matter — Claude handles the order"
+      - "Write tests first, then nothing else"
+    answer: 1
+  - question: "Why should you build one layer at a time instead of asking Claude to build everything at once?"
+    options:
+      - "Claude cannot handle building multiple layers"
+      - "Each layer should be tested and verified before building on top of it"
+      - "It is cheaper"
+      - "There is no reason — always build everything at once"
+    answer: 1
+  - question: "What does 'vertical slicing' mean in feature development?"
+    options:
+      - "Cutting the code in half"
+      - "Building one complete user-facing feature all the way through the stack, then moving to the next"
+      - "Only building the frontend"
+      - "Only building the backend"
+    answer: 1
+  - question: "After building and accepting all file changes, what is the next step?"
+    options:
+      - "Deploy immediately"
+      - "Start the next feature"
+      - "Manually test the feature in the browser and verify it works end-to-end"
+      - "Write documentation"
+    answer: 2
+---
+
+## The Full-Stack Feature Workflow
+
+Building a feature with Claude Code follows a bottom-up pattern: schema → data layer → API → UI → tests. Each layer is reviewable before building the next.
+
+## Example: Adding Notifications to a Web App
+
+Let us walk through building a complete notifications feature from scratch.
+
+### Step 1: Database Schema
+
+```
+> I am adding user notifications to the app.
+  Create SQL for a notifications table in Supabase:
+  - id (uuid, primary key)
+  - user_id (uuid, references auth.users)
+  - message (text)
+  - link (text, nullable)
+  - is_read (boolean, default false)
+  - created_at (timestamptz)
+  
+  Add RLS policy: users can only see their own notifications.
+  Output as SQL ready to run in Supabase SQL editor.
+```
+
+Review the SQL. Run it in Supabase. Come back.
+
+### Step 2: TypeScript Types
+
+```
+> Create @src/types/notification.ts with a Notification type 
+  that matches the table we just created. Also create a 
+  NotificationWithMeta type that includes a formatted 
+  time_ago string.
+```
+
+### Step 3: Server Functions
+
+```
+> Create @src/lib/notifications.ts with these functions 
+  using the service client from @/lib/supabase/server:
+  - getNotifications(userId): returns Notification[]
+  - markAsRead(notificationId, userId): returns { success }
+  - markAllRead(userId): returns { count }
+  - getUnreadCount(userId): returns number
+```
+
+### Step 4: API Routes
+
+```
+> Create @src/app/api/notifications/route.ts
+  Following the same pattern as @src/app/api/progress/route.ts:
+  - GET: returns notifications for the current user
+  - PATCH: marks a notification as read (takes notificationId in body)
+```
+
+### Step 5: React Hook
+
+```
+> Create @src/hooks/useNotifications.ts
+  - Fetches notifications from /api/notifications on mount
+  - Provides markRead(id) and markAllRead() functions
+  - Tracks unreadCount
+  - Returns { notifications, unreadCount, markRead, markAllRead, loading }
+```
+
+### Step 6: UI Components
+
+```
+> Create @src/components/NotificationBell.tsx
+  - Shows a bell icon with unreadCount badge
+  - Clicking opens a dropdown list of notifications
+  - Each item shows the message and a link if present
+  - Uses the useNotifications hook
+  - Follow the visual style of @src/components/ui/Button.tsx
+```
+
+### Step 7: Wire It Up
+
+```
+> Add NotificationBell to the header in @src/app/layout.tsx 
+  next to the sign-out button. Import from @/components/NotificationBell
+```
+
+### Step 8: Manual Test
+
+Now go to the browser and verify end-to-end:
+1. Notifications endpoint returns data
+2. Bell shows unread count
+3. Clicking marks as read
+4. Count updates
+
+## The Vertical Slice Principle
+
+Build one complete feature all the way through the stack before starting the next. A half-built feature in three layers is harder to debug than a complete feature in one.
+
+## Summary
+
+Schema → types → server functions → API routes → hooks → components → wire up → test. Each step is small, reviewable, and safe. This is how you ship reliable features fast.

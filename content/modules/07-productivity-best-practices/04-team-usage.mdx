@@ -1,0 +1,117 @@
+---
+title: "Using Claude Code with a Team"
+description: "Standards and practices for teams using Claude Code together effectively."
+order: 4
+duration: "9 min"
+videoUrl: ""
+quiz:
+  - question: "What is the most important thing to standardize when a team adopts Claude Code?"
+    options:
+      - "Everyone uses the same computer"
+      - "A shared CLAUDE.md in the repo that documents conventions Claude should follow"
+      - "Everyone uses the same billing account"
+      - "Everyone writes prompts in the same format"
+    answer: 1
+  - question: "How should AI-generated code be treated in code review?"
+    options:
+      - "It should skip code review since AI is more reliable than humans"
+      - "Exactly the same as human-written code — reviewed for correctness, security, and alignment with conventions"
+      - "It should have a separate lighter review process"
+      - "It should not be used in team projects"
+    answer: 1
+  - question: "What is a good team norm around Claude Code and attribution?"
+    options:
+      - "Never tell your team you used Claude Code"
+      - "It does not matter — AI assistance is invisible anyway"
+      - "Be transparent: mention when Claude Code helped with something and share useful prompts with the team"
+      - "Always add a comment saying 'AI generated' to every AI-written line"
+    answer: 2
+  - question: "When a new team member joins, what Claude Code resource should you give them first?"
+    options:
+      - "A list of all prompts ever used on the project"
+      - "The CLAUDE.md file and a brief onboarding prompt chain to help them get oriented"
+      - "Nothing — they can figure it out"
+      - "The entire codebase printed out"
+    answer: 1
+---
+
+## Teams That Use Claude Code Well
+
+AI-assisted development on a team is a multiplier — if the team has standards. Without them, you get inconsistent code that is hard to review and maintain.
+
+## The Team CLAUDE.md
+
+The single most important standardization: one `CLAUDE.md` in the repo that everyone contributes to and uses.
+
+It should include:
+- Tech stack and key dependencies
+- Naming conventions agreed on by the team
+- Architecture decisions and why they were made
+- Code patterns to follow
+- What NOT to do (and why)
+- Current work in progress (updated on each PR)
+
+When Claude writes code to your CLAUDE.md spec, it matches what a teammate would write. That is reviewable.
+
+## Code Review Norms
+
+AI-generated code gets the same review as human code. Period.
+
+Some teams add a lightweight PR template section:
+
+```markdown
+## AI Assistance
+- [ ] No AI assistance used
+- [ ] Used Claude Code for: [describe what]
+- [ ] All AI-generated code was reviewed and tested
+```
+
+Transparency helps the team learn from each other's prompts and builds trust.
+
+## Sharing Prompts
+
+When you find a prompt that works really well, share it:
+
+- Add it to the team CLAUDE.md under `## Useful Prompts`
+- Share it in your team chat
+- Add it to your project's `prompts/` directory
+
+A library of tested prompts is a team productivity asset.
+
+## Onboarding New Developers
+
+When someone joins the team:
+
+```
+> I am a new developer joining this team.
+  Read @CLAUDE.md and then walk me through:
+  1. How the app is structured
+  2. The patterns used for authentication
+  3. How to add a new API route correctly
+  4. The testing conventions
+  
+  Then quiz me on the key conventions to make sure I got them.
+```
+
+This is a better onboarding experience than reading documentation alone.
+
+## Preventing Style Drift
+
+One risk of team Claude Code usage: three developers using Claude with slightly different prompts produce three different styles of code. Fix this with:
+
+1. Regular CLAUDE.md updates after each major PR
+2. Code review comments that say "update CLAUDE.md with this pattern" when good patterns emerge
+3. Monthly team review: is our CLAUDE.md still accurate?
+
+## When Not to Use Claude Code in a Team
+
+- **Architecture decisions** — these require human discussion, not AI generation
+- **Security architecture** — the whole team should understand how security works
+- **Business logic decisions** — Claude does not know your users or business goals
+- **Anything that should be human-owned** — if it goes wrong, a human needs to understand it
+
+Use Claude for implementation. Keep strategy and architecture human.
+
+## Summary
+
+A shared, maintained CLAUDE.md is the foundation of team AI usage. Review AI code like human code. Share good prompts. Be transparent. Keep architecture human.

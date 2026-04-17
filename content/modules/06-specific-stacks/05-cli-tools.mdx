@@ -1,0 +1,151 @@
+---
+title: "CLI Tools"
+description: "Build command-line tools, automation scripts, and developer utilities with Claude Code."
+order: 5
+duration: "10 min"
+videoUrl: ""
+quiz:
+  - question: "What makes a CLI tool user-friendly according to professional CLI design?"
+    options:
+      - "Long output with lots of information"
+      - "Helpful --help text, clear error messages, exit codes, and --dry-run support for destructive operations"
+      - "Using as many flags as possible"
+      - "Always requiring a config file"
+    answer: 1
+  - question: "What exit code should a CLI tool return when it fails?"
+    options:
+      - "0"
+      - "Any number"
+      - "1 (or another non-zero code)"
+      - "-1"
+    answer: 2
+  - question: "What is a good use case for building a CLI tool with Claude Code?"
+    options:
+      - "A task that only needs to be done once"
+      - "A repetitive workflow that could be automated — code generation, data processing, deployment steps, content publishing"
+      - "Replacing your entire application with a terminal interface"
+      - "Simple file viewing"
+    answer: 1
+  - question: "What Node.js library does Claude recommend for building robust CLIs?"
+    options:
+      - "express"
+      - "commander or yargs for argument parsing, chalk or kleur for colors"
+      - "inquirer for everything"
+      - "Plain process.argv only"
+    answer: 1
+---
+
+## CLI Tools Are Underrated
+
+CLI tools are some of the highest-leverage things you can build. A well-built CLI that automates a 30-minute manual task pays for itself the first time someone uses it.
+
+## Building a Complete CLI
+
+```
+> Create @tools/generate-component.js — a CLI tool for our Next.js project
+  
+  Usage: node tools/generate-component.js ComponentName [--dir src/components/feature]
+  
+  What it does:
+  1. Creates ComponentName.tsx with our standard React component template
+  2. Creates ComponentName.test.tsx with the standard test scaffold
+  3. Appends an export to the nearest index.ts barrel file
+  
+  Requirements:
+  - Uses commander for argument parsing
+  - Validates that ComponentName is PascalCase (error if not)
+  - --dry-run flag shows what would be created without writing
+  - --force flag overwrites if files already exist (default: error if exists)
+  - Colored output with chalk (green = created, yellow = skipped, red = error)
+  - Returns exit code 1 on any error
+  
+  Install commander and chalk first.
+```
+
+## Content Publishing CLI
+
+```
+> Create @cli/publish-lesson.ts
+  
+  Usage: ts-node cli/publish-lesson.ts <module-slug> <lesson-slug>
+  
+  What it does:
+  1. Validates the MDX file exists in content/modules/
+  2. Checks frontmatter is complete (all required fields present)
+  3. Validates quiz has at least 3 questions and each has 4 options
+  4. Runs a word count and warns if lesson is under 400 words
+  5. Outputs a summary of what would be published
+  
+  This is read-only — no writes, just validation.
+  Use gray-matter for frontmatter parsing.
+```
+
+## Data Migration Tool
+
+```
+> Create @scripts/migrate-users.ts
+  
+  Migrates user data from old_users table to new users schema.
+  
+  Flags:
+  - --dry-run: show what would be migrated without writing
+  - --limit N: only process N records (for testing)
+  - --start-from ID: continue a paused migration from a specific user ID
+  
+  Behavior:
+  - Reads in batches of 100
+  - Prints progress: "Migrated 100/5000 users..."
+  - Writes a migration log to migration-[timestamp].json
+  - On error: logs the failed user ID and continues (does not abort)
+  - Final summary: success count, error count, time elapsed
+```
+
+## Interactive CLI with Prompts
+
+```
+> Create @cli/setup.js using inquirer
+  
+  This runs the first-time setup for a developer joining the project:
+  
+  1. Ask for their name (text input)
+  2. Ask which environment they are setting up (select: local/staging)
+  3. Check if .env.local exists — if yes, ask to overwrite (confirm)
+  4. Generate the .env.local file with the correct values for their choice
+  5. Run npm install
+  6. Print "Setup complete! Run npm run dev to start"
+  
+  No external config needed — env values are hardcoded for each environment.
+```
+
+## Shell Scripts
+
+Claude Code writes shell scripts too:
+
+```
+> Create @scripts/deploy.sh
+  
+  Deployment script that:
+  1. Runs TypeScript type check (fail if errors)
+  2. Runs tests (fail if any fail)
+  3. Runs next build (fail if build fails)
+  4. Commits the build output to the deploy branch
+  5. Pushes to origin (triggers Vercel deployment)
+  
+  Each step should print its status and stop on failure.
+  Use set -e at the top so any error stops execution.
+```
+
+## npm Script Integration
+
+```
+> Add these scripts to package.json that use the CLI tools we created:
+  
+  "generate": "node tools/generate-component.js"
+  "publish-lesson": "ts-node cli/publish-lesson.ts"  
+  "setup": "node cli/setup.js"
+  "deploy": "bash scripts/deploy.sh"
+```
+
+## Summary
+
+CLI tools built with Claude Code follow the Unix philosophy: do one thing well, have helpful output, support --dry-run for destructive operations, and return proper exit codes. Automate everything that gets done more than twice.

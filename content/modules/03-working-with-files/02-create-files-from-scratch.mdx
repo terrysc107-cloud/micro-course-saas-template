@@ -1,0 +1,134 @@
+---
+title: "Create Files from Scratch"
+description: "Build new components, utilities, and modules with Claude Code doing the heavy lifting."
+order: 2
+duration: "10 min"
+videoUrl: ""
+quiz:
+  - question: "What is the best way to ask Claude to create a new file?"
+    options:
+      - "'Make a file'"
+      - "Specify the file path, what it exports, the interface/API, and any constraints like dependencies or patterns to follow"
+      - "'Claude, write some code'"
+      - "Just describe the end result and let Claude figure out the file name"
+    answer: 1
+  - question: "When creating a component that is similar to an existing one, what should you do?"
+    options:
+      - "Ask Claude to create it from scratch without mentioning the existing component"
+      - "Reference the existing component with @ so Claude can match the same patterns"
+      - "Copy the existing component manually first"
+      - "Delete the existing component and rewrite it"
+    answer: 1
+  - question: "After Claude creates a new file, what is the first thing you should verify?"
+    options:
+      - "That it is exactly 100 lines"
+      - "That it compiles/type-checks cleanly and the exports match what you need"
+      - "That Claude used your favorite variable naming convention"
+      - "That there are no comments in the file"
+    answer: 1
+  - question: "Which approach produces the most consistent, project-appropriate code?"
+    options:
+      - "Always starting from a blank prompt"
+      - "Asking Claude to 'write good code'"
+      - "Referencing existing similar files and asking Claude to follow those patterns"
+      - "Describing the output you want in words only"
+    answer: 2
+---
+
+## From Zero to Working File
+
+Creating new files is where Claude Code shines brightest. Boilerplate that used to take 30 minutes of typing now takes 30 seconds of prompting.
+
+## The Anatomy of a Good Creation Prompt
+
+```
+> Create @src/hooks/useDebounce.ts
+  - Generic TypeScript hook
+  - Accepts a value of type T and a delay in ms
+  - Returns a debounced version of the value
+  - Default delay: 300ms
+  - No external dependencies — use useEffect and useState from React
+```
+
+This prompt specifies:
+- **File path** — where it lives
+- **Interface** — what it accepts and returns
+- **Constraints** — TypeScript, no dependencies
+- **Default behavior** — 300ms default
+
+Claude will produce exactly this, nothing more.
+
+## Matching Existing Patterns
+
+Always reference similar existing files when creating something new:
+
+```
+> Create a new API route at @src/app/api/teams/route.ts
+  Follow the same patterns as @src/app/api/users/route.ts:
+  - GET returns a list, POST creates a new item
+  - Uses createClient() from @/lib/supabase/server
+  - Validates input with zod
+  - Returns consistent { data, error } shape
+```
+
+Claude reads the referenced file and mirrors its structure exactly. This keeps your codebase consistent without you having to re-explain conventions every time.
+
+## Creating Full Feature Modules
+
+For a new feature, scaffold everything at once:
+
+```
+> I am adding a "notifications" feature. Create these files:
+  - @src/types/notification.ts — the Notification type with id, userId, message, read, createdAt
+  - @src/lib/notifications.ts — getNotifications(userId) and markRead(id) functions using Supabase
+  - @src/components/NotificationBell.tsx — icon button showing unread count badge
+```
+
+Claude creates all three files in sequence, with each one aware of the others.
+
+## Building Out a Component Library
+
+When building a design system or component library:
+
+```
+> I have @components/ui/Button.tsx as my base component pattern.
+  Create these additional components following the same style:
+  - Input.tsx — text input with label, error state, helper text
+  - Textarea.tsx — multiline input with the same props pattern
+  - Select.tsx — dropdown with the same variants as Button (sm/md/lg)
+```
+
+Claude reads Button.tsx and builds the other three with matching prop interfaces and class structures.
+
+## After Creation — Quick Validation
+
+Once Claude creates a file:
+
+1. **Scan the diff** — does it match your mental model?
+2. **Check imports** — are all imports resolvable in your project?
+3. **Run TypeScript** — `npx tsc --noEmit` catches type errors immediately
+4. **Test it** — either run the feature or write a quick test
+
+For a component:
+```
+> Now import and render NotificationBell in @src/app/layout.tsx 
+  just below the nav, so I can see it in the browser
+```
+
+See it working before moving on.
+
+## Creating Test Files
+
+Claude is exceptional at writing tests for code it just created:
+
+```
+> Write Vitest unit tests for the useDebounce hook we just created.
+  Test: default delay, custom delay, value update cancellation.
+  Put the tests in @src/__tests__/useDebounce.test.ts
+```
+
+Claude already has the hook in context and writes tests that exactly match its implementation.
+
+## Summary
+
+The creation loop is: specify the interface → reference similar patterns → accept the file → validate it works → write tests. Done correctly, this produces production-ready code faster than you could write it from scratch.

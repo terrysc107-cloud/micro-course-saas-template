@@ -1,0 +1,160 @@
+---
+title: "Debug with Claude Code"
+description: "Diagnose and fix bugs faster by giving Claude the right context."
+order: 2
+duration: "11 min"
+videoUrl: ""
+quiz:
+  - question: "What three pieces of information make a debugging prompt most effective?"
+    options:
+      - "The file name, the line number, and the variable name"
+      - "The error message, the relevant file(s), and what you expected to happen vs. what actually happened"
+      - "The stack trace, your OS, and your Node version"
+      - "The function name, the test file, and the PR number"
+    answer: 1
+  - question: "When a bug is intermittent (happens sometimes but not always), what extra context should you provide?"
+    options:
+      - "Nothing extra — describe it the same way"
+      - "The conditions under which it happens vs. when it does not, any patterns you have noticed"
+      - "Only the error message from when it does happen"
+      - "Ask Claude to reproduce it in a new file"
+    answer: 1
+  - question: "What is 'rubber duck debugging' and how does Claude Code improve on it?"
+    options:
+      - "A technique where you explain your code to a rubber duck to find bugs; Claude actually responds with solutions"
+      - "A type of automated test"
+      - "A visual debugger tool"
+      - "A method of compressing code"
+    answer: 0
+  - question: "After Claude suggests a fix, what should you do if you are not sure why the fix works?"
+    options:
+      - "Accept it without understanding — it works and that is enough"
+      - "Reject it"
+      - "Ask Claude to explain why this change fixes the problem"
+      - "Ask a human developer instead"
+    answer: 2
+---
+
+## Debugging Is a Dialogue
+
+Claude Code is not a magic bug-fixing machine — it is a very smart collaborator. The quality of the diagnosis depends on the quality of the information you provide.
+
+## The Perfect Bug Report
+
+Give Claude everything it would need to reproduce the issue:
+
+```
+> I have a bug in the checkout flow.
+  
+  Expected: User completes Stripe payment, gets redirected to /dashboard
+  Actual: User completes payment, Stripe webhook fires (I can see it in Stripe dashboard),
+          but the user is redirected to /?upgrade=true as if they have no purchase.
+  
+  Relevant files:
+  - @src/app/api/stripe/webhook/route.ts — handles the webhook
+  - @src/proxy.ts — checks course_purchases table
+  
+  Error in server logs:
+  "No purchase found for user undefined"
+  
+  The webhook event shows userId in metadata. What is wrong?
+```
+
+This gives Claude: the symptom, the expected behavior, the actual behavior, the relevant code, and the error message. It will find the bug.
+
+## Paste the Full Error
+
+Always include the complete error, not just the first line:
+
+```
+> Getting this error when the page loads:
+  
+  Error: Cannot read properties of null (reading 'user_id')
+      at getCompletedLessons (/src/lib/progress.ts:12:39)
+      at DashboardPage (/src/app/dashboard/page.tsx:18:25)
+  
+  Relevant file: @src/lib/progress.ts
+```
+
+The stack trace tells Claude exactly where in the call chain it broke.
+
+## Intermittent Bugs
+
+For bugs that do not happen every time:
+
+```
+> This bug happens only when:
+  - The user signs up (not on login)
+  - AND their email has a + sign in it (like user+test@example.com)
+  
+  It does not happen with normal emails.
+  
+  The sign-up code is in @src/app/api/signup/route.ts
+  What could be causing the special character issue?
+```
+
+Pattern recognition is Claude's strength — give it the pattern.
+
+## "It Was Working Before" Bugs
+
+When a regression is introduced:
+
+```
+> This was working before my last commit. I added a new Supabase 
+  query in @src/lib/progress.ts and now the dashboard is blank.
+  
+  The new code I added starts at line 34. Before that the 
+  getCompletedLessons function only made one query. 
+  Now it makes two and something is wrong with the second one.
+```
+
+Claude checks the interaction between the existing and new code.
+
+## When You Are Just Stuck
+
+Sometimes you do not have an error — the code just does not behave right:
+
+```
+> @src/components/CourseSidebar.tsx — the checkmarks are not 
+  updating after I complete a quiz. I can see in the Network tab 
+  that the /api/progress response includes the completed lesson.
+  But the sidebar still shows the Circle icon instead of CheckCircle2.
+  
+  The completed prop is passed from the lesson page. 
+  What is the flow and where could the state update be failing?
+```
+
+Claude traces the data flow and finds where the state disconnect is happening.
+
+## Understanding the Fix
+
+Never just accept a fix without understanding it:
+
+```
+You: [accepts fix]
+You: > Why did adding router.refresh() after the API call fix the issue?
+     What was happening before that caused the stale data?
+```
+
+Understanding why teaches you the pattern and prevents the same bug next time.
+
+## When Claude Gets It Wrong
+
+Sometimes the first diagnosis is off. Redirect with more information:
+
+```
+You: > I tried that fix but the bug still happens
+
+Claude: [asks for more context]
+
+You: > Actually, looking more carefully, the issue might be in the 
+      data flow. The lesson page uses server components but the 
+      sidebar is a client component. Could that cause a mismatch 
+      in how the completed data is read?
+```
+
+Your debugging instincts plus Claude's pattern recognition is more powerful than either alone.
+
+## Summary
+
+Great debugging prompts include: the symptom, expected vs. actual, relevant files, the full error, and any patterns you have noticed. The rest is dialogue.

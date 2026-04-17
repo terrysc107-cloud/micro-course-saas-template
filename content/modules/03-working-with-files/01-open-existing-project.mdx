@@ -1,0 +1,145 @@
+---
+title: "Open an Existing Project"
+description: "Bring Claude Code into a real codebase and get oriented fast."
+order: 1
+duration: "10 min"
+videoUrl: ""
+quiz:
+  - question: "What is the first thing you should do when opening an existing project with Claude Code?"
+    options:
+      - "Ask Claude to rewrite everything"
+      - "Orient Claude with a brief description of what the project does and what you want to work on"
+      - "Delete the node_modules folder"
+      - "Run all the tests first"
+    answer: 1
+  - question: "What does asking Claude to 'map the codebase' do?"
+    options:
+      - "Creates a new map.json file"
+      - "Helps Claude give you a high-level summary of folder structure, key files, and patterns used"
+      - "Adds documentation to every function"
+      - "Runs the linter"
+    answer: 1
+  - question: "What file can you create to give Claude persistent project context across sessions?"
+    options:
+      - "PROJECT.md"
+      - "AI_CONTEXT.txt"
+      - "CLAUDE.md"
+      - ".clauderc"
+    answer: 2
+  - question: "When joining a team that already uses Claude Code, what should you look for first?"
+    options:
+      - "The biggest files to refactor"
+      - "The CLAUDE.md file which likely contains team conventions and project guidelines"
+      - "Ways to change the project structure"
+      - "The oldest git commits"
+    answer: 1
+---
+
+## Opening a Project Cold
+
+You have a real codebase — maybe one you inherited, maybe one you are joining. Here is how to use Claude Code effectively from day one.
+
+Navigate to the project root and start Claude:
+
+```bash
+cd ~/projects/my-app
+claude
+```
+
+## Orient Claude First
+
+Do not jump straight into "fix this bug." Spend two minutes orienting Claude so every subsequent message is smarter:
+
+```
+> This is a Next.js 14 app using Supabase for auth and Postgres.
+  It is a project management tool for small teams. 
+  I am joining the team and getting set up.
+  Can you map the codebase — give me a high-level overview of the 
+  folder structure and the key patterns used?
+```
+
+Claude will scan your project and produce a useful map:
+
+- What the main directories contain
+- The stack and key dependencies
+- Patterns it recognizes (API routes, component structure, auth approach)
+- Any obvious inconsistencies or tech debt it notices
+
+## Getting Oriented Yourself
+
+Ask follow-up questions to build mental model:
+
+```
+> How does authentication work in this project? Walk me through 
+  the flow from the user clicking "Sign In" to getting a session.
+
+> Where is the database schema defined?
+
+> What does the middleware.ts file do and why does it check two 
+  different tables?
+```
+
+These questions cost almost nothing. They save hours of codebase spelunking.
+
+## Finding Where to Make Changes
+
+When you have a specific task, ask Claude to find the right place:
+
+```
+> I need to add a "due date" field to tasks. 
+  Where does the task data model live? Which files would I need to change?
+```
+
+Claude will point you at the relevant files, saving the 20-minute scavenger hunt of reading through the whole codebase.
+
+## Creating a CLAUDE.md
+
+Once you understand the project, create a `CLAUDE.md` file in the root. This is loaded automatically every session:
+
+```markdown
+# My App — Claude Code Context
+
+## Stack
+- Next.js 14 App Router, TypeScript, Tailwind CSS
+- Supabase (Postgres + Auth)
+- Deployed on Vercel
+
+## Key Patterns
+- API routes use `createClient()` from `@/lib/supabase/server`
+- All DB writes go through service role client
+- Components use `cn()` utility for Tailwind class merging
+
+## Conventions
+- Function names: camelCase
+- Component files: PascalCase
+- Use zod for all input validation in API routes
+- Always add error handling for Supabase queries
+
+## Do Not Touch
+- The schema.sql file — run migrations through Supabase dashboard
+- The env.local file
+```
+
+With `CLAUDE.md` in place, every new session starts with Claude already knowing your conventions.
+
+## Working on Legacy Code
+
+If the project has messy or undocumented code, Claude Code is your best documentation tool:
+
+```
+> @src/utils/legacy-calculations.js — this file has no comments.
+  Read through it and add JSDoc comments explaining what each 
+  function does and what parameters it expects.
+```
+
+Or to modernize:
+
+```
+> @src/api/users.js uses callbacks instead of async/await.
+  Refactor it to use async/await while keeping identical behavior.
+  Do one function at a time, starting with getUser.
+```
+
+## Summary
+
+Opening a project well sets up every future session. Invest 10 minutes to orient Claude, create your CLAUDE.md, and understand the architecture. You will recoup that time on your very first feature.

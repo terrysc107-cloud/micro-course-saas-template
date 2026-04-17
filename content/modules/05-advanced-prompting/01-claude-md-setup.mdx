@@ -1,0 +1,146 @@
+---
+title: "CLAUDE.md Setup"
+description: "Create a CLAUDE.md that gives every session perfect project context automatically."
+order: 1
+duration: "10 min"
+videoUrl: ""
+quiz:
+  - question: "What is CLAUDE.md?"
+    options:
+      - "A documentation file for humans"
+      - "A file that Claude Code automatically reads at the start of every session to load project context"
+      - "A configuration file for the Claude API"
+      - "A file that replaces your README"
+    answer: 1
+  - question: "Where should CLAUDE.md be placed?"
+    options:
+      - "In the src/ folder"
+      - "In a hidden .claude/ directory"
+      - "In the project root, alongside package.json"
+      - "In the docs/ folder"
+    answer: 2
+  - question: "What is the most important section to include in CLAUDE.md?"
+    options:
+      - "Your personal preferences"
+      - "Conventions and patterns specific to YOUR project that Claude cannot infer from the code alone"
+      - "The entire project README"
+      - "A list of all your files"
+    answer: 1
+  - question: "Can you have CLAUDE.md files in subdirectories?"
+    options:
+      - "No — only one CLAUDE.md per project"
+      - "Yes — subdirectory CLAUDE.md files add context specific to that module"
+      - "Only if you rename them module.md"
+      - "Only in the src/ directory"
+    answer: 1
+---
+
+## What Is CLAUDE.md?
+
+`CLAUDE.md` is a file you create in your project root that Claude Code reads automatically at the start of every session. It is your persistent project brief — once written, you never have to re-explain your stack, conventions, or constraints.
+
+Without CLAUDE.md, every session starts cold. With it, Claude arrives already knowing your project inside and out.
+
+## Creating Your CLAUDE.md
+
+Here is a complete template for a Next.js + Supabase project:
+
+```markdown
+# Project Name — Claude Code Context
+
+## What This Is
+Brief description: what the app does, who uses it, why it exists.
+
+## Tech Stack
+- Next.js 14 App Router, TypeScript, Tailwind CSS
+- Supabase (Postgres + Auth with @supabase/ssr)
+- Deployed on Vercel
+- Testing: Vitest + React Testing Library
+
+## Project Structure
+- app/ — Next.js pages and API routes
+- components/ — React components (ui/ for shared, feature/ for feature-specific)
+- lib/ — utilities (supabase/, stripe.ts, content.ts)
+- content/modules/ — MDX lesson files
+- types/ — TypeScript types
+
+## Key Patterns
+- API routes use createClient() from @/lib/supabase/server
+- Admin operations use createServiceClient() (bypasses RLS)
+- All components use cn() from @/lib/utils for Tailwind merging
+- API responses return { data, error } shape consistently
+- Input validation uses zod in all API routes
+
+## Conventions
+- Files: kebab-case for pages and utils, PascalCase for components
+- Functions: camelCase, descriptive names
+- Types: PascalCase interfaces, suffix with 'Props' for component props
+- Error handling: always catch and return proper HTTP status codes
+- No console.log in production code — use structured logging
+
+## Supabase
+- Never use anon client for privileged operations
+- Always add RLS policies when creating new tables
+- Use upsert with onConflict for idempotent writes
+- Check for null on all Supabase query results before accessing properties
+
+## Do Not Touch
+- .env.local — never read or modify this file
+- supabase/migrations — run schema changes through Supabase dashboard
+- The Stripe webhook signature verification logic
+
+## Current Work in Progress
+[Update this section as you work on new features]
+- Building out the notifications system
+- Quiz pass rate tracking in dashboard
+```
+
+## Getting Claude to Write Your CLAUDE.md
+
+Let Claude draft it:
+
+```
+> Based on scanning this project, write a CLAUDE.md file 
+  that I will put in the root. Include: tech stack, project structure,
+  key patterns you see in the code, naming conventions, and 
+  any patterns I should always follow. 
+  
+  Ask me for anything you cannot infer from the codebase.
+```
+
+Claude drafts it, you edit and add the things only you know (business rules, off-limits areas, work in progress).
+
+## Subdirectory CLAUDE.md Files
+
+For large projects, add CLAUDE.md in subdirectories:
+
+```
+src/api/CLAUDE.md
+```
+
+```markdown
+# API Routes Context
+
+All routes in this directory:
+- Must authenticate the user before doing anything
+- Must use zod for body validation
+- Return 401 for unauthenticated, 400 for invalid input, 500 for server errors
+- Use createServiceClient() for any admin database operations
+```
+
+Now any session working in `src/api/` automatically picks up those conventions.
+
+## Keeping It Updated
+
+Review and update CLAUDE.md when:
+
+- You add a new dependency or pattern
+- The team agrees on a new convention
+- You complete a major refactor that changes how things work
+- You start a new phase of the project
+
+Think of it as living documentation. It costs two minutes to update and saves ten minutes of re-explaining in every future session.
+
+## Summary
+
+CLAUDE.md is the single highest-leverage thing you can do for long-term Claude Code productivity. Write it once, maintain it as you go, and every session starts perfectly calibrated to your project.

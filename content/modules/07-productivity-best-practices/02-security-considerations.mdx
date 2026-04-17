@@ -1,0 +1,146 @@
+---
+title: "Security Considerations"
+description: "Use Claude Code safely — protect your secrets, your users, and your codebase."
+order: 2
+duration: "10 min"
+videoUrl: ""
+quiz:
+  - question: "What should you NEVER do when asking Claude Code for help?"
+    options:
+      - "Ask about security vulnerabilities"
+      - "Share your actual secret keys, passwords, or production credentials in a prompt"
+      - "Ask about authentication patterns"
+      - "Share your .env.local.example file"
+    answer: 1
+  - question: "What security review should you always do on AI-generated code handling auth?"
+    options:
+      - "None — AI-generated auth code is always secure"
+      - "Check that every protected route verifies the user session, validates authorization, and never trusts client-supplied IDs for access decisions"
+      - "Only check for typos"
+      - "Run it through an AI security scanner"
+    answer: 1
+  - question: "What is a 'confused deputy' vulnerability in the context of API routes?"
+    options:
+      - "A route that returns confusing error messages"
+      - "When an API endpoint acts on a resource ID from the request body without verifying the authenticated user actually owns that resource"
+      - "When two routes have similar names"
+      - "When Claude Code makes an unintended change"
+    answer: 1
+  - question: "How should you handle secrets when working on open-source code with Claude Code?"
+    options:
+      - "Add them to the code and remove them before committing"
+      - "Use .env.local for secrets and .env.local.example with placeholder values — never put actual secrets in any tracked file"
+      - "Store them in comments"
+      - "Use a public gist"
+    answer: 1
+---
+
+## Security Is Not Optional
+
+AI-generated code can introduce security vulnerabilities just like human-written code. Claude is very good at writing secure code — but only if you prompt for it and review it correctly.
+
+## Never Share Real Secrets
+
+The most important rule: never put actual secret values in a Claude Code prompt.
+
+**Wrong:**
+```
+> My Stripe secret key is sk_live_AbCdEf123... — use it in the webhook handler
+```
+
+**Right:**
+```
+> The Stripe secret key is in STRIPE_SECRET_KEY environment variable.
+  Use process.env.STRIPE_SECRET_KEY in the webhook handler.
+```
+
+Claude does not need the actual value. It needs to know the variable name.
+
+## The Confused Deputy Check
+
+A common AI-generated vulnerability: an API that trusts client-supplied IDs.
+
+**Vulnerable (do not ship):**
+```ts
+// User sends: { taskId: "task-123" }
+const { taskId } = await req.json();
+await db.delete("tasks").where("id", taskId);  // deletes ANY task!
+```
+
+**Secure:**
+```ts
+const user = await getAuthUser(req);
+const { taskId } = await req.json();
+// Verify ownership before deleting
+const task = await db.select("tasks").where("id", taskId).where("user_id", user.id);
+if (!task) return Response.json({ error: "Not found" }, { status: 404 });
+await db.delete("tasks").where("id", taskId).where("user_id", user.id);
+```
+
+Ask Claude to add ownership checks to every mutation:
+
+```
+> Review @src/app/api/tasks/[taskId]/route.ts
+  For every write operation (PUT, PATCH, DELETE), verify that 
+  the task belongs to the authenticated user before proceeding.
+  Never delete or update a record based solely on the URL parameter.
+```
+
+## SQL Injection Prevention
+
+Claude always uses parameterized queries when you ask correctly:
+
+```
+> Write a search function in @src/lib/tasks.ts
+  
+  IMPORTANT: use parameterized queries only.
+  Never use string interpolation or template literals to build SQL.
+  The search input comes from user input and could be malicious.
+```
+
+## Secret Scanning Setup
+
+Ask Claude to set up secret scanning:
+
+```
+> Add a pre-commit hook using git-secrets or gitleaks 
+  that prevents committing any strings that look like:
+  - API keys (starting with sk-, pk-, eyJ)
+  - AWS credentials
+  - Private keys
+  
+  Create @.gitleaks.toml with appropriate rules.
+  Add the pre-commit hook to @.git/hooks/pre-commit
+```
+
+## Environment Variable Audit
+
+Periodically:
+
+```
+> Audit @src for any place where environment variables are used.
+  Create a complete list of:
+  - All env vars referenced in the codebase
+  - Whether each one is public (NEXT_PUBLIC_) or secret
+  - Where each one is used
+  - Any variables that appear to be secrets but are marked as public
+```
+
+## Security-First Prompting
+
+When building auth or data-handling features, lead with security:
+
+```
+> Create a password reset API route at @src/app/api/auth/reset/route.ts
+  
+  Security requirements:
+  - Rate limit to 3 requests per email per hour
+  - Never confirm whether an email exists in the system (always return 200)
+  - Use a time-limited, single-use token
+  - Invalidate the token immediately upon use
+  - Log all attempts (success and failure) with timestamp and IP
+```
+
+## Summary
+
+Never share real secrets. Add ownership checks to every mutation. Use parameterized queries. Review auth code extra carefully. These four habits, consistently applied, keep AI-generated code safe to ship.

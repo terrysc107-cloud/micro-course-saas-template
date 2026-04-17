@@ -1,0 +1,108 @@
+---
+title: "Install Claude Code"
+description: "Get Claude Code running on your machine in under 5 minutes."
+order: 1
+duration: "8 min"
+videoUrl: ""
+quiz:
+  - question: "What command installs Claude Code globally?"
+    options:
+      - "npm install claude-code"
+      - "npm install -g @anthropic-ai/claude-code"
+      - "npx claude-code"
+      - "brew install claude-code"
+    answer: 1
+  - question: "What is the minimum Node.js version required for Claude Code?"
+    options:
+      - "Node.js 14"
+      - "Node.js 16"
+      - "Node.js 18"
+      - "Node.js 20"
+    answer: 2
+  - question: "After installing, which command opens Claude Code in your current project?"
+    options:
+      - "claude start"
+      - "claude-code ."
+      - "claude"
+      - "npx claude"
+    answer: 2
+---
+
+## Welcome to Claude Code Mastery
+
+You're about to learn one of the most powerful developer tools available today. Claude Code is a command-line tool that brings Anthropic's Claude AI directly into your terminal — where you do your real work.
+
+Unlike chat interfaces, Claude Code understands your **entire project**. It reads your files, writes code, runs commands, and helps you ship faster than you ever thought possible.
+
+## Prerequisites
+
+Before installing, make sure you have:
+
+- **Node.js 18 or higher** — check with `node --version`
+- **An Anthropic API key** — get one at [console.anthropic.com](https://console.anthropic.com)
+- **A terminal** — Terminal on Mac, Windows Terminal, or any Linux shell
+
+## Install Claude Code
+
+Open your terminal and run:
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+This installs Claude Code globally so you can use it from any project folder on your machine.
+
+**Verify it worked:**
+
+```bash
+claude --version
+```
+
+You should see a version number. If you get "command not found", your npm global bin directory may not be in your PATH. Fix it with:
+
+```bash
+export PATH="$PATH:$(npm root -g)/../.bin"
+```
+
+Add that line to your `~/.zshrc` or `~/.bashrc` to make it permanent.
+
+## Set Your API Key
+
+Claude Code needs your Anthropic API key. Set it as an environment variable:
+
+**Mac / Linux:**
+```bash
+export ANTHROPIC_API_KEY=sk-ant-your-key-here
+```
+
+To make it permanent, add that line to your `~/.zshrc` or `~/.bashrc`, then reload:
+
+```bash
+source ~/.zshrc
+```
+
+**Windows (PowerShell):**
+```powershell
+$env:ANTHROPIC_API_KEY="sk-ant-your-key-here"
+```
+
+## Launch Claude Code
+
+Navigate to any project folder and type:
+
+```bash
+claude
+```
+
+An interactive session opens. You will see a prompt where you can start typing to your AI pair programmer, which has full context of the code in your directory.
+
+## What Happens Under the Hood
+
+When you run `claude`, it:
+
+1. Scans your project directory structure
+2. Reads relevant files to build context
+3. Connects to the Anthropic API with your key
+4. Opens an interactive session ready for your first prompt
+
+You are set up. In the next lesson you will configure your API key properly, understand usage costs, and set your spending limits.

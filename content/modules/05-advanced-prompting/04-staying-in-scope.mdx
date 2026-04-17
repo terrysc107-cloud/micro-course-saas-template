@@ -1,0 +1,133 @@
+---
+title: "Staying in Scope"
+description: "Keep Claude focused on exactly what you want — no more, no less."
+order: 4
+duration: "8 min"
+videoUrl: ""
+quiz:
+  - question: "What is the most effective phrase to prevent Claude from making unrequested changes?"
+    options:
+      - "Please be careful"
+      - "'Only change what I explicitly ask. Do not touch anything else.'"
+      - "'Be minimal'"
+      - "'Stay focused'"
+    answer: 1
+  - question: "What should you do if Claude makes a helpful-but-unrequested change?"
+    options:
+      - "Accept it — Claude probably knows best"
+      - "Accept the change you wanted, reject the extras, then explicitly ask for the extra change if you want it"
+      - "Reject everything and start over"
+      - "Thank Claude and move on"
+    answer: 1
+  - question: "What is 'assistant scope creep'?"
+    options:
+      - "When the project scope grows unexpectedly"
+      - "When Claude makes changes beyond what was requested, often because it spotted something to improve"
+      - "When Claude asks too many clarifying questions"
+      - "When the context window runs out"
+    answer: 1
+  - question: "How do you tell Claude exactly which lines to edit?"
+    options:
+      - "You cannot specify line numbers"
+      - "Reference the file with @ and describe the exact location: 'line 45', 'the handleSubmit function', 'the return statement'"
+      - "Claude always edits the right lines automatically"
+      - "You must copy and paste the lines you want changed"
+    answer: 1
+---
+
+## The Scope Problem
+
+Claude is helpful by nature — sometimes too helpful. It spots code that could be better, adds things "while it is in there," and refactors things you did not ask it to refactor.
+
+In small doses this is great. But when you are trying to make a surgical change, unexpected edits are bugs waiting to happen.
+
+## The One Rule
+
+Add this to every prompt where scope matters:
+
+```
+> Update the label on the Submit button to say "Complete Purchase".
+  Only change this text. Do not modify anything else in the file.
+```
+
+"Do not modify anything else" is the most powerful scope constraint you have.
+
+## Being Specific About What to Change
+
+The more precisely you describe the target, the less room there is for drift:
+
+**Vague (risky):**
+```
+> Fix the checkout form
+```
+
+**Specific (safe):**
+```
+> In @src/components/CheckoutForm.tsx, in the handleSubmit function 
+  (around line 45), the setLoading(false) call is missing in the 
+  catch block. Add it so the button resets when the request fails.
+  Do not change anything else.
+```
+
+## Handling Unrequested Changes
+
+When Claude does something useful but outside your scope:
+
+```
+You: > Add a loading spinner to the Submit button in @src/components/Form.tsx
+
+Claude: [adds spinner, also fixes a typo in an error message, 
+         and adds missing aria-label attributes for accessibility]
+
+You: Accept the spinner change, reject the other two.
+
+Later:
+You: > Now fix that typo in the error message on line 78 — change 
+      "Sumbit" to "Submit"
+```
+
+Accept what you asked for. Audit the rest. Come back for the good stuff deliberately.
+
+## Scope Constraints for Refactoring
+
+Refactoring is the highest-risk area for scope creep:
+
+```
+> Refactor the calculateScore function in @src/lib/scoring.ts
+  to be more readable by extracting the weight constants to a 
+  named object at the top of the file.
+  
+  Constraints:
+  - Only change calculateScore and add the constant object
+  - Do not change any other functions in the file
+  - Do not change the function signature or return type
+  - The existing tests must still pass
+```
+
+Four explicit constraints. Claude knows exactly where the walls are.
+
+## Multi-File Changes
+
+When Claude needs to touch multiple files:
+
+```
+> Rename the type 'Student' to 'StudentProfile' everywhere.
+  
+  Files to update:
+  - @src/types/index.ts (the type definition)
+  - @src/lib/students.ts (function signatures)
+  - @src/api/onboarding/student/route.ts (usage in handler)
+  
+  Do not update any other files. Do not change any logic — 
+  this is a pure rename.
+```
+
+Explicitly listing the files prevents Claude from going exploring.
+
+## Using /clear to Reset Scope
+
+When you are done with one task and moving to the next, use `/clear` to reset the conversation. This prevents Claude from thinking the new task is related to the old one and "helpfully" making connections across tasks.
+
+## Summary
+
+Scope is about being the architect. You decide what changes, when, and where. The phrases "only change," "do not touch," and listing explicit file targets are your most powerful tools for staying in control.

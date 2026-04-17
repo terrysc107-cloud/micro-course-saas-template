@@ -1,0 +1,156 @@
+---
+title: "Write Tests Automatically"
+description: "Let Claude Code handle test boilerplate so you can ship with confidence."
+order: 3
+duration: "10 min"
+videoUrl: ""
+quiz:
+  - question: "What information should you give Claude to write useful tests?"
+    options:
+      - "Just the file name"
+      - "The function to test, the testing framework being used, and the key behaviors to cover"
+      - "Only the test cases you want — Claude writes the code"
+      - "Nothing — Claude reads everything automatically"
+    answer: 1
+  - question: "What is a snapshot test good for?"
+    options:
+      - "Testing API performance"
+      - "Capturing component output and detecting unexpected UI changes"
+      - "Testing database queries"
+      - "Testing animation timing"
+    answer: 1
+  - question: "What does TDD (Test-Driven Development) mean in Claude Code terms?"
+    options:
+      - "Claude writes tests before you read them"
+      - "You describe what the function should do, Claude writes failing tests first, then you ask Claude to write code that passes them"
+      - "You write tests after the code is complete"
+      - "Tests are optional in TDD"
+    answer: 1
+  - question: "What is the best strategy for testing API routes with Claude Code?"
+    options:
+      - "Manually test in the browser only"
+      - "Use Claude to write integration tests that mock the database and test auth, input validation, and response shape"
+      - "Just test the database queries directly"
+      - "Skip API tests — they are too complex"
+    answer: 1
+---
+
+## Testing Without the Dread
+
+Writing tests is the most skipped step in software development. It feels slow and repetitive. Claude Code removes the friction — it writes the boilerplate so you just review and ship.
+
+## Unit Tests for Functions
+
+```
+> Write Vitest unit tests for @src/lib/scoring.ts
+  
+  Test the calculateWeightedScore function:
+  - Valid input with all six categories populated
+  - Input with some categories missing (should default to 0)
+  - All zeros — should return total score of 0
+  - Maximum values — should return total score of 100
+  - Verify the tier classification: >=75 returns tier_1, >=50 returns tier_2, <50 returns tier_3
+  
+  Put tests in @src/__tests__/scoring.test.ts
+  Use Vitest, no mocking needed for this pure function
+```
+
+Claude reads the function and writes tests that match its exact behavior.
+
+## Component Tests
+
+```
+> Write React Testing Library tests for @src/components/LessonQuiz.tsx
+  
+  Test:
+  - Component renders all questions
+  - Selecting an answer highlights it
+  - Submit button is disabled until all questions answered
+  - Shows correct/incorrect highlighting after submission
+  - Shows "Try Again" button when score < 70
+  - Shows "Next Lesson" button when score >= 70
+  
+  Mock the fetch to /api/quiz — return { score: 40, passed: false, correct: [true, false, false] }
+  for the fail case and { score: 100, passed: true, correct: [true, true, true] } for the pass case
+```
+
+## API Route Tests
+
+```
+> Write integration tests for @src/app/api/quiz/route.ts
+  
+  Test scenarios:
+  - Unauthenticated request returns 401
+  - Missing required fields returns 400
+  - Unknown lesson slug returns 404  
+  - Correct answers produce passed: true and score of 100
+  - All wrong answers produce passed: false and score of 0
+  - Passing score triggers lesson_progress insert (verify with db mock)
+  
+  Use Vitest, mock @/lib/supabase/server and @/lib/content
+```
+
+## TDD with Claude Code
+
+Test-Driven Development (write tests first, then code) is powerful with Claude:
+
+```
+Step 1:
+> I want to build a useLocalStorage hook.
+  Before writing the hook, write failing tests that describe:
+  - Retrieving a stored value
+  - Storing a new value
+  - Using a default value when nothing is stored
+  - Handling JSON serialization of objects
+  
+  Put tests in @src/__tests__/useLocalStorage.test.ts
+
+Step 2:
+> Now write @src/hooks/useLocalStorage.ts that makes all those tests pass
+```
+
+This produces tightly-specified, testable code.
+
+## Snapshot Tests
+
+For UI components you want to lock in:
+
+```
+> Write a Vitest snapshot test for @src/components/ui/Button.tsx
+  covering all variants (primary, secondary, ghost, outline) 
+  and all sizes (sm, md, lg).
+  Put the test in @src/__tests__/Button.test.tsx
+```
+
+After accepting, run the tests once to create the snapshots. Future changes that alter the rendered output will fail the snapshot and alert you.
+
+## Test Coverage Report
+
+After writing tests, check what you are missing:
+
+```
+> Run a coverage check on @src/lib/ and tell me which functions 
+  have less than 80% coverage based on the tests in @src/__tests__/
+```
+
+Claude analyzes the relationship between your source and test files.
+
+## When Tests Fail
+
+After Claude writes tests, they should pass. If they do not:
+
+```
+> The test for markAsRead is failing with:
+  "Expected mock to have been called but it was not"
+  
+  The test is in @src/__tests__/notifications.test.ts line 45
+  The implementation is in @src/lib/notifications.ts
+  
+  What is wrong — is the test wrong or is the implementation wrong?
+```
+
+Claude diagnoses whether it is a test issue (wrong mock setup) or an implementation issue.
+
+## Summary
+
+Ask Claude to write your test boilerplate. Specify the testing framework, the behaviors to cover, and whether mocking is needed. Review the tests like you review code — they are documentation of what your system should do.

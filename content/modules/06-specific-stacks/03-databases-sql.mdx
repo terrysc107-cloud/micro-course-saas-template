@@ -1,0 +1,149 @@
+---
+title: "Databases & SQL"
+description: "Write safe, optimized SQL and manage Supabase/Postgres schemas with Claude Code."
+order: 3
+duration: "12 min"
+videoUrl: ""
+quiz:
+  - question: "What is SQL injection and how should Claude always prevent it?"
+    options:
+      - "A type of database optimization; prevented by indexing"
+      - "A security attack where user input is interpreted as SQL; prevented by always using parameterized queries"
+      - "A way to speed up queries; prevented by caching"
+      - "A database error; prevented by try/catch"
+    answer: 1
+  - question: "What should you always ask Claude to add to a new database table?"
+    options:
+      - "Indexes on every column"
+      - "Row Level Security policies so users can only access their own data"
+      - "A created_by column"
+      - "A version column"
+    answer: 1
+  - question: "What is an N+1 query problem?"
+    options:
+      - "Running one query that returns N+1 rows"
+      - "Running one query to get a list, then N more individual queries for each item — should be replaced with a JOIN or batch query"
+      - "A query that takes N+1 seconds to run"
+      - "Having N+1 database connections open"
+    answer: 1
+  - question: "When should you add a database index?"
+    options:
+      - "On every column always"
+      - "Never — Postgres handles optimization automatically"
+      - "On columns that are frequently used in WHERE clauses, JOIN conditions, or ORDER BY"
+      - "Only on primary key columns"
+    answer: 2
+---
+
+## Claude Code + Databases
+
+SQL is an area where Claude Code pays dividends. Schema design, query writing, index optimization, and migration planning are all tasks Claude handles very well — when you ask precisely.
+
+## Schema Design
+
+```
+> Design a Postgres schema for a task management app.
+  
+  Requirements:
+  - Users can create projects
+  - Projects contain tasks
+  - Tasks have: title, description, status (todo/in_progress/done), 
+    priority (low/medium/high), assignee, due_date
+  - Tasks can have subtasks
+  - Support tagging tasks
+  
+  Output as SQL with:
+  - Proper foreign key constraints
+  - Created_at and updated_at timestamps on every table
+  - RLS policies (using Supabase auth.uid())
+  - Appropriate indexes for common query patterns
+  - Enum types for status and priority
+```
+
+## Writing Safe Queries
+
+Always parameterized:
+
+```
+> In @src/lib/tasks.ts, write a getTasksByProject function
+  
+  It should:
+  - Accept projectId and optional filters (status, assignee)
+  - Use parameterized queries (never string interpolation)
+  - Join with users table to get assignee name
+  - Order by priority DESC, created_at ASC
+  - Return typed TaskWithAssignee[] using @src/types/task.ts
+```
+
+## Finding and Fixing N+1 Queries
+
+```
+> Review @src/app/dashboard/page.tsx for N+1 query problems.
+  
+  I am loading a list of projects, then for each project 
+  loading its tasks in a separate query inside a map.
+  Rewrite this to use a single query with a Supabase join.
+```
+
+## Full-Text Search
+
+```
+> Add full-text search to @src/app/api/tasks/search/route.ts
+  
+  Search across task title and description.
+  Use Postgres full-text search (to_tsvector, to_tsquery).
+  Handle partial words by using prefix matching.
+  Also add the necessary GIN index to the tasks table as a migration.
+```
+
+## Query Optimization
+
+```
+> This query in @src/lib/analytics.ts is taking 2+ seconds:
+  [paste the query]
+  
+  The tasks table has 500k rows. What indexes would speed this up?
+  Write the CREATE INDEX statements I should run.
+  Explain why each index helps.
+```
+
+## Migrations
+
+```
+> I need to add an 'archived_at' column to the projects table.
+  
+  Write a Supabase migration that:
+  1. Adds the column (nullable timestamptz)
+  2. Updates the RLS policies to exclude archived projects 
+     from normal queries
+  3. Creates a partial index on archived_at WHERE archived_at IS NOT NULL
+  
+  Format as SQL ready to run in Supabase SQL editor.
+```
+
+## Supabase-Specific Patterns
+
+```
+> Write a Supabase query in @src/lib/tasks.ts that:
+  - Filters by multiple statuses (array input)
+  - Uses the Supabase client (not raw SQL)
+  - Handles the case where the statuses array is empty (return all)
+  - Uses the correct @supabase/ssr pattern from the rest of this file
+```
+
+## Audit Logging
+
+```
+> Add an audit log table to our Postgres schema.
+  
+  When any row in tasks is inserted, updated, or deleted:
+  - Record: table name, row id, action (INSERT/UPDATE/DELETE), 
+    changed_by (auth.uid()), changed_at, old_data (JSONB), new_data (JSONB)
+  
+  Use a Postgres trigger function.
+  Write the CREATE TABLE, the trigger function, and the trigger itself.
+```
+
+## Summary
+
+Always ask Claude to use parameterized queries, add RLS policies, and include appropriate indexes. These three habits keep your database secure and performant from day one.

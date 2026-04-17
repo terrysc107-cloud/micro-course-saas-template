@@ -1,0 +1,148 @@
+---
+title: "Python Scripts"
+description: "Use Claude Code to write, debug, and automate Python scripts for any purpose."
+order: 2
+duration: "11 min"
+videoUrl: ""
+quiz:
+  - question: "What information should you give Claude when asking it to write a Python script?"
+    options:
+      - "Just the script name"
+      - "What the script does, what inputs it takes, what outputs it produces, and any libraries to use or avoid"
+      - "Only the desired output"
+      - "The Python version and nothing else"
+    answer: 1
+  - question: "What is the best way to ask Claude to make a Python script production-ready?"
+    options:
+      - "'Make it better'"
+      - "Ask specifically for: argument parsing with argparse, logging, error handling with meaningful messages, and a __main__ guard"
+      - "'Add more code'"
+      - "'Optimize it'"
+    answer: 1
+  - question: "When debugging a Python error with Claude Code, what should you include?"
+    options:
+      - "Only the error type"
+      - "The full traceback, the relevant code, and a description of the input that caused the error"
+      - "Just the line number"
+      - "Nothing — paste the file and Claude figures it out"
+    answer: 1
+  - question: "What Python pattern does Claude use for scripts that need to be both importable and runnable?"
+    options:
+      - "import __main__"
+      - "if __name__ == '__main__': main()"
+      - "def run(): pass"
+      - "export default"
+    answer: 1
+---
+
+## Python + Claude Code
+
+Python is one of the best languages to use with Claude Code. Scripts, automation, data processing, API integrations — Claude handles the boilerplate so you can focus on the logic.
+
+## Writing a Basic Script
+
+```
+> Create @scripts/process_csv.py
+  
+  What it does: reads a CSV of user emails and subscription dates,
+  filters users whose subscription expired more than 30 days ago,
+  and outputs a new CSV with just those users.
+  
+  Input: CSV with columns: email, subscription_end_date (ISO format)
+  Output: CSV with the same columns, filtered
+  
+  Requirements:
+  - Use the csv module (no pandas — keep dependencies minimal)
+  - Accept input and output file paths as command-line arguments
+  - Print a summary: "Processed N rows. Found M expired users."
+  - Handle file not found gracefully
+```
+
+## Making Scripts Production-Ready
+
+```
+> Improve @scripts/process_csv.py to be production-ready:
+  
+  1. Add argparse for command-line arguments with --help documentation
+  2. Add Python logging (not print) — INFO for progress, ERROR for failures
+  3. Add a __main__ guard
+  4. Add comprehensive docstrings
+  5. Handle malformed CSV rows gracefully (skip and log)
+  6. Add a --dry-run flag that shows what would be processed without writing output
+```
+
+## API Integration Scripts
+
+```
+> Create @scripts/sync_users.py
+  
+  This script syncs users from our Supabase database to a Mailchimp 
+  email list. It should:
+  
+  1. Read users from Supabase using the supabase-py client
+     (environment variables: SUPABASE_URL, SUPABASE_SERVICE_KEY)
+  2. For each user, check if they exist in Mailchimp via API
+     (MAILCHIMP_API_KEY, MAILCHIMP_LIST_ID env vars)
+  3. Add new users, update changed email addresses
+  4. Log every action to sync.log
+  5. Print a summary at the end
+  
+  Handle Mailchimp API rate limiting with exponential backoff.
+```
+
+## Data Processing
+
+```
+> Create @scripts/analyze_quiz_results.py
+  
+  Reads quiz results JSON (array of { userId, moduleSlug, lessonSlug, score, passed, attemptedAt })
+  
+  Outputs:
+  - Average score per lesson
+  - Pass rate per lesson (% who passed on first try)
+  - Lessons with highest failure rate (top 5)
+  - Users who gave up (took quiz 3+ times and never passed)
+  
+  Output as a formatted report to stdout and to report.txt
+```
+
+## Debugging Python with Claude
+
+```
+> I am getting this error running @scripts/sync_users.py:
+  
+  Traceback (most recent call last):
+    File "scripts/sync_users.py", line 47, in sync_user
+      response = requests.post(url, json=payload, headers=headers)
+  requests.exceptions.ConnectionError: HTTPSConnectionPool(host='us20.api.mailchimp.com')
+  
+  The script runs fine locally but fails in our CI environment.
+  What could cause this in CI but not locally?
+```
+
+## Type Annotations
+
+```
+> Add full type annotations to @scripts/process_csv.py
+  Use Python 3.10+ syntax (union types with |, etc.)
+  Also add a py.typed marker file
+```
+
+## Writing Tests for Python Scripts
+
+```
+> Write pytest tests for @scripts/process_csv.py
+  
+  Test:
+  - Normal CSV with mix of expired and active users
+  - Empty CSV
+  - CSV with malformed dates (should skip and log)
+  - File not found (should exit with error code 1)
+  
+  Use tmp_path fixture for test CSV files
+  Put tests in @tests/test_process_csv.py
+```
+
+## Summary
+
+Python scripts with Claude Code: specify the input/output contract, the libraries to use, and any error handling requirements. Claude writes clean, well-documented Python that follows the production patterns you need.

@@ -1,0 +1,134 @@
+---
+title: "Daily Workflow Habits"
+description: "Build a sustainable Claude Code practice that makes you consistently faster."
+order: 1
+duration: "10 min"
+videoUrl: ""
+quiz:
+  - question: "What is the 'morning context load' habit?"
+    options:
+      - "Reading the news before coding"
+      - "Starting each day by opening Claude Code and briefing it on what you are working on today"
+      - "Loading all project files into context"
+      - "Running your tests first thing"
+    answer: 1
+  - question: "Why should you create a new Claude Code session for each new task?"
+    options:
+      - "Sessions are billed per task"
+      - "Previous task context can confuse Claude and lead to wrong assumptions about what you are working on"
+      - "Claude forgets everything after 30 minutes"
+      - "There is no reason — use one long session"
+    answer: 1
+  - question: "What is the 'rubber duck upgrade' habit?"
+    options:
+      - "Keeping a rubber duck on your desk"
+      - "Before asking Claude to write code, first ask it to explain the problem and propose approaches, then choose one"
+      - "Using Claude only for debugging"
+      - "Reviewing code with a colleague before using Claude"
+    answer: 1
+  - question: "How often should you update your CLAUDE.md?"
+    options:
+      - "Never — set it and forget it"
+      - "Daily — update it every single day"
+      - "When you establish a new pattern, add a significant dependency, or change a major convention"
+      - "Only when starting a new project"
+    answer: 2
+---
+
+## The Compounding Effect
+
+Claude Code usage compounds. Developers who build good habits in the first month are twice as fast as those who use it ad-hoc. Here are the habits that actually matter.
+
+## The Morning Context Load (2 minutes)
+
+Start every coding session by orienting Claude:
+
+```
+> I am picking up where I left off yesterday.
+  I am building the notifications feature. 
+  Relevant files: @src/lib/notifications.ts, @src/components/NotificationBell.tsx
+  Today's goal: wire up the bell component to the header and make the mark-as-read work.
+  What do we need to do first?
+```
+
+This 2-minute brief saves you 20 minutes of re-orienting yourself mentally.
+
+## One Task Per Session
+
+The most valuable habit: start a fresh session for each distinct task.
+
+```bash
+# Task 1: fix the checkout bug
+claude
+> [work on checkout bug, accept fixes, /exit]
+
+# Task 2: add the notification bell  
+claude
+> [work on notification bell, /exit]
+```
+
+Each session is focused. Claude does not carry wrong assumptions from Task 1 into Task 2.
+
+## The Rubber Duck Upgrade
+
+Before asking Claude to write code, ask it to think first:
+
+```
+> I need to add pagination to the products list.
+  Before writing any code, explain the two main approaches 
+  (cursor-based vs. offset-based) and recommend which is better 
+  for our use case (Supabase, ~10k rows, sorted by created_at).
+```
+
+Now you choose the approach with understanding. Claude writes code with a clear direction.
+
+## Timeboxed Sessions
+
+Set a time limit for each Claude Code session. Without a limit, sessions drift and context accumulates.
+
+- **Bug fix**: 20 minutes
+- **New feature**: 45-60 minutes
+- **Refactor**: 30 minutes
+
+When the time is up, commit what is working and start fresh next session. This prevents the "I'll just add one more thing" spiral.
+
+## The End-of-Day Commit Message
+
+Before closing for the day:
+
+```
+> Here is my git diff --staged:
+  [paste diff]
+  
+  Write a commit message for this work. 
+  Also: is there anything in this diff that looks unfinished 
+  or that I should follow up on tomorrow?
+```
+
+You get a clean commit and a to-do reminder.
+
+## Keeping CLAUDE.md Fresh
+
+Every time you establish a new pattern:
+
+```
+> I just decided to use zod for all API input validation going forward.
+  Update @CLAUDE.md to add this to the conventions section.
+```
+
+Takes 30 seconds. Saves 5 minutes every future session.
+
+## The Weekly Review
+
+Once a week, spend 5 minutes asking:
+
+```
+> Review my recent work in git log and identify:
+  - Any patterns that have been repeated (could be automated)
+  - Any code that looks inconsistent with our conventions
+  - Any technical debt that is worth addressing before it grows
+```
+
+## Summary
+
+Morning context load → one task per session → rubber duck first → timebox → end-of-day commit → update CLAUDE.md. This practice, done consistently, is what turns Claude Code from a novelty into a superpower.

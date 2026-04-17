@@ -1,0 +1,127 @@
+---
+title: "The Edit-Review-Accept Loop"
+description: "Master the core workflow that keeps you in control while Claude does the heavy lifting."
+order: 3
+duration: "10 min"
+videoUrl: ""
+quiz:
+  - question: "What does a 'diff' show you in Claude Code?"
+    options:
+      - "The difference in API costs between two models"
+      - "Lines added (green) and removed (red) in a proposed file change"
+      - "A comparison between two different projects"
+      - "The elapsed time since the last change"
+    answer: 1
+  - question: "What should you do BEFORE pressing y to accept a change?"
+    options:
+      - "Nothing — accept immediately to save time"
+      - "Run your tests first"
+      - "Read the entire diff and understand every change"
+      - "Copy the code to a backup file"
+    answer: 2
+  - question: "When Claude makes a change you did not expect, what is the best response?"
+    options:
+      - "Accept it anyway"
+      - "Press n to reject, then clarify what you actually wanted"
+      - "Delete the file manually"
+      - "Restart your computer"
+    answer: 1
+  - question: "What is the main benefit of reviewing each change before accepting?"
+    options:
+      - "It makes the session cheaper"
+      - "You stay the architect — you catch bugs, security issues, and scope creep before they hit your codebase"
+      - "It makes Claude work faster"
+      - "It prevents Claude from using the internet"
+    answer: 1
+---
+
+## The Most Important Habit in Claude Code
+
+The single habit that separates effective Claude Code users from people who create messes is this: **review every change before accepting it**.
+
+This sounds obvious. In practice, developers get into a flow and start hammering `y` without reading. That is when bugs, security holes, and unwanted changes slip in.
+
+## Reading the Diff
+
+When Claude proposes a change, it shows a diff:
+
+```diff
+  // src/api/users.ts
+  
+  export async function getUser(id: string) {
+-   const user = await db.query(`SELECT * FROM users WHERE id = ${id}`);
++   const user = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+    return user;
+  }
+```
+
+Lines starting with `-` (red) are being removed. Lines starting with `+` (green) are being added.
+
+In this example, Claude fixed a SQL injection vulnerability by parameterizing the query. If you had accepted without reading, you might have missed that this was a security issue in your original code — now fixed.
+
+## What to Check in Every Diff
+
+**Scope** — Did Claude only touch what you asked? Watch for unrelated changes snuck in.
+
+**Logic** — Does the new code actually do what you asked? Read it like a code review.
+
+**Edge cases** — Are there obvious missing error checks, null checks, or boundary conditions?
+
+**Style** — Does it match your project's conventions (naming, formatting, imports)?
+
+**Security** — Are there any credentials, hardcoded values, or unsafe patterns?
+
+## Asking Questions Before Accepting
+
+You do not have to accept or reject immediately. You can ask questions:
+
+```
+You: > Add a rate limiter to the login endpoint
+
+Claude: [shows diff adding rate limiting middleware]
+
+You: > Before I accept — why did you put this in middleware 
+      instead of directly in the route handler?
+
+Claude: [explains the tradeoff]
+
+You: > Got it, that makes sense. Accept.
+```
+
+This dialogue makes you a better developer — you are learning from every change, not just shipping blindly.
+
+## Rejecting and Redirecting
+
+Press `n` to reject a change, then explain what you actually wanted:
+
+```
+You: > Add form validation to the sign-up form
+
+Claude: [adds client-side only validation]
+
+You: > n — I need server-side validation too. The client-side 
+      validation is fine, but also add validation in the API 
+      route at @src/app/api/signup/route.ts
+```
+
+You have not lost any work. Claude still holds all the context. Just redirect.
+
+## Partial Acceptance
+
+Sometimes Claude changes three files and two are great but one is wrong. You can accept the good ones and reject the bad one:
+
+```
+Accept change to src/lib/auth.ts? (y/n) y
+Accept change to src/components/LoginForm.tsx? (y/n) y  
+Accept change to src/app/layout.tsx? (y/n) n
+```
+
+Then give Claude specific feedback on the rejected file.
+
+## The Golden Rule
+
+**You are the architect. Claude is the builder.**
+
+Claude can write code faster than you can, but it does not know your business logic, your team's conventions, your security requirements, or your users. You do. Stay in the loop on every change and you will never lose control of your codebase.
+
+This loop — prompt, read diff, ask questions, accept or redirect — is what makes Claude Code a multiplier rather than a liability.

@@ -1,0 +1,144 @@
+---
+title: "Edit & Refactor Code"
+description: "Use Claude Code to improve, modernize, and clean up existing code safely."
+order: 3
+duration: "11 min"
+videoUrl: ""
+quiz:
+  - question: "What is the safest way to refactor a large function with Claude Code?"
+    options:
+      - "Ask Claude to refactor the entire file at once"
+      - "Break it into small, reviewable steps — one change at a time"
+      - "Delete the function and let Claude rewrite it from scratch"
+      - "Copy the function to a new file before refactoring"
+    answer: 1
+  - question: "When asking Claude to refactor, what constraint should you always include?"
+    options:
+      - "The file must become shorter"
+      - "'Keep the same external behavior / public API'"
+      - "Use the most modern JavaScript features possible"
+      - "Add comments to every line"
+    answer: 1
+  - question: "What is a 'surgical edit' in Claude Code terms?"
+    options:
+      - "An edit that makes the code look cleaner"
+      - "A precise, targeted change to one specific thing without touching anything else"
+      - "An edit done late at night"
+      - "A change that removes more lines than it adds"
+    answer: 1
+  - question: "Before refactoring a heavily-used utility, what should you do first?"
+    options:
+      - "Nothing — Claude handles it"
+      - "Ask Claude to write tests for the existing behavior before changing anything"
+      - "Notify your team via email"
+      - "Rewrite it in a different language"
+    answer: 1
+---
+
+## Edit vs. Refactor
+
+- **Edit**: a targeted change to fix a bug, add a prop, or update a value
+- **Refactor**: restructuring code to improve it without changing its behavior
+
+Both use the same Claude Code workflow, but refactoring requires more care.
+
+## Surgical Edits
+
+For small, precise changes, be surgical:
+
+```
+> In @src/components/PricingCard.tsx, change the "Buy Now" button 
+  label to "Get Instant Access" and change its color from bg-blue-600 
+  to bg-brand-600. Do not touch anything else.
+```
+
+The "do not touch anything else" constraint is your safety rail. Without it, Claude might helpfully refactor the whole component while it is in there.
+
+## Renaming Across the Codebase
+
+```
+> Rename the function `getUserData` to `fetchUserProfile` everywhere 
+  in the codebase. Update all imports and usages.
+  Files to check: @src/lib/, @src/hooks/, @src/api/, @src/components/
+```
+
+Claude handles the find-and-replace with context, ensuring it only renames call sites and not string literals that happen to contain the same text.
+
+## Type Safety Upgrades
+
+Common in JavaScript projects moving to TypeScript:
+
+```
+> @src/utils/formatting.js uses no types. 
+  Convert it to TypeScript:
+  - Add explicit parameter and return types to every function
+  - Replace any `any` with proper types
+  - Rename to formatting.ts
+  - Do not change the logic, only add types
+```
+
+## Safe Refactoring Pattern
+
+For important code, always write tests first:
+
+```
+Step 1:
+> @src/lib/scoring.ts has no tests. Before we refactor it, 
+  write comprehensive unit tests for the calculateScore() function 
+  covering: normal input, empty input, boundary values (0 and 100), 
+  and invalid input. Put tests in @src/__tests__/scoring.test.ts
+
+Step 2:
+> Run the tests to confirm they pass
+
+Step 3:
+> Now refactor calculateScore() to be more readable — 
+  extract the category weighting into a named constant object,
+  replace the nested ternary with a switch statement.
+  The tests we just wrote must still pass.
+```
+
+This pattern — test then refactor — is bulletproof.
+
+## Removing Dead Code
+
+```
+> @src/lib/legacy-api.ts appears to be unused. 
+  Before deleting it, check @src for any file that imports from it.
+  If it is truly unused, confirm and I will accept the deletion.
+```
+
+Claude scans your project before suggesting a deletion. You stay in control.
+
+## Splitting Large Files
+
+When a file grows too large:
+
+```
+> @src/lib/utils.ts has grown to 400 lines and mixes 
+  string utilities, date utilities, and number utilities.
+  Split it into three files:
+  - @src/lib/utils/strings.ts
+  - @src/lib/utils/dates.ts  
+  - @src/lib/utils/numbers.ts
+  
+  Keep a @src/lib/utils/index.ts that re-exports everything 
+  so existing imports still work.
+```
+
+The re-export barrel file (`index.ts`) is key — it means zero import updates needed elsewhere.
+
+## Performance Refactors
+
+```
+> @src/components/DataTable.tsx re-renders on every keystroke 
+  because the filterData function is recreated on each render.
+  Memoize the filtered data with useMemo — only recalculate 
+  when the data prop or filter string changes.
+```
+
+Claude understands React's performance patterns and applies them correctly.
+
+## Summary
+
+Edit surgically, test before refactoring anything important, and always include the "keep the same external behavior" constraint. Claude Code makes refactoring faster and safer than doing it manually.

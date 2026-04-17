@@ -1,0 +1,152 @@
+---
+title: "REST APIs"
+description: "Build, consume, and integrate REST APIs cleanly with Claude Code."
+order: 4
+duration: "11 min"
+videoUrl: ""
+quiz:
+  - question: "What should every REST API endpoint you build with Claude Code include by default?"
+    options:
+      - "Only the happy path"
+      - "Authentication, input validation, error handling with appropriate HTTP status codes, and typed responses"
+      - "A database query"
+      - "A rate limiter"
+    answer: 1
+  - question: "What HTTP status codes should Claude know to use?"
+    options:
+      - "Only 200 and 500"
+      - "200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict, 422 Validation Error, 500 Internal Server Error"
+      - "Only 200, 404, and 500"
+      - "Any number between 100 and 599"
+    answer: 1
+  - question: "What is the best way to integrate a third-party REST API with Claude Code?"
+    options:
+      - "Ask Claude to write code from memory without any docs"
+      - "Paste the relevant section of the API documentation into your prompt"
+      - "Ask Claude to find the documentation itself"
+      - "Always build a wrapper library first"
+    answer: 1
+  - question: "What is exponential backoff and when should you use it?"
+    options:
+      - "A database optimization technique"
+      - "A retry strategy where wait time doubles with each failed attempt — use when calling APIs that have rate limits"
+      - "A caching strategy"
+      - "A way to paginate large responses"
+    answer: 1
+---
+
+## Building APIs
+
+Claude Code builds clean, consistent REST APIs when you specify the contract upfront.
+
+## The Complete API Route Template
+
+```
+> Create @src/app/api/teams/[teamId]/members/route.ts
+  
+  GET /api/teams/:teamId/members
+  - Auth required (return 401 if not authenticated)
+  - Verify user is member of teamId (return 403 if not)
+  - Return { members: TeamMember[] }
+  
+  POST /api/teams/:teamId/members  
+  - Auth required
+  - Verify user is team admin (return 403 if not admin)
+  - Body: { email: string, role: 'member' | 'admin' }
+  - Validate with zod (return 422 on invalid input)
+  - Return 409 if user is already a member
+  - Return { member: TeamMember } with 201 on success
+  
+  DELETE /api/teams/:teamId/members
+  - Auth required, verify admin
+  - Body: { userId: string }
+  - Cannot remove yourself (return 400)
+  - Return { success: true } on success
+  
+  Use types from @src/types/team.ts
+  Follow patterns from @src/app/api/users/route.ts
+```
+
+## API Error Response Shape
+
+Standardize error responses:
+
+```
+> All API routes in this project should return errors in this shape:
+  { error: string, code?: string, details?: unknown }
+  
+  Update @src/app/api/teams/[teamId]/members/route.ts to use 
+  this shape for all error responses. 
+  Also create @src/lib/api-response.ts with helper functions:
+  - success(data, status = 200)
+  - error(message, status, code?, details?)
+```
+
+## API Client Library
+
+```
+> Create @src/lib/api-client.ts — a typed client for all internal API routes
+  
+  Include methods:
+  - getTeamMembers(teamId): Promise<TeamMember[]>
+  - addTeamMember(teamId, email, role): Promise<TeamMember>
+  - removeTeamMember(teamId, userId): Promise<void>
+  
+  Each method should:
+  - Handle HTTP errors and throw descriptive errors
+  - Be fully typed using the types from @src/types/team.ts
+```
+
+## Integrating a Third-Party API
+
+When working with external APIs, paste the docs:
+
+```
+> I need to integrate the Resend email API.
+  
+  From their docs:
+  POST https://api.resend.com/emails
+  Authorization: Bearer {RESEND_API_KEY}
+  Body: { from: string, to: string[], subject: string, html: string }
+  
+  Create @src/lib/email.ts with a sendEmail function that:
+  - Accepts: to, subject, html
+  - Uses the from address from RESEND_FROM_EMAIL env var
+  - Handles API errors and throws with descriptive messages
+  - Retries once on 429 (rate limit) after 1 second
+  - Returns { id: string } on success
+```
+
+## Webhook Handler
+
+```
+> Create @src/app/api/webhooks/github/route.ts
+  
+  Handles GitHub webhook events for our deployment notifications.
+  
+  Security: Verify the X-Hub-Signature-256 header using 
+  GITHUB_WEBHOOK_SECRET env var and the raw request body.
+  Return 401 if signature is invalid.
+  
+  Handle event type 'push':
+  - Parse the repository name and branch from the payload
+  - If branch is 'main', trigger a deployment notification
+    by calling @src/lib/notifications.ts createSystemNotification()
+  
+  Return 200 { received: true } for all valid events.
+```
+
+## Rate Limiting
+
+```
+> Add rate limiting to @src/app/api/auth/login/route.ts
+  
+  Limit: 5 requests per email per 15 minutes
+  Storage: use a simple in-memory Map (sufficient for single-server; 
+  note this does not persist across restarts)
+  On rate limit exceeded: return 429 with Retry-After header
+```
+
+## Summary
+
+API quality = auth + validation + error handling + consistent response shape. Give Claude the full contract — method, auth requirements, input shape, response shape, error cases — and it builds exactly what you specify.

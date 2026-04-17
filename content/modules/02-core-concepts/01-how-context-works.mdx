@@ -1,0 +1,114 @@
+---
+title: "How Context Works"
+description: "Understand what Claude Code can see, why context matters, and how to manage it."
+order: 1
+duration: "8 min"
+videoUrl: ""
+quiz:
+  - question: "What is the context window in Claude Code?"
+    options:
+      - "A graphical window that shows your code"
+      - "The total amount of text Claude can process in one session"
+      - "The list of recently opened files"
+      - "A browser window for viewing documentation"
+    answer: 1
+  - question: "When you start a Claude Code session, what does it automatically read?"
+    options:
+      - "Your entire hard drive"
+      - "Only the file you have open in your editor"
+      - "Your project directory structure and key files"
+      - "Only files you explicitly name"
+    answer: 2
+  - question: "What happens when the context window fills up?"
+    options:
+      - "Claude Code crashes"
+      - "Older parts of the conversation are forgotten or quality degrades"
+      - "It automatically upgrades to a bigger model"
+      - "It saves everything to disk and continues"
+    answer: 1
+  - question: "Which slash command helps free up context during a long session?"
+    options:
+      - "/save"
+      - "/forget"
+      - "/compact"
+      - "/shrink"
+    answer: 2
+---
+
+## What Is Context?
+
+Context is everything Claude Code knows right now. It includes:
+
+- Your conversation history (every message back and forth)
+- File contents you've referenced or that were auto-loaded
+- Any code Claude has written or modified in this session
+
+Think of it like working memory. The more you cram in, the harder it is to think clearly about any one thing.
+
+## The Context Window
+
+Claude Code runs on large language models with a finite context window — measured in tokens (roughly 0.75 words per token). When that window fills up:
+
+- Older parts of the conversation may be dropped
+- Claude may lose track of earlier decisions
+- Responses can become less coherent or start making mistakes
+
+Modern Claude models have very large context windows (200,000+ tokens), but long sessions with many file edits can still fill them.
+
+## What Gets Loaded Automatically
+
+When you start `claude` in a project, it automatically loads:
+
+1. **Project structure** — the file/folder tree
+2. **`CLAUDE.md`** — if it exists (more on this in Module 5)
+3. **`package.json`, `tsconfig.json`** — config files that reveal the stack
+4. **Git status** — what files are modified
+
+It does NOT load every source file automatically — that would be too expensive. You load specific files by referencing them.
+
+## Loading Files Explicitly
+
+Use `@` syntax to tell Claude exactly what to look at:
+
+```
+> Look at @src/lib/auth.ts and explain the session logic
+> Compare @components/Button.tsx and @components/IconButton.tsx
+> I am editing @pages/api/checkout.ts — here is the bug I am seeing
+```
+
+This targeted approach keeps context clean and focused.
+
+## Context Strategy
+
+**Do:**
+- Load only files relevant to the current task
+- Use `/compact` when the conversation is getting long
+- Use `/clear` between unrelated tasks
+- Start new sessions for new features
+
+**Don't:**
+- Load your entire codebase at once
+- Let sessions run for hours across many different tasks
+- Ask Claude to "look at everything" in a large repo
+
+## Practical Example
+
+Imagine you are fixing a bug in a checkout flow. Instead of:
+
+```
+> Read all the files in my project and find the bug
+```
+
+Do this:
+
+```
+> I have a bug where checkout fails with a 500 error. 
+  The relevant files are @src/api/checkout.ts and @src/lib/stripe.ts
+  Here is the error from the server logs: [paste error]
+```
+
+This loads exactly the right context, nothing more. Claude can diagnose and fix precisely.
+
+## Summary
+
+Context is your most important resource in Claude Code. Treat it like RAM — use it deliberately, free it up often, and your sessions will be faster, cheaper, and more accurate.
