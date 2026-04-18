@@ -3,7 +3,8 @@ title: "Security Considerations"
 description: "Use Claude Code safely — protect your secrets, your users, and your codebase."
 order: 2
 duration: "10 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=romGzY0Xu0s"
+coverImage: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What should you NEVER do when asking Claude Code for help?"
     options:
@@ -56,6 +57,8 @@ The most important rule: never put actual secret values in a Claude Code prompt.
 
 Claude does not need the actual value. It needs to know the variable name.
 
+<Callout type="warning">Never paste real API keys, database passwords, JWT secrets, or any credentials into a Claude Code prompt — not even "just this once" for testing. Claude conversations are sent to Anthropic's API servers, and your credentials should never leave your local environment. Always use environment variable names instead of actual values.</Callout>
+
 ## The Confused Deputy Check
 
 A common AI-generated vulnerability: an API that trusts client-supplied IDs.
@@ -85,6 +88,8 @@ Ask Claude to add ownership checks to every mutation:
   the task belongs to the authenticated user before proceeding.
   Never delete or update a record based solely on the URL parameter.
 ```
+
+<Callout type="warning">AI-generated authentication code has a specific failure mode: it often verifies that a user is logged in but forgets to verify that the logged-in user is authorized to access the specific resource. Always audit every auth-related diff for both authentication (are you logged in?) and authorization (do you own this resource?).</Callout>
 
 ## SQL Injection Prevention
 
@@ -144,3 +149,5 @@ When building auth or data-handling features, lead with security:
 ## Summary
 
 Never share real secrets. Add ownership checks to every mutation. Use parameterized queries. Review auth code extra carefully. These four habits, consistently applied, keep AI-generated code safe to ship.
+
+<KeyPoint>Security with Claude Code comes down to four habits: never paste real credentials, always check ownership in mutations, always use parameterized queries, and review auth code more carefully than any other code — these four practices prevent the vast majority of AI-introduced security vulnerabilities.</KeyPoint>

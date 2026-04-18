@@ -5,9 +5,22 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Claude Code Mastery — Learn AI-Assisted Development",
+  title: "Claude Code Class — Learn AI-Assisted Development",
   description:
     "The complete beginner course to Claude Code. Build faster, debug smarter, and unlock new income streams with AI-assisted development.",
+  metadataBase: new URL("https://claudecodeclass.com"),
+  openGraph: {
+    title: "Claude Code Class — Learn AI-Assisted Development",
+    description: "The complete beginner course to Claude Code. Build faster, debug smarter, and unlock new income streams with AI-assisted development.",
+    url: "https://claudecodeclass.com",
+    siteName: "Claude Code Class",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Claude Code Class",
+    description: "The complete beginner course to Claude Code. Build 10× faster with AI-assisted development.",
+  },
 };
 
 export default function RootLayout({

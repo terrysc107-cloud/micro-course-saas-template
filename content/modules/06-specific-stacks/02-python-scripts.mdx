@@ -3,7 +3,8 @@ title: "Python Scripts"
 description: "Use Claude Code to write, debug, and automate Python scripts for any purpose."
 order: 2
 duration: "11 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=jW2sAtCI93U"
+coverImage: "https://images.unsplash.com/photo-1526379879527-8559ecfcaec1?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What information should you give Claude when asking it to write a Python script?"
     options:
@@ -38,6 +39,8 @@ quiz:
 ## Python + Claude Code
 
 Python is one of the best languages to use with Claude Code. Scripts, automation, data processing, API integrations — Claude handles the boilerplate so you can focus on the logic.
+
+<Callout type="tip">Always specify your Python version and key dependencies at the start of your prompt — "Python 3.11, using the built-in csv module, no pandas" or "Python 3.10+, use httpx not requests." This prevents Claude from defaulting to Python 3.8 syntax or importing libraries you do not have installed.</Callout>
 
 ## Writing a Basic Script
 
@@ -120,6 +123,8 @@ Python is one of the best languages to use with Claude Code. Scripts, automation
   What could cause this in CI but not locally?
 ```
 
+<Callout type="warning">Before running any AI-generated Python script that touches files, sends emails, or calls external APIs, create a virtualenv and install the dependencies in isolation — never run it directly in your system Python. Claude may specify libraries you do not have, and installing them globally can create version conflicts.</Callout>
+
 ## Type Annotations
 
 ```
@@ -146,3 +151,5 @@ Python is one of the best languages to use with Claude Code. Scripts, automation
 ## Summary
 
 Python scripts with Claude Code: specify the input/output contract, the libraries to use, and any error handling requirements. Claude writes clean, well-documented Python that follows the production patterns you need.
+
+<KeyPoint>The key to great Python scripts from Claude is specifying the full contract upfront: Python version, allowed libraries, input format, output format, and error handling behavior — this produces scripts that are production-ready from the first iteration rather than requiring three rounds of fixes.</KeyPoint>

@@ -3,7 +3,8 @@ title: "Git Workflow with Claude Code"
 description: "Use Claude Code to write commit messages, review diffs, and manage branches cleanly."
 order: 4
 duration: "9 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=FjHtZnjNEBU"
+coverImage: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What should you ask Claude to do before writing a commit message?"
     options:
@@ -60,6 +61,8 @@ Then ask Claude:
   - Includes a brief body if there are multiple changes
 ```
 
+<Callout type="tip">Use Claude to draft commit messages from the actual diff output — paste `git diff --staged` into your prompt and ask for a conventional commit message. This produces commit messages that are accurate and specific to what changed, rather than vague messages you type from memory.</Callout>
+
 Conventional commit types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`
 
 **Example output:**
@@ -85,6 +88,8 @@ Before committing anything important, ask Claude to review:
 ```
 
 Claude catches issues before they hit your repo.
+
+<Callout type="warning">Always review AI-written commit messages before pushing — Claude summarizes the diff accurately but cannot know the business context behind why you made the change. A message like "fix null check in user query" is less useful than "fix crash when guest user visits dashboard (users table has no row for guests)" — add that context yourself.</Callout>
 
 ## Branch Naming
 
@@ -150,3 +155,5 @@ When you have a lot of unstaged changes:
 ## Summary
 
 Use Claude for commit messages, pre-commit reviews, PR descriptions, and merge conflict resolution. Your git history becomes clean and descriptive without the effort of writing it manually.
+
+<KeyPoint>Claude is an excellent git assistant for drafting commit messages, reviewing diffs before committing, and writing PR descriptions — use it consistently and your git history will become a readable record of why changes were made, not just what changed.</KeyPoint>

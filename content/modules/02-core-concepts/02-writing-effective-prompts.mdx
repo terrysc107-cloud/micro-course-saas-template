@@ -3,7 +3,8 @@ title: "Writing Effective Prompts"
 description: "Learn the prompting patterns that get great code on the first try."
 order: 2
 duration: "12 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=yDHgZRKB7H8"
+coverImage: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "Which prompt is more effective?"
     options:
@@ -47,6 +48,8 @@ A strong prompt has four elements:
 2. **Where** — which file(s) or components are involved?
 3. **Why** — what is the goal or constraint?
 4. **Context** — relevant errors, expected behavior, existing patterns
+
+<Callout type="info">These four elements map directly to how a senior developer would hand off a task: the what gives direction, the where saves search time, the why prevents misguided solutions, and the context eliminates back-and-forth. Missing any one of them forces Claude to guess — and guessing produces generic code.</Callout>
 
 **Weak prompt:**
 ```
@@ -93,6 +96,8 @@ Tell Claude what shape you want the output in:
 ```
 
 Specifying the interface before the implementation ensures Claude builds exactly the API you plan to use.
+
+<Callout type="tip">Include what you do NOT want in your prompt, not just what you do want. "No external dependencies," "do not change the function signature," "keep this compatible with React 18" — these negative constraints prevent Claude from making well-intentioned changes that break your setup.</Callout>
 
 ## Iterating on Output
 
@@ -152,5 +157,9 @@ Or to understand a pattern:
   calls the existing supabase.auth.resetPasswordForEmail() method 
   and returns { success, error }.
 ```
+
+<Callout type="warning">Vague prompts like "make this better," "clean this up," or "improve the code" are the most common source of unwanted Claude behavior — Claude will make changes that are technically improvements but not what you needed, and you have no way to predict what it will touch. Always describe the specific outcome you want.</Callout>
+
+<KeyPoint>A great prompt includes what to build, which files to touch, why it matters, and what constraints to follow — the more precisely you specify the task upfront, the less back-and-forth you need and the better the first output will be.</KeyPoint>
 
 The more specific your prompts, the faster you ship. In the next lesson, you will learn the edit-review-accept loop — the workflow that keeps you in control while Claude does the heavy lifting.

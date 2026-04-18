@@ -3,7 +3,8 @@ title: "Databases & SQL"
 description: "Write safe, optimized SQL and manage Supabase/Postgres schemas with Claude Code."
 order: 3
 duration: "12 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=H4I2lCYLydk"
+coverImage: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is SQL injection and how should Claude always prevent it?"
     options:
@@ -60,6 +61,8 @@ SQL is an area where Claude Code pays dividends. Schema design, query writing, i
   - Enum types for status and priority
 ```
 
+<Callout type="warning">Never run AI-generated SQL directly on your production database — always test it on a development or staging environment first. A migration that drops the wrong column or an UPDATE without a WHERE clause cannot be undone without a backup, regardless of how confidently the SQL was generated.</Callout>
+
 ## Writing Safe Queries
 
 Always parameterized:
@@ -74,6 +77,8 @@ Always parameterized:
   - Order by priority DESC, created_at ASC
   - Return typed TaskWithAssignee[] using @src/types/task.ts
 ```
+
+<Callout type="tip">Before executing any non-trivial query Claude writes, ask it to explain what the query does in plain English — including what data it reads, what it modifies, and any edge cases. If the explanation reveals something unexpected, you have caught it before it runs against your data.</Callout>
 
 ## Finding and Fixing N+1 Queries
 
@@ -147,3 +152,5 @@ Always parameterized:
 ## Summary
 
 Always ask Claude to use parameterized queries, add RLS policies, and include appropriate indexes. These three habits keep your database secure and performant from day one.
+
+<KeyPoint>Every table Claude creates should have RLS policies, every query should use parameterized inputs, and every migration should be tested on development before production — make these non-negotiable and you will never have a database security incident from AI-generated SQL.</KeyPoint>

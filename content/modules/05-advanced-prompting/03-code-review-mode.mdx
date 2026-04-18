@@ -3,7 +3,8 @@ title: "Code Review Mode"
 description: "Use Claude as a rigorous code reviewer before you push to main."
 order: 3
 duration: "9 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=hYZdIwFIy-c"
+coverImage: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is Claude Code review mode best used for?"
     options:
@@ -38,6 +39,8 @@ quiz:
 ## Claude as Your Pre-Push Reviewer
 
 Before pushing to main or opening a PR, a quick Claude code review catches issues that are expensive to fix after merge. Think of it as a free senior engineer reviewing everything you write.
+
+<Callout type="tip">Use Claude for a review pass both before you make changes and after — a "before" review identifies issues in the existing code you need to be aware of, while an "after" review catches anything introduced by your changes. Two minutes each saves hours of debugging in production.</Callout>
 
 ## Basic Code Review
 
@@ -156,6 +159,10 @@ When asked to review code, always check:
 
 Now every review request automatically applies your full checklist.
 
+<Callout type="success">Using Claude to review your own PRs before they go to human reviewers means your teammates spend their review time on architecture and business logic — not catching missing null checks or spotting SQL injection. Your PRs become faster to merge and easier to trust.</Callout>
+
 ## Summary
 
 Code review mode turns Claude into a rigorous pre-merge gate. Use it consistently and you will push far fewer bugs to production.
+
+<KeyPoint>Claude code review mode is most powerful when you define a checklist in your CLAUDE.md — auth, input validation, error handling, SQL safety, no hardcoded secrets — so every review request runs the same rigorous checks automatically without you having to remember to ask.</KeyPoint>

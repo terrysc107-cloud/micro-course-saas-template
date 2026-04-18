@@ -3,7 +3,8 @@ title: "Chaining Prompts"
 description: "Build complex workflows by chaining focused prompts sequentially."
 order: 2
 duration: "10 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=vVRQWxnOFE8"
+coverImage: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is prompt chaining?"
     options:
@@ -50,6 +51,8 @@ Prompt 3 (builds on 2) → Review → Accept/Reject
 ...
 Final product assembled one solid piece at a time
 ```
+
+<Callout type="tip">Keep each prompt in a chain focused on exactly one deliverable — one file, one function, one concept. When a single prompt in the chain spans multiple concerns, the output for each concern is weaker and harder to review independently.</Callout>
 
 ## Example: Full Auth System Chain
 
@@ -121,6 +124,8 @@ For tasks you do repeatedly (new API route, new component, new hook), build a ch
 
 Save this template in your CLAUDE.md under "## New File Checklists" so you can copy-paste the prompts every time.
 
+<Callout type="warning">In long chains, Claude can gradually drift from your original conventions as it builds on each step — a style decision in step 2 might propagate through steps 3-5 without you noticing. Periodically check back against your reference files or CLAUDE.md to ensure consistency is maintained throughout the chain.</Callout>
+
 ## When to Use One Prompt Instead
 
 Simple, atomic tasks do not need chaining:
@@ -134,3 +139,5 @@ Reserve chaining for tasks where one part depends on another part being correct 
 ## Summary
 
 Complex work = sequential chains. Each prompt is small, focused, and reviewable. The result is better than any single big prompt, and you stay in complete control throughout.
+
+<KeyPoint>For complex features, chaining focused prompts is always better than one giant prompt — each step is independently reviewable, mistakes are caught before they compound, and the final result is more consistent and correct than anything a single large prompt can produce.</KeyPoint>

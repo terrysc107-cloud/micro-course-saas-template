@@ -16,6 +16,7 @@ export interface LessonFrontmatter {
   order: number;
   duration: string;
   videoUrl?: string;
+  coverImage?: string;
   quiz: QuizQuestion[];
 }
 

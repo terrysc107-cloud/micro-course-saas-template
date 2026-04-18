@@ -3,7 +3,8 @@ title: "CLI Tools"
 description: "Build command-line tools, automation scripts, and developer utilities with Claude Code."
 order: 5
 duration: "10 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=ntDIxaeo3Wg"
+coverImage: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What makes a CLI tool user-friendly according to professional CLI design?"
     options:
@@ -38,6 +39,8 @@ quiz:
 ## CLI Tools Are Underrated
 
 CLI tools are some of the highest-leverage things you can build. A well-built CLI that automates a 30-minute manual task pays for itself the first time someone uses it.
+
+<Callout type="tip">Always specify the target OS and shell in your CLI tool prompt — "macOS/Linux bash," "cross-platform Node.js," or "Windows PowerShell compatible." Path separators, command syntax, and available utilities differ significantly, and Claude will default to one platform's conventions if you do not specify.</Callout>
 
 ## Building a Complete CLI
 
@@ -135,6 +138,8 @@ Claude Code writes shell scripts too:
   Use set -e at the top so any error stops execution.
 ```
 
+<Callout type="success">Once your CLI tool is working, Claude can write everything you need to distribute it via npm: a `bin` entry in `package.json`, a shebang line, README usage docs, and even a GitHub Actions workflow for publishing to npm. What started as a personal utility can be a public tool with half a day of extra work.</Callout>
+
 ## npm Script Integration
 
 ```
@@ -149,3 +154,5 @@ Claude Code writes shell scripts too:
 ## Summary
 
 CLI tools built with Claude Code follow the Unix philosophy: do one thing well, have helpful output, support --dry-run for destructive operations, and return proper exit codes. Automate everything that gets done more than twice.
+
+<KeyPoint>A well-built CLI tool that automates a 30-minute manual task pays for the time to build it on the very first use — specify the target OS, the argument interface, a `--dry-run` flag, proper exit codes, and colored output, and Claude will produce a tool that feels professional from day one.</KeyPoint>

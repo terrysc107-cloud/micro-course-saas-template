@@ -3,7 +3,8 @@ title: "Next.js & React"
 description: "Use Claude Code effectively with Next.js App Router, Server Components, and React patterns."
 order: 1
 duration: "13 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=Tyuwwc7OtNg"
+coverImage: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "In Next.js App Router, when should a component be a Server Component vs. a Client Component?"
     options:
@@ -63,6 +64,8 @@ vs.
 ```
 
 Claude will correctly use async/await at the top level for server components and hooks for client components.
+
+<Callout type="tip">When prompting Claude for Next.js code, reference the official Next.js docs patterns by saying "follow the Next.js 14 App Router pattern for data fetching" or "use the recommended approach from the Next.js docs for this." This anchors Claude to current best practices rather than older Pages Router patterns that may be in its training data.</Callout>
 
 ## Route Handlers
 
@@ -128,6 +131,8 @@ Claude will correctly use async/await at the top level for server components and
   Types based on the Product type from @src/types/index.ts
 ```
 
+<Callout type="info">Always tell Claude explicitly whether you are using the App Router or the Pages Router — they have different conventions for layouts, data fetching, and routing. If Claude is generating `getServerSideProps` when you expected `async` server components, this is why.</Callout>
+
 ## Common Next.js + Claude Code Patterns
 
 **Loading states:**
@@ -151,3 +156,5 @@ Claude will correctly use async/await at the top level for server components and
 ## Summary
 
 Always tell Claude whether each component is a Server Component or Client Component. Specify the data sources and mutation patterns. Next.js conventions are well-understood by Claude — just communicate the right constraints and it will produce idiomatic, production-ready App Router code.
+
+<KeyPoint>The single most important thing to specify in every Next.js prompt is whether each component is a Server Component or Client Component — this one constraint determines everything about how Claude handles data fetching, state, and interactivity in the generated code.</KeyPoint>

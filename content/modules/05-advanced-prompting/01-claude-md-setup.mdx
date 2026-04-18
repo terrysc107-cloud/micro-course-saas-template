@@ -3,7 +3,8 @@ title: "CLAUDE.md Setup"
 description: "Create a CLAUDE.md that gives every session perfect project context automatically."
 order: 1
 duration: "10 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=h7QJL2_gEXA"
+coverImage: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is CLAUDE.md?"
     options:
@@ -95,6 +96,8 @@ Brief description: what the app does, who uses it, why it exists.
 - Quiz pass rate tracking in dashboard
 ```
 
+<Callout type="tip">Run `/init` inside a Claude Code session to auto-generate a starter CLAUDE.md — Claude scans your project and creates a draft with your stack, key files, and patterns it detects. Use this as the foundation and add the things only you know: team conventions, off-limits areas, and work in progress.</Callout>
+
 ## Getting Claude to Write Your CLAUDE.md
 
 Let Claude draft it:
@@ -130,6 +133,8 @@ All routes in this directory:
 
 Now any session working in `src/api/` automatically picks up those conventions.
 
+<Callout type="info">CLAUDE.md is not a set-it-and-forget-it file — update it every time you establish a new pattern, add a significant dependency, or agree on a new team convention. A stale CLAUDE.md is worse than none because it actively gives Claude wrong assumptions about your project.</Callout>
+
 ## Keeping It Updated
 
 Review and update CLAUDE.md when:
@@ -144,3 +149,5 @@ Think of it as living documentation. It costs two minutes to update and saves te
 ## Summary
 
 CLAUDE.md is the single highest-leverage thing you can do for long-term Claude Code productivity. Write it once, maintain it as you go, and every session starts perfectly calibrated to your project.
+
+<KeyPoint>CLAUDE.md is the single highest-leverage file you can create — it turns every new session from a cold start into one where Claude already knows your stack, conventions, and constraints, saving minutes of re-explanation on every single session for the life of the project.</KeyPoint>

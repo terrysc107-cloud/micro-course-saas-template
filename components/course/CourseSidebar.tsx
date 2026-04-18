@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Circle, Lock, ChevronDown, ChevronRight } from "lucide-react";
+import { CheckCircle2, Circle, ChevronDown, ChevronRight } from "lucide-react";
 import type { Module } from "@/lib/content";
 
 interface CourseSidebarProps {
@@ -16,19 +16,10 @@ export default function CourseSidebar({ modules, completed }: CourseSidebarProps
   const pathname = usePathname();
   const completedSet = new Set(completed);
 
-  // Build "accessible" set: first lesson always accessible, others require previous completion
+  // All lessons accessible — paid users can jump to any lesson freely
   const allLessons = modules.flatMap((m) =>
     m.lessons.map((l) => ({ key: `${l.moduleSlug}/${l.lessonSlug}`, ...l }))
   );
-  const accessibleKeys = new Set<string>();
-  if (allLessons.length > 0) {
-    accessibleKeys.add(allLessons[0].key);
-    for (let i = 1; i < allLessons.length; i++) {
-      if (completedSet.has(allLessons[i - 1].key)) {
-        accessibleKeys.add(allLessons[i].key);
-      }
-    }
-  }
 
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
@@ -89,38 +80,30 @@ export default function CourseSidebar({ modules, completed }: CourseSidebarProps
                   {mod.lessons.map((lesson) => {
                     const key = `${lesson.moduleSlug}/${lesson.lessonSlug}`;
                     const isComplete = completedSet.has(key);
-                    const isAccessible = accessibleKeys.has(key);
                     const href = `/learn/${lesson.moduleSlug}/${lesson.lessonSlug}`;
                     const isActive = pathname === href;
 
                     return (
                       <li key={key}>
-                        {isAccessible ? (
-                          <Link
-                            href={href}
-                            className={cn(
-                              "flex items-center gap-3 pl-8 pr-4 py-2 text-sm transition-colors",
-                              isActive
-                                ? "bg-brand-600/20 text-brand-300 border-r-2 border-brand-500"
-                                : "text-slate-400 hover:text-white hover:bg-slate-800/50"
-                            )}
-                          >
-                            {isComplete ? (
-                              <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
-                            ) : (
-                              <Circle className="w-4 h-4 text-slate-600 shrink-0" />
-                            )}
-                            <span className="truncate">{lesson.frontmatter.title}</span>
-                            <span className="ml-auto text-xs text-slate-600 shrink-0">
-                              {lesson.frontmatter.duration}
-                            </span>
-                          </Link>
-                        ) : (
-                          <div className="flex items-center gap-3 pl-8 pr-4 py-2 text-sm text-slate-600 cursor-not-allowed">
-                            <Lock className="w-4 h-4 shrink-0" />
-                            <span className="truncate">{lesson.frontmatter.title}</span>
-                          </div>
-                        )}
+                        <Link
+                          href={href}
+                          className={cn(
+                            "flex items-center gap-3 pl-8 pr-4 py-2 text-sm transition-colors",
+                            isActive
+                              ? "bg-brand-600/20 text-brand-300 border-r-2 border-brand-500"
+                              : "text-slate-400 hover:text-white hover:bg-slate-800/50"
+                          )}
+                        >
+                          {isComplete ? (
+                            <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                          ) : (
+                            <Circle className="w-4 h-4 text-slate-600 shrink-0" />
+                          )}
+                          <span className="truncate">{lesson.frontmatter.title}</span>
+                          <span className="ml-auto text-xs text-slate-600 shrink-0">
+                            {lesson.frontmatter.duration}
+                          </span>
+                        </Link>
                       </li>
                     );
                   })}

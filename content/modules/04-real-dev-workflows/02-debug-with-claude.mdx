@@ -3,7 +3,8 @@ title: "Debug with Claude Code"
 description: "Diagnose and fix bugs faster by giving Claude the right context."
 order: 2
 duration: "11 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=hVRohDb2n0c"
+coverImage: "https://images.unsplash.com/photo-1516110833967-0b5716ca1387?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What three pieces of information make a debugging prompt most effective?"
     options:
@@ -62,6 +63,8 @@ Give Claude everything it would need to reproduce the issue:
 
 This gives Claude: the symptom, the expected behavior, the actual behavior, the relevant code, and the error message. It will find the bug.
 
+<Callout type="tip">Always paste the full error message including the complete stack trace — not just the first line. The stack trace tells Claude exactly where in the call chain the error originated, which is often three levels above where the exception is thrown and far more useful than the error message itself.</Callout>
+
 ## Paste the Full Error
 
 Always include the complete error, not just the first line:
@@ -94,6 +97,8 @@ For bugs that do not happen every time:
 ```
 
 Pattern recognition is Claude's strength — give it the pattern.
+
+<Callout type="info">Tell Claude what you have already tried before asking for a solution — "I already checked X, Y, and Z" prevents Claude from suggesting the same things again and pushes it to look at less obvious causes. This alone can save three rounds of back-and-forth.</Callout>
 
 ## "It Was Working Before" Bugs
 
@@ -158,3 +163,5 @@ Your debugging instincts plus Claude's pattern recognition is more powerful than
 ## Summary
 
 Great debugging prompts include: the symptom, expected vs. actual, relevant files, the full error, and any patterns you have noticed. The rest is dialogue.
+
+<KeyPoint>A great debugging prompt gives Claude the symptom, the expected vs. actual behavior, the relevant files, the full error with stack trace, and what you have already tried — the more context you provide upfront, the more likely Claude is to diagnose correctly on the first attempt.</KeyPoint>

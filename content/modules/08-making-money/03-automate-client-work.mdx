@@ -3,7 +3,8 @@ title: "Automate Client Work"
 description: "Build automation tools with Claude Code that turn one-time projects into recurring revenue."
 order: 3
 duration: "11 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=Q6H--YvCcmA"
+coverImage: "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is 'automation tax' in the context of client work?"
     options:
@@ -104,6 +105,8 @@ Every one of these is a script you can build with Claude Code in 2-4 hours.
 
 For 10 clients at $100/month: $1,000/month recurring, almost zero ongoing work.
 
+<Callout type="tip">Package each automation you build as a standalone, reusable script per client — give it its own repo, its own `.env.example`, and its own README. When a second client needs something similar, you have a starting point that takes 1 hour to adapt instead of 4 hours to rebuild.</Callout>
+
 ## Building a Reusable Automation Framework
 
 After your first few automations, patterns repeat. Ask Claude to help you build a framework:
@@ -127,6 +130,8 @@ After your first few automations, patterns repeat. Ask Claude to help you build 
 
 Now each new automation takes 1 hour instead of 4.
 
+<Callout type="warning">Always test automations in a staging environment before delivering to a client — an automation that accidentally sends 500 duplicate emails, deletes the wrong records, or overwrites production data is a relationship-ending mistake. Add a `--dry-run` flag to every automation you build and run it in dry-run mode first, every single time.</Callout>
+
 ## Pitching Automation Services
 
 When talking to small business owners:
@@ -138,3 +143,5 @@ Every business owner nods at this.
 ## Summary
 
 Automation is one-time build + recurring maintenance. Use Claude Code to build fast, price the build at market rate, and charge a maintenance retainer that compounds. 10 clients = $1,000/month on autopilot.
+
+<KeyPoint>The automation business model works because you build once and charge monthly — use Claude Code to build fast enough that the build fee is nearly pure profit, then collect maintenance retainers that compound month over month with almost zero incremental work.</KeyPoint>

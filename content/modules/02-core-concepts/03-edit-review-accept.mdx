@@ -3,7 +3,8 @@ title: "The Edit-Review-Accept Loop"
 description: "Master the core workflow that keeps you in control while Claude does the heavy lifting."
 order: 3
 duration: "10 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=Q0bsphUTLtw"
+coverImage: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What does a 'diff' show you in Claude Code?"
     options:
@@ -41,6 +42,8 @@ The single habit that separates effective Claude Code users from people who crea
 
 This sounds obvious. In practice, developers get into a flow and start hammering `y` without reading. That is when bugs, security holes, and unwanted changes slip in.
 
+<Callout type="warning">Never develop the habit of pressing `y` without reading the diff — even on small changes. The moment you start skipping the review step, you lose the primary safety net that makes Claude Code safe to use in production codebases. Speed is not worth a security hole.</Callout>
+
 ## Reading the Diff
 
 When Claude proposes a change, it shows a diff:
@@ -72,6 +75,8 @@ In this example, Claude fixed a SQL injection vulnerability by parameterizing th
 **Security** — Are there any credentials, hardcoded values, or unsafe patterns?
 
 ## Asking Questions Before Accepting
+
+<Callout type="tip">Before asking Claude to make an edit, ask it to explain its plan first: "Before you make any changes, explain what you're going to do and why." This surfaces misunderstandings before they become code you have to undo — and saves you from reviewing a diff that was built on a wrong assumption.</Callout>
 
 You do not have to accept or reject immediately. You can ask questions:
 
@@ -123,5 +128,7 @@ Then give Claude specific feedback on the rejected file.
 **You are the architect. Claude is the builder.**
 
 Claude can write code faster than you can, but it does not know your business logic, your team's conventions, your security requirements, or your users. You do. Stay in the loop on every change and you will never lose control of your codebase.
+
+<KeyPoint>You are the architect and Claude is the builder — reviewing every diff before accepting is not optional overhead, it is the habit that lets you stay in control of your codebase while moving at AI speed.</KeyPoint>
 
 This loop — prompt, read diff, ask questions, accept or redirect — is what makes Claude Code a multiplier rather than a liability.

@@ -3,7 +3,8 @@ title: "Create Files from Scratch"
 description: "Build new components, utilities, and modules with Claude Code doing the heavy lifting."
 order: 2
 duration: "10 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=s-Mc26Ytz10"
+coverImage: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is the best way to ask Claude to create a new file?"
     options:
@@ -57,6 +58,8 @@ This prompt specifies:
 - **Default behavior** — 300ms default
 
 Claude will produce exactly this, nothing more.
+
+<Callout type="tip">Describe the interface (what a function accepts and returns, what props a component takes) before asking Claude to implement it. When you specify the API surface first, Claude builds toward your usage — instead of building something that technically works but requires you to adapt your code to fit it.</Callout>
 
 ## Matching Existing Patterns
 
@@ -117,6 +120,8 @@ For a component:
 
 See it working before moving on.
 
+<Callout type="success">When Claude creates a file that compiles cleanly and matches your mental model on the first attempt, that is the payoff of specifying the interface upfront — you just produced production-ready code in 30 seconds instead of 30 minutes, and all you need to do is write the tests.</Callout>
+
 ## Creating Test Files
 
 Claude is exceptional at writing tests for code it just created:
@@ -132,3 +137,5 @@ Claude already has the hook in context and writes tests that exactly match its i
 ## Summary
 
 The creation loop is: specify the interface → reference similar patterns → accept the file → validate it works → write tests. Done correctly, this produces production-ready code faster than you could write it from scratch.
+
+<KeyPoint>The fastest path to a correct new file is: specify the exact interface you need, reference a similar existing file for patterns, and let Claude implement — the more precisely you define the "what," the less revision you need on the "how."</KeyPoint>

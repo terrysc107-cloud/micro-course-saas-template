@@ -3,7 +3,8 @@ title: "Write Tests Automatically"
 description: "Let Claude Code handle test boilerplate so you can ship with confidence."
 order: 3
 duration: "10 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=Cpej__Ns1sA"
+coverImage: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What information should you give Claude to write useful tests?"
     options:
@@ -90,6 +91,8 @@ Claude reads the function and writes tests that match its exact behavior.
   Use Vitest, mock @/lib/supabase/server and @/lib/content
 ```
 
+<Callout type="tip">Ask Claude to write the test before the implementation — describe what the function should do, have Claude write failing tests that capture those behaviors, then ask Claude to write the code that makes them pass. This forces both you and Claude to agree on the contract before a single line of implementation exists.</Callout>
+
 ## TDD with Claude Code
 
 Test-Driven Development (write tests first, then code) is powerful with Claude:
@@ -135,6 +138,8 @@ After writing tests, check what you are missing:
 
 Claude analyzes the relationship between your source and test files.
 
+<Callout type="success">Tests written by Claude for code Claude just wrote have a surprising benefit beyond coverage: they serve as living documentation of what the function is supposed to do. When a future developer (or future you) reads the code and wonders "what edge cases does this handle?" the tests answer that question instantly.</Callout>
+
 ## When Tests Fail
 
 After Claude writes tests, they should pass. If they do not:
@@ -154,3 +159,5 @@ Claude diagnoses whether it is a test issue (wrong mock setup) or an implementat
 ## Summary
 
 Ask Claude to write your test boilerplate. Specify the testing framework, the behaviors to cover, and whether mocking is needed. Review the tests like you review code — they are documentation of what your system should do.
+
+<KeyPoint>The biggest unlock in test writing with Claude is the TDD flow: write the failing tests first, then implement — this eliminates the "I will add tests later" trap and ensures your implementation is validated against a clear specification from the start.</KeyPoint>

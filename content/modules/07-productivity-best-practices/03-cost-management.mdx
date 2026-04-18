@@ -3,7 +3,8 @@ title: "Cost Management"
 description: "Get maximum output from Claude Code while keeping your API costs under control."
 order: 3
 duration: "8 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=tbDDYKRFjhk"
+coverImage: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is the single most effective way to reduce Claude Code costs?"
     options:
@@ -50,6 +51,8 @@ Inside a session, type:
 This shows how much the current session has cost. Do this periodically during long sessions.
 
 Set a monthly spending cap in the Anthropic console to protect yourself from runaway usage.
+
+<Callout type="tip">Use `/compact` aggressively — not just when you feel like the session is getting long, but on a schedule: after 20-30 minutes on any task. The summary Claude produces from a clean, active conversation is much more useful than one produced when Claude is already losing track of details.</Callout>
 
 ## The Biggest Cost Drivers
 
@@ -106,6 +109,8 @@ claude -p "What does this error mean: Cannot read properties of undefined"
 
 One-shot mode (`-p`) is cheaper than opening a full interactive session for a quick question.
 
+<Callout type="info">The `-p` one-shot mode is not just cheaper — it is often the right tool for quick questions because it does not carry state from previous work. A focused question gets a focused answer, without Claude trying to relate your question to whatever you were working on before.</Callout>
+
 ## Choosing the Right Model
 
 Claude Code defaults to Claude 3.5 or 3.7 Sonnet — powerful but not the cheapest. You can switch mid-session:
@@ -137,3 +142,5 @@ These assume efficient usage habits. Careless usage can be 3-5x these numbers.
 ## Summary
 
 Clear between tasks, load files precisely, spec well upfront, use /compact in long sessions, and monitor with /cost. These five habits keep Claude Code affordable while maximizing output.
+
+<KeyPoint>The five habits that keep Claude Code costs under control: use `/clear` between unrelated tasks, load only the files you need, write a detailed spec upfront instead of clarifying over 10 messages, use `/compact` proactively, and use `-p` one-shot mode for quick questions — these alone can cut your usage costs in half.</KeyPoint>

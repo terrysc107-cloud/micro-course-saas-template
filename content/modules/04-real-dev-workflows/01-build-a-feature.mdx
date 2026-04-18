@@ -3,7 +3,8 @@ title: "Build a Feature End-to-End"
 description: "Ship a complete feature from database to UI using Claude Code at every step."
 order: 1
 duration: "14 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=hxEHFOz5ADQ"
+coverImage: "https://images.unsplash.com/photo-1537884944318-390069bb8665?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is the recommended order for building a full-stack feature with Claude Code?"
     options:
@@ -42,6 +43,8 @@ Building a feature with Claude Code follows a bottom-up pattern: schema → data
 ## Example: Adding Notifications to a Web App
 
 Let us walk through building a complete notifications feature from scratch.
+
+<Callout type="tip">Break the feature into sub-tasks before you start prompting — write out the steps yourself (schema, types, server functions, API, hook, UI) and use each one as a separate prompt. This prevents Claude from jumping ahead and building on a shaky foundation.</Callout>
 
 ### Step 1: Database Schema
 
@@ -126,6 +129,8 @@ Now go to the browser and verify end-to-end:
 3. Clicking marks as read
 4. Count updates
 
+<Callout type="warning">Watch for scope drift during a feature build — if Claude starts suggesting "while we are here, we should also add X," that is a sign to redirect. Politely decline anything not in your sub-task list and add it to a follow-up prompt so it gets the focused attention it deserves.</Callout>
+
 ## The Vertical Slice Principle
 
 Build one complete feature all the way through the stack before starting the next. A half-built feature in three layers is harder to debug than a complete feature in one.
@@ -133,3 +138,5 @@ Build one complete feature all the way through the stack before starting the nex
 ## Summary
 
 Schema → types → server functions → API routes → hooks → components → wire up → test. Each step is small, reviewable, and safe. This is how you ship reliable features fast.
+
+<KeyPoint>Build features bottom-up, one layer at a time — schema first, then data functions, then API, then UI — and verify each layer works before building the next; this way mistakes are caught when they are cheap to fix, not after you have built six layers on top of them.</KeyPoint>

@@ -3,7 +3,8 @@ title: "Your First Claude Code Command"
 description: "Run your first prompt, understand the output, and learn the interactive session flow."
 order: 3
 duration: "10 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=eMZmDH3T2bY"
+coverImage: "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What does Claude Code do when you type a message in the interactive session?"
     options:
@@ -52,6 +53,8 @@ You'll see the Claude Code interface load. It shows your project path and a prom
 
 Claude Code will read your directory and respond with a breakdown of what it sees.
 
+<Callout type="info">Claude Code does not just look at your current directory — it reads config files like `package.json`, `tsconfig.json`, and any `CLAUDE.md` file to build an immediate picture of your tech stack and project conventions before you type your first prompt.</Callout>
+
 ## Your First Real Prompt
 
 Let's do something useful. Ask Claude Code to create a simple utility:
@@ -97,6 +100,8 @@ This is the core Claude Code workflow:
 
 Never just smash `y` without reading. The review step is where you stay in control.
 
+<Callout type="tip">If you are unsure about a proposed change, you do not have to accept or reject immediately. Just type a follow-up question like "Why did you choose this approach?" before deciding — Claude will explain, and you will learn something every time.</Callout>
+
 ## Referencing Specific Files
 
 Use `@` to point Claude at a specific file:
@@ -132,5 +137,9 @@ Your files stay exactly as they were (with any accepted changes written). Sessio
 - **Be specific.** "Fix the bug" is weak. "The login form submits but shows a 404 — check the API route" is strong.
 - **Review everything.** Claude is very good but not infallible. Your job is to stay the architect.
 - **Ask follow-ups.** If the first response isn't right, just say "That's not quite right — try X instead."
+
+<Callout type="warning">Before accepting any diff that touches authentication, payment logic, or database queries, slow down and read every changed line — these are the areas where AI-generated code is most likely to have subtle security issues or miss edge cases.</Callout>
+
+<KeyPoint>The edit-review-accept loop is your core Claude Code workflow — Claude proposes, you read the diff carefully, then you decide; this review step is what keeps you the architect and prevents bugs from slipping into your codebase.</KeyPoint>
 
 In the next lesson you'll learn to navigate and use Claude Code's CLI features more efficiently.

@@ -3,7 +3,8 @@ title: "Staying in Scope"
 description: "Keep Claude focused on exactly what you want — no more, no less."
 order: 4
 duration: "8 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=rFUY6VxLXpo"
+coverImage: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is the most effective phrase to prevent Claude from making unrequested changes?"
     options:
@@ -40,6 +41,8 @@ quiz:
 Claude is helpful by nature — sometimes too helpful. It spots code that could be better, adds things "while it is in there," and refactors things you did not ask it to refactor.
 
 In small doses this is great. But when you are trying to make a surgical change, unexpected edits are bugs waiting to happen.
+
+<Callout type="warning">Scope creep most often appears in refactoring prompts — you ask Claude to rename a function and it also extracts a helper, updates the tests, and adds a comment. These changes may all be improvements, but they make the diff harder to review and add risk to what was supposed to be a simple rename. Lock down scope explicitly.</Callout>
 
 ## The One Rule
 
@@ -124,6 +127,8 @@ When Claude needs to touch multiple files:
 
 Explicitly listing the files prevents Claude from going exploring.
 
+<Callout type="tip">The most effective scope-limiting phrase is "only change X, do not touch Y" — be explicit about what is off-limits, not just what you want changed. For example: "only modify the handleSubmit function, do not change the form layout, the validation logic, or any other functions in this file."</Callout>
+
 ## Using /clear to Reset Scope
 
 When you are done with one task and moving to the next, use `/clear` to reset the conversation. This prevents Claude from thinking the new task is related to the old one and "helpfully" making connections across tasks.
@@ -131,3 +136,5 @@ When you are done with one task and moving to the next, use `/clear` to reset th
 ## Summary
 
 Scope is about being the architect. You decide what changes, when, and where. The phrases "only change," "do not touch," and listing explicit file targets are your most powerful tools for staying in control.
+
+<KeyPoint>Staying in scope is staying in control — use "only change X, do not touch Y" in every prompt where precision matters, and always explicitly list the files Claude is allowed to modify; this single habit prevents most of the "Claude did something I did not ask for" frustrations.</KeyPoint>

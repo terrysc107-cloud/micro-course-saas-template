@@ -3,7 +3,8 @@ title: "CLI Navigation & Basics"
 description: "Master the Claude Code CLI — commands, shortcuts, flags, and session management."
 order: 4
 duration: "9 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=6eBSHbLKuN0"
+coverImage: "https://images.unsplash.com/photo-1601882589907-ce1b7efe2a40?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What flag runs a single Claude Code command without opening an interactive session?"
     options:
@@ -59,6 +60,8 @@ Once inside a session (`claude`), you have access to slash commands:
 
 **Use `/clear` often.** When you've finished one task and are starting a new one, clearing context keeps Claude focused and saves money.
 
+<Callout type="tip">`/compact` and `/clear` are not the same: `/compact` summarizes the conversation and keeps important facts (good for long sessions on the same task), while `/clear` wipes everything (best when switching to a completely different task). Use the wrong one and you lose context you needed.</Callout>
+
 ## One-Shot Mode
 
 For quick tasks, use the `-p` flag (print mode):
@@ -72,6 +75,8 @@ Claude reads your project, answers, and exits. No interactive session needed. Gr
 - Quick questions while working in another tool
 - Running Claude Code from scripts or CI/CD
 - Automating code generation tasks
+
+<Callout type="info">The `-p` flag is also your gateway to scripting Claude into your build pipeline — you can chain it with shell commands like `claude -p "Summarize what changed in this diff" <<< "$(git diff HEAD~1)"` to automate tasks like changelog generation or PR description drafts.</Callout>
 
 ## Useful Flags
 
@@ -135,5 +140,7 @@ alias ccnew="claude /clear"
 ```
 
 Now `cc` opens a session, `ccp "question"` asks a quick question, and `ccnew` starts fresh.
+
+<KeyPoint>Mastering the CLI means knowing two modes — interactive sessions for ongoing work and `-p` one-shot mode for quick questions and scripting — plus using `/compact` vs `/clear` deliberately to manage context and cost.</KeyPoint>
 
 You now know everything you need to use Claude Code efficiently from the command line. Next up: the core concepts that make your prompts actually work.

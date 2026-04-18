@@ -3,7 +3,8 @@ title: "Open an Existing Project"
 description: "Bring Claude Code into a real codebase and get oriented fast."
 order: 1
 duration: "10 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=PAPq2UypkFk"
+coverImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is the first thing you should do when opening an existing project with Claude Code?"
     options:
@@ -81,6 +82,8 @@ Ask follow-up questions to build mental model:
 
 These questions cost almost nothing. They save hours of codebase spelunking.
 
+<Callout type="tip">Use `@` references to load specific files into your orientation questions — for example, `@src/middleware.ts` and `@src/lib/auth.ts` together give Claude the full picture of how authentication flows through your app, instead of making it guess from the folder structure alone.</Callout>
+
 ## Finding Where to Make Changes
 
 When you have a specific task, ask Claude to find the right place:
@@ -122,6 +125,8 @@ Once you understand the project, create a `CLAUDE.md` file in the root. This is 
 
 With `CLAUDE.md` in place, every new session starts with Claude already knowing your conventions.
 
+<Callout type="info">On startup, Claude automatically reads your project structure, `package.json`, `tsconfig.json`, git status, and any `CLAUDE.md` files. This gives it your tech stack instantly — but conventions, team decisions, and off-limits files are only known if you document them in `CLAUDE.md`.</Callout>
+
 ## Working on Legacy Code
 
 If the project has messy or undocumented code, Claude Code is your best documentation tool:
@@ -143,3 +148,5 @@ Or to modernize:
 ## Summary
 
 Opening a project well sets up every future session. Invest 10 minutes to orient Claude, create your CLAUDE.md, and understand the architecture. You will recoup that time on your very first feature.
+
+<KeyPoint>The 10 minutes you spend orienting Claude and creating a CLAUDE.md when you first open a project will save you hours of re-explaining context in every future session — it is the highest-leverage setup task you can do.</KeyPoint>

@@ -3,7 +3,8 @@ title: "REST APIs"
 description: "Build, consume, and integrate REST APIs cleanly with Claude Code."
 order: 4
 duration: "11 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=WG_5HSq-Tt4"
+coverImage: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What should every REST API endpoint you build with Claude Code include by default?"
     options:
@@ -97,6 +98,8 @@ Standardize error responses:
   - Be fully typed using the types from @src/types/team.ts
 ```
 
+<Callout type="tip">If the third-party API you are integrating has an OpenAPI spec (a `.yaml` or `.json` file), paste the relevant endpoint definitions directly into your prompt — this gives Claude exact request/response shapes, required headers, and error codes, producing integration code that is far more accurate than anything based on general knowledge alone.</Callout>
+
 ## Integrating a Third-Party API
 
 When working with external APIs, paste the docs:
@@ -136,6 +139,8 @@ When working with external APIs, paste the docs:
   Return 200 { received: true } for all valid events.
 ```
 
+<Callout type="warning">In any API route that handles authentication tokens, always review how Claude manages the token lifecycle — check that tokens are never logged, never exposed in error responses, never sent to third-party services, and expire appropriately. AI-generated auth code that leaks tokens is the most common security issue in AI-built APIs.</Callout>
+
 ## Rate Limiting
 
 ```
@@ -150,3 +155,5 @@ When working with external APIs, paste the docs:
 ## Summary
 
 API quality = auth + validation + error handling + consistent response shape. Give Claude the full contract — method, auth requirements, input shape, response shape, error cases — and it builds exactly what you specify.
+
+<KeyPoint>Every API route Claude builds should have the same four elements by default: authentication check, input validation with zod, error handling with correct HTTP status codes, and a consistent response shape — specify all four in every prompt and your APIs will be production-ready from day one.</KeyPoint>

@@ -3,7 +3,8 @@ title: "Edit & Refactor Code"
 description: "Use Claude Code to improve, modernize, and clean up existing code safely."
 order: 3
 duration: "11 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=Oxwda5c6nY0"
+coverImage: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is the safest way to refactor a large function with Claude Code?"
     options:
@@ -77,6 +78,8 @@ Common in JavaScript projects moving to TypeScript:
   - Do not change the logic, only add types
 ```
 
+<Callout type="warning">Never ask Claude to refactor an entire large file in one prompt — it will miss edge cases, lose track of subtle dependencies, and produce a diff too large to review meaningfully. Break refactors into logical steps: extract one concept at a time, run tests between each step, and accept or reject independently.</Callout>
+
 ## Safe Refactoring Pattern
 
 For important code, always write tests first:
@@ -99,6 +102,8 @@ Step 3:
 ```
 
 This pattern — test then refactor — is bulletproof.
+
+<Callout type="tip">When asking Claude to refactor, always tell it the style or pattern to follow: "refactor this to match the pattern in @src/lib/auth.ts" or "use the same error-handling approach as the other routes in this folder." Without a reference, Claude picks a style — with one, it matches yours.</Callout>
 
 ## Removing Dead Code
 
@@ -142,3 +147,5 @@ Claude understands React's performance patterns and applies them correctly.
 ## Summary
 
 Edit surgically, test before refactoring anything important, and always include the "keep the same external behavior" constraint. Claude Code makes refactoring faster and safer than doing it manually.
+
+<KeyPoint>For safe refactoring: write tests for the existing behavior first, then refactor with the constraint that those tests must still pass — this gives you an objective definition of "correct" that survives the change.</KeyPoint>

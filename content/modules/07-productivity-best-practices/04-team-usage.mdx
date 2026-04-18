@@ -3,7 +3,8 @@ title: "Using Claude Code with a Team"
 description: "Standards and practices for teams using Claude Code together effectively."
 order: 4
 duration: "9 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=7pKN_pjPW04"
+coverImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is the most important thing to standardize when a team adopts Claude Code?"
     options:
@@ -53,6 +54,8 @@ It should include:
 
 When Claude writes code to your CLAUDE.md spec, it matches what a teammate would write. That is reviewable.
 
+<Callout type="tip">Keep a shared CLAUDE.md in the repo and treat it like code — review changes to it in PRs, require team consensus on changes to conventions, and update it in the same PR where you establish a new pattern. A well-maintained team CLAUDE.md is worth more than any amount of onboarding documentation.</Callout>
+
 ## Code Review Norms
 
 AI-generated code gets the same review as human code. Period.
@@ -67,6 +70,8 @@ Some teams add a lightweight PR template section:
 ```
 
 Transparency helps the team learn from each other's prompts and builds trust.
+
+<Callout type="info">Establish team conventions for prompt patterns early — for example, "always reference @CLAUDE.md at the start of a session," "always include the framework version in stack-specific prompts," or "always use the pre-ship checklist prompt before merging." Shared patterns produce more consistent output and make AI-generated code easier to review.</Callout>
 
 ## Sharing Prompts
 
@@ -115,3 +120,5 @@ Use Claude for implementation. Keep strategy and architecture human.
 ## Summary
 
 A shared, maintained CLAUDE.md is the foundation of team AI usage. Review AI code like human code. Share good prompts. Be transparent. Keep architecture human.
+
+<KeyPoint>A team that shares one maintained CLAUDE.md, reviews AI code like human code, and builds a library of tested prompt templates will compound efficiency gains month over month — the shared context makes every developer on the team better, not just the ones who are power users of Claude Code.</KeyPoint>

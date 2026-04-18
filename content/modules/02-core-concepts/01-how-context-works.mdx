@@ -3,7 +3,8 @@ title: "How Context Works"
 description: "Understand what Claude Code can see, why context matters, and how to manage it."
 order: 1
 duration: "8 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=-uW5-TaVXu4"
+coverImage: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is the context window in Claude Code?"
     options:
@@ -44,6 +45,8 @@ Context is everything Claude Code knows right now. It includes:
 - Any code Claude has written or modified in this session
 
 Think of it like working memory. The more you cram in, the harder it is to think clearly about any one thing.
+
+<Callout type="info">Context is not just conversation text — every file Claude reads gets added to the token count. A single 500-line file can consume more context than 20 back-and-forth messages, so loading files strategically is just as important as keeping conversations concise.</Callout>
 
 ## The Context Window
 
@@ -86,6 +89,8 @@ This targeted approach keeps context clean and focused.
 - Use `/clear` between unrelated tasks
 - Start new sessions for new features
 
+<Callout type="tip">Do not wait for Claude to start making mistakes before running `/compact` — use it proactively after 20-30 minutes on a complex task. Running it while the conversation is still clean produces a much better summary than running it when Claude is already starting to drift.</Callout>
+
 **Don't:**
 - Load your entire codebase at once
 - Let sessions run for hours across many different tasks
@@ -109,6 +114,10 @@ Do this:
 
 This loads exactly the right context, nothing more. Claude can diagnose and fix precisely.
 
+<Callout type="warning">Watch out for large auto-generated files like `package-lock.json`, compiled output, or massive GraphQL schema files — if Claude loads one of these, it can eat a huge chunk of your context window in a single step. Mention explicitly that Claude should ignore these files when relevant.</Callout>
+
 ## Summary
 
 Context is your most important resource in Claude Code. Treat it like RAM — use it deliberately, free it up often, and your sessions will be faster, cheaper, and more accurate.
+
+<KeyPoint>Context is a finite resource — load only the files relevant to your current task, use `/compact` proactively in long sessions, and start a fresh session for each new task to keep Claude focused and your costs down.</KeyPoint>

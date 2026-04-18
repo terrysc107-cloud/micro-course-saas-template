@@ -3,7 +3,8 @@ title: "Review, Polish & Ship"
 description: "The final checklist before you deploy — using Claude Code to polish your work."
 order: 5
 duration: "9 min"
-videoUrl: ""
+videoUrl: "https://www.youtube.com/watch?v=pZzQOMNmx4c"
+coverImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is the 'pre-ship checklist' approach with Claude Code?"
     options:
@@ -60,6 +61,8 @@ Claude Code helps you ship faster. But fast shipping means nothing if you ship b
   Report any issues found.
 ```
 
+<Callout type="tip">Have Claude do a final review pass immediately before you commit — not the same review you did while building, but a fresh one with the complete set of changes in view. This catches things like a `console.log` you added for debugging, a TODO you forgot to address, or a hardcoded value that should be an environment variable.</Callout>
+
 ## Loading & Error State Review
 
 One of the most common polish items:
@@ -113,6 +116,8 @@ One of the most common polish items:
 
 Review the list and tell Claude which ones to actually delete.
 
+<Callout type="success">Developers who use Claude for a pre-ship review consistently report shipping with more confidence — not because Claude is infallible, but because having a structured checklist enforced on every deploy means they stop waking up at 3am to fix things they knew they should have checked. The peace of mind is real.</Callout>
+
 ## Documentation Pass
 
 ```
@@ -144,3 +149,5 @@ Run this yourself before pushing.
 ## Summary
 
 Pre-ship review → loading/error states → accessibility → performance → dead code → docs → manual test. This hour of review prevents the kind of bugs that hurt users and wake you up at 3am.
+
+<KeyPoint>The pre-ship checklist prompt — auth checks, input validation, error handling, no debug logs, no hardcoded values, TypeScript clean — takes five minutes and catches the issues that would otherwise take five hours to debug in production; make it a non-negotiable step before every deploy.</KeyPoint>

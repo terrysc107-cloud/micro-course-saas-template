@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -25,16 +25,18 @@ const TESTIMONIALS = [
   { name: "Derek L.", role: "Full-Stack Engineer", text: "The testing and git workflow lessons changed how I work. My PRs are smaller and cleaner. My team lead literally asked what I'd been doing differently." },
 ];
 
-export default function LandingPage() {
+function UpgradeScroller() {
   const searchParams = useSearchParams();
   const upgrade = searchParams.get("upgrade");
-
   useEffect(() => {
     if (upgrade === "true") {
       document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
     }
   }, [upgrade]);
+  return null;
+}
 
+export default function LandingPage() {
   async function handleBuyNow() {
     const res = await fetch("/api/stripe/checkout", { method: "POST" });
     if (res.status === 401) {
@@ -47,12 +49,13 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      <Suspense fallback={null}><UpgradeScroller /></Suspense>
       {/* Nav */}
       <nav className="border-b border-slate-800/50 sticky top-0 z-10 bg-slate-950/80 backdrop-blur">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-lg">
             <Zap className="w-5 h-5 text-brand-400" />
-            Claude Code Mastery
+            Claude Code Class
           </div>
           <div className="flex items-center gap-4">
             <Link href="/sign-in" className="text-slate-400 hover:text-white text-sm transition-colors">
@@ -260,9 +263,9 @@ export default function LandingPage() {
       <footer className="border-t border-slate-800 py-8 text-center text-slate-600 text-sm">
         <div className="flex items-center justify-center gap-2 mb-2">
           <Zap className="w-4 h-4 text-brand-400" />
-          <span className="text-white font-semibold">Claude Code Mastery</span>
+          <span className="text-white font-semibold">Claude Code Class</span>
         </div>
-        <p>© {new Date().getFullYear()} Claude Code Mastery · All rights reserved</p>
+        <p>© {new Date().getFullYear()} Claude Code Class · All rights reserved</p>
       </footer>
     </div>
   );
