@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { getModuleMeta } from "@/lib/course-config";
 
 const MODULES_DIR = path.join(process.cwd(), "content", "modules");
 
@@ -30,6 +31,7 @@ export interface Lesson {
 export interface Module {
   slug: string;
   title: string;
+  description: string;
   order: number;
   lessons: Omit<Lesson, "content">[];
 }
@@ -54,7 +56,11 @@ function slugify(filename: string) {
   return filename.replace(/^\d+-/, "").replace(/\.mdx$/, "");
 }
 
+/** Falls back to a title derived from the folder name when a module has no
+ *  entry in MODULE_META, so a newly added folder still renders. */
 function moduleTitle(folder: string) {
+  const meta = getModuleMeta(folder);
+  if (meta) return meta.title;
   return folder
     .replace(/^\d+-/, "")
     .split("-")
@@ -82,6 +88,7 @@ export function getAllModules(): Module[] {
     return {
       slug: folder,
       title: moduleTitle(folder),
+      description: getModuleMeta(folder)?.description ?? "",
       order: moduleOrder(folder),
       lessons,
     };

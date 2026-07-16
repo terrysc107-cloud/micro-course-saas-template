@@ -1,115 +1,114 @@
 ---
 title: "Install Claude Code"
-description: "Get Claude Code running on your machine in under 5 minutes."
+description: "Install Claude Code with the native installer, and understand which methods auto-update."
 order: 1
-duration: "8 min"
-videoUrl: "https://www.youtube.com/watch?v=SUysp3sJHbA"
+duration: "7 min"
 coverImage: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=1200&auto=format&fit=crop&q=80"
 quiz:
-  - question: "What command installs Claude Code globally?"
+  - question: "You installed Claude Code with Homebrew and haven't touched it in a month. What is the most likely state of your install?"
     options:
-      - "npm install claude-code"
-      - "npm install -g @anthropic-ai/claude-code"
-      - "npx claude-code"
-      - "brew install claude-code"
+      - "Current — Homebrew casks update themselves in the background"
+      - "Behind, because Homebrew installs do not auto-update; you have to run brew upgrade yourself"
+      - "Broken — Homebrew installs expire after 30 days"
+      - "Current, because Claude Code updates itself regardless of how it was installed"
     answer: 1
-  - question: "What is the minimum Node.js version required for Claude Code?"
+  - question: "Why does the documentation recommend Git for Windows on a native Windows install?"
     options:
-      - "Node.js 14"
-      - "Node.js 16"
-      - "Node.js 18"
-      - "Node.js 20"
-    answer: 2
-  - question: "After installing, which command opens Claude Code in your current project?"
+      - "Claude Code cannot start without a Git repository"
+      - "Without it, Claude Code falls back to PowerShell instead of using the Bash tool"
+      - "It is the only way to authenticate your account"
+      - "It installs the Node.js runtime that Claude Code depends on"
+    answer: 1
+  - question: "A teammate insists you must install Node.js 18+ before Claude Code will run. How should you treat that claim?"
     options:
-      - "claude start"
-      - "claude-code ."
-      - "claude"
-      - "npx claude"
+      - "Correct — Node 18 is a hard requirement of every install method"
+      - "Correct, but only on Linux"
+      - "Outdated — the current docs present a native install and state no Node version requirement for it"
+      - "Correct — Claude Code is distributed exclusively on npm"
     answer: 2
 ---
 
-## Welcome to Claude Code Mastery
+## Install It
 
-You're about to learn one of the most powerful developer tools available today. Claude Code is a command-line tool that brings Anthropic's Claude AI directly into your terminal — where you do your real work.
+The native installer is the recommended method in the current documentation. Pick the line for your platform and run it.
 
-Unlike chat interfaces, Claude Code understands your **entire project**. It reads your files, writes code, runs commands, and helps you ship faster than you ever thought possible.
-
-## Prerequisites
-
-Before installing, make sure you have:
-
-- **Node.js 18 or higher** — check with `node --version`
-- **An Anthropic API key** — get one at [console.anthropic.com](https://console.anthropic.com)
-- **A terminal** — Terminal on Mac, Windows Terminal, or any Linux shell
-
-## Install Claude Code
-
-Open your terminal and run:
+**macOS, Linux, WSL:**
 
 ```bash
-npm install -g @anthropic-ai/claude-code
+curl -fsSL https://claude.ai/install.sh | bash
 ```
 
-This installs Claude Code globally so you can use it from any project folder on your machine.
+**Windows PowerShell:**
 
-**Verify it worked:**
+```powershell
+irm https://claude.ai/install.ps1 | iex
+```
+
+**Windows CMD:**
+
+```batch
+curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
+
+Your prompt tells you which Windows shell you are in: PowerShell shows `PS C:\`, CMD shows `C:\` with no `PS`. If you get `The token '&&' is not a valid statement separator`, you ran the CMD line in PowerShell. If you get `'irm' is not recognized`, you ran the PowerShell line in CMD.
+
+Verify:
 
 ```bash
 claude --version
 ```
 
-You should see a version number. If you get "command not found", your npm global bin directory may not be in your PATH. Fix it with:
+<Callout type="info">If the install command fails with a `403`, a curl error, or `syntax error near unexpected token '<'`, the official [install troubleshooting page](https://code.claude.com/docs/en/troubleshoot-install) maps specific errors to specific fixes. Start there rather than guessing.</Callout>
+
+## Alternatives, And What They Cost You
+
+You do not have to use the native installer. You just have to know what you are giving up.
+
+| Method | Command | Auto-updates? |
+|---|---|---|
+| Native | see above | Yes, in the background |
+| Homebrew | `brew install --cask claude-code` | No |
+| WinGet | `winget install Anthropic.ClaudeCode` | No |
+| Linux package managers | apt, dnf, apk | Follows your package manager |
+
+Linux package installs are available on Debian, Fedora, RHEL, and Alpine.
+
+**This is the difference that matters.** Native installations update themselves in the background, so you stay on the latest version without thinking about it. Homebrew and WinGet installations do not. If you go that route, updating is a chore you now own:
 
 ```bash
-export PATH="$PATH:$(npm root -g)/../.bin"
+brew upgrade claude-code
 ```
 
-Add that line to your `~/.zshrc` or `~/.bashrc` to make it permanent.
-
-<Callout type="tip">After adding the export line to your shell config, run `source ~/.zshrc` (or open a new terminal tab) to apply it immediately — you should not need to restart your machine.</Callout>
-
-## Set Your API Key
-
-Claude Code needs your Anthropic API key. Set it as an environment variable:
-
-**Mac / Linux:**
-```bash
-export ANTHROPIC_API_KEY=sk-ant-your-key-here
-```
-
-To make it permanent, add that line to your `~/.zshrc` or `~/.bashrc`, then reload:
-
-```bash
-source ~/.zshrc
-```
-
-**Windows (PowerShell):**
 ```powershell
-$env:ANTHROPIC_API_KEY="sk-ant-your-key-here"
+winget upgrade Anthropic.ClaudeCode
 ```
 
-<Callout type="warning">Never commit your API key to a Git repository. If you paste it directly into a file that gets committed, rotate it immediately at console.anthropic.com — leaked keys can rack up thousands of dollars in charges within hours.</Callout>
+Claude Code ships frequently. A month of skipped upgrades is a real gap in features and security fixes — and it is the most common reason a documented flag "doesn't exist" on someone's machine.
 
-## Launch Claude Code
+<Callout type="warning">Homebrew publishes two casks and they are not the same thing. `claude-code` tracks the stable channel — typically about a week behind, and it skips releases with major regressions. `claude-code@latest` tracks the latest channel and gets new versions as soon as they ship. Whichever you install is the one you must name when you upgrade.</Callout>
 
-Navigate to any project folder and type:
+## Windows: One Extra Step
+
+On **native Windows**, [Git for Windows](https://git-scm.com/downloads/win) is recommended so Claude Code can use the Bash tool. Without it, Claude Code uses PowerShell as its shell tool instead — workable, but a different execution surface than most documentation and most of this course assumes.
+
+WSL setups do not need it.
+
+## About That npm Command
+
+If you learned Claude Code from an older tutorial, you probably saw this:
 
 ```bash
-claude
+npm install -g @anthropic-ai/claude-code   # not the recommended path
 ```
 
-An interactive session opens. You will see a prompt where you can start typing to your AI pair programmer, which has full context of the code in your directory.
+Along with a claim that Node.js 18 or higher is required. Neither reflects the current documentation. The docs present the native install as the recommended method and state no Node version requirement for it. If you have an old npm-based install lying around, the native installer is where to go.
 
-## What Happens Under the Hood
+We are flagging this explicitly because it is still all over the internet, and because a course that quietly teaches the stale thing is worse than no course.
 
-When you run `claude`, it:
+<Callout type="tip">Claude Code is not only a terminal tool. The same engine runs in VS Code, JetBrains IDEs, a desktop app, the web, and Slack — and your CLAUDE.md files, settings, and MCP servers carry across all of them. Install the CLI first; it is the surface everything else is described against.</Callout>
 
-1. Scans your project directory structure
-2. Reads relevant files to build context
-3. Connects to the Anthropic API with your key
-4. Opens an interactive session ready for your first prompt
+<KeyPoint>Use the native installer unless you have a specific reason not to — it is the recommended method and it is the only one that auto-updates. If you choose Homebrew or WinGet, upgrading is now your job, and a stale install is the single most common source of "that flag doesn't work for me."</KeyPoint>
 
-<KeyPoint>Claude Code is a global CLI tool that connects your terminal directly to Claude — install it once with npm, set your API key as an environment variable, and run `claude` from any project folder to start an AI-powered coding session.</KeyPoint>
+Claude Code moves fast, and these commands come from the official [quickstart](https://code.claude.com/docs/en/quickstart) and [setup](https://code.claude.com/docs/en/setup) pages as verified for this course. If something here doesn't match what you see, the docs win — check them.
 
-You are set up. In the next lesson you will configure your API key properly, understand usage costs, and set your spending limits.
+Next: getting logged in, and why you almost certainly do not need an API key.

@@ -1,0 +1,145 @@
+---
+title: "Accounts and Login"
+description: "Log in to Claude Code, understand the account types, and fix the auth problems that actually happen."
+order: 2
+duration: "8 min"
+coverImage: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&auto=format&fit=crop&q=80"
+quiz:
+  - question: "You have an active Claude Max subscription. What do you need to do before running `claude` for the first time?"
+    options:
+      - "Create an API key in the Console and export it as ANTHROPIC_API_KEY"
+      - "Nothing — run `claude` and it will prompt you to log in through your browser"
+      - "Add your subscription email to a config file"
+      - "Install a separate authentication helper"
+    answer: 1
+  - question: "Your subscription is active, but Claude Code keeps failing with auth errors on one machine. An old `ANTHROPIC_API_KEY` is still exported in your shell profile. Why does that break things?"
+    options:
+      - "Two credentials cannot be stored at once, so Claude Code refuses to start"
+      - "ANTHROPIC_API_KEY sits above subscription OAuth in the precedence list, so once approved it wins over your subscription"
+      - "The API key overwrites the credential file on disk"
+      - "It doesn't — the subscription always takes priority over environment variables"
+    answer: 1
+  - question: "Which of these is the right way to find out what Claude Code is currently costing you and which model it is running?"
+    options:
+      - "Read the pricing table printed in the CLI banner"
+      - "Use `/status` for the active account and auth method, `/model` for the model, and claude.com/pricing for current prices"
+      - "Check the version number — pricing is tied to the release"
+      - "Only an org admin can see any of this"
+    answer: 1
+---
+
+## You Probably Don't Need an API Key
+
+Let's kill the most common piece of Claude Code misinformation first.
+
+**Claude Code requires an account. It does not require an `ANTHROPIC_API_KEY`.** Older tutorials — including, honestly, the first version of this course — taught `export ANTHROPIC_API_KEY=sk-ant-...` as a mandatory setup step for every learner. That is wrong, and it actively causes bugs (more on that below).
+
+What you actually do is this:
+
+```bash
+claude
+```
+
+On first use, Claude Code prompts you to log in and completes authentication in your browser. Once logged in, your credentials are stored and you won't need to log in again.
+
+That's the whole setup.
+
+## Which Account Works
+
+You can log in with any of these:
+
+- **Claude Pro, Max, Team, or Enterprise** subscription — the recommended path, and what most readers of this course will use
+- **Claude Console** — API access with pre-paid credits. On first login, a "Claude Code" workspace is created automatically in the Console for centralized cost tracking
+- **A supported cloud provider** — Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry
+- **A self-hosted Claude apps gateway**, if your organization runs one. Your admin pre-configures the gateway URL, and `/login` opens directly on the Cloud gateway screen so you sign in with corporate SSO
+
+If you are an individual developer paying for your own tooling, the subscription path is the one to take. If you are inside a company that has already made this decision, it has probably been made for you — ask which of the four applies before you spend an afternoon fighting it.
+
+## The Three Commands
+
+| Command | What it does |
+|---|---|
+| `/login` | Switch accounts or re-authenticate |
+| `/logout` | Log out; resets first-launch setup |
+| `/status` | Show the active account and auth method |
+
+`/status` is the one you'll reach for when something is wrong. It answers "who am I actually logged in as, and how?" — which is nearly always the real question.
+
+## Where Your Credentials Live
+
+After login, credentials are stored on your system:
+
+| OS | Location |
+|---|---|
+| macOS | Keychain |
+| Linux | `~/.claude/.credentials.json` (mode `0600`) |
+| Windows | `%USERPROFILE%\.claude\.credentials.json` |
+
+Worth knowing for two reasons: you can confirm a login actually persisted, and you know exactly what not to sync into a dotfiles repo.
+
+<Callout type="warning">On Linux, `.credentials.json` is a real credential in a plain file. Mode `0600` means only your user can read it — keep it that way, and keep `~/.claude/` out of any repository you push.</Callout>
+
+## Authentication Precedence
+
+When multiple credentials are present, Claude Code resolves them in a fixed order. First match wins:
+
+1. Cloud provider credentials (`CLAUDE_CODE_USE_BEDROCK` / `_VERTEX` / `_FOUNDRY`)
+2. `ANTHROPIC_AUTH_TOKEN` (sent as `Authorization: Bearer`)
+3. `ANTHROPIC_API_KEY` (sent as `X-Api-Key`)
+4. `apiKeyHelper` script output
+5. `CLAUDE_CODE_OAUTH_TOKEN`
+6. Subscription OAuth from `/login` — the default for most people
+
+A signed-in Claude apps gateway session sits outside this list entirely and outranks cloud providers.
+
+Read that list top to bottom and notice where your subscription sits: **dead last**. That is not a bug, but it is the source of the next section.
+
+## The Stale API Key Gotcha
+
+This is the auth failure you are most likely to hit, and it is genuinely confusing when it happens.
+
+You have an active subscription. Claude Code works fine on your laptop. On your other machine it throws auth errors, or bills somewhere unexpected, or behaves like an account you don't recognize. Nothing you changed today explains it.
+
+The cause: an `ANTHROPIC_API_KEY` is still exported somewhere — a `.zshrc` line from a tutorial six months ago, a `.env` your shell sources, a CI variable that leaked into your local profile. It sits at position 3 in the precedence list. Your subscription sits at position 6. Once approved, the stale key wins.
+
+The fix:
+
+```bash
+unset ANTHROPIC_API_KEY
+```
+
+Then check `/status` to confirm which account and auth method you are actually on. If it comes back after a restart, grep your shell profiles — the export is written down somewhere.
+
+<Callout type="tip">Make `/status` the first thing you run whenever authentication is behaving strangely. "Which credential won?" is the answer to a surprising share of Claude Code auth mysteries, and `/status` tells you directly instead of making you reason about a precedence list from memory.</Callout>
+
+## Tokens for CI
+
+For non-interactive environments, there is a dedicated path:
+
+```bash
+claude setup-token
+```
+
+This prints a one-year OAuth token for use as `CLAUDE_CODE_OAUTH_TOKEN`. Constraints worth knowing before you build a pipeline on it:
+
+- It requires a Pro, Max, Team, or Enterprise plan
+- It is inference-scoped — it cannot establish Remote Control sessions
+- Bare mode (`--bare`) does not read it
+
+## Models and Cost
+
+We are deliberately not printing a model name or a price table in this course.
+
+Both change without notice. The default model shifts, pricing pages move, and cost depends on your plan, your model, and your account type. A stale number quoted confidently is worse than no number at all — it's the kind of thing you'd act on.
+
+So learn the mechanism instead:
+
+- **`/model`** — see and change the model for the current session
+- **`/status`** — see the active account and auth method
+- **[claude.com/pricing](https://claude.com/pricing)** — current pricing, from the source
+
+<KeyPoint>Run `claude`, log in through the browser, and you're done — an API key is not required and, if a stale one is sitting in your environment, it will silently outrank your subscription. When auth misbehaves, `/status` first, then `unset ANTHROPIC_API_KEY`.</KeyPoint>
+
+The account types, precedence order, and credential paths here come from the official [authentication docs](https://code.claude.com/docs/en/authentication) as verified for this course. Claude Code ships weekly — if your experience diverges, check the docs.
+
+Next: your first real session.

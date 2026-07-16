@@ -1,146 +1,146 @@
 ---
 title: "CLI Navigation & Basics"
-description: "Master the Claude Code CLI — commands, shortcuts, flags, and session management."
+description: "The shell commands, session commands, and shortcuts worth committing to memory."
 order: 4
 duration: "9 min"
-videoUrl: "https://www.youtube.com/watch?v=6eBSHbLKuN0"
 coverImage: "https://images.unsplash.com/photo-1601882589907-ce1b7efe2a40?w=1200&auto=format&fit=crop&q=80"
 quiz:
-  - question: "What flag runs a single Claude Code command without opening an interactive session?"
+  - question: "You finished a session yesterday and want to pick the same conversation back up in the same directory. What's the fastest route?"
     options:
-      - "--run"
-      - "--once"
-      - "-p or --print"
-      - "--no-session"
-    answer: 2
-  - question: "What does the /clear command do inside a session?"
-    options:
-      - "Deletes all your project files"
-      - "Clears the conversation history / context window"
-      - "Clears the terminal output only"
-      - "Resets your API key"
+      - "You can't — sessions don't persist, so summarize what you were doing in a fresh session"
+      - "`claude -c` continues the most recent conversation in the current directory, or `claude -r` / `/resume` picks a specific one"
+      - "Re-run `claude` with the same prompt to rebuild the conversation"
+      - "Copy the transcript out of ~/.claude and paste it back in"
     answer: 1
-  - question: "Which command shows all available slash commands inside Claude Code?"
+  - question: "You've been on the same debugging task for 40 minutes and context is filling up. Which command fits, and why?"
     options:
-      - "help"
-      - "/commands"
-      - "/help"
-      - "--list"
-    answer: 2
-  - question: "What is the purpose of the --model flag?"
+      - "`/clear`, because it frees the most space"
+      - "`/compact`, because it summarizes the conversation and keeps what matters — you still need the earlier findings"
+      - "`/exit` and restart, because a fresh process is always cleaner"
+      - "`/config`, to raise the context limit"
+    answer: 1
+  - question: "What does `Shift+Tab` do in a session?"
     options:
-      - "To rename your project"
-      - "To select which Claude model to use for the session"
-      - "To create a new AI model"
-      - "To view model pricing"
+      - "Autocompletes the current command"
+      - "Cycles permission modes"
+      - "Switches between open files"
+      - "Toggles the transcript viewer"
     answer: 1
 ---
 
-## The Claude Code CLI
+## Two Ways In
 
-Claude Code has two modes:
+Claude Code runs from your shell as either a conversation or a single shot. Knowing which you want before you type saves a surprising amount of time.
 
-1. **Interactive session** — `claude` starts a back-and-forth conversation
-2. **One-shot mode** — run a single command and get output, then exit
+**Shell commands** — these start or resume Claude Code from your terminal:
 
-Knowing when to use each saves you time.
+| Command | What it does | Example |
+|---|---|---|
+| `claude` | Start interactive mode | `claude` |
+| `claude "task"` | Run a one-time task | `claude "fix the build error"` |
+| `claude -p "query"` | Run one-off query, then exit | `claude -p "explain this function"` |
+| `claude -c` | Continue most recent conversation in current directory | `claude -c` |
+| `claude -r` | Resume a previous conversation | `claude -r` |
 
-## Interactive Session Commands
+`claude "task"` and `claude -p "query"` look similar and aren't. The first opens an interactive session with that as the opening prompt. The second answers and exits — no session, no back-and-forth.
 
-Once inside a session (`claude`), you have access to slash commands:
+## Sessions Persist
+
+This trips up people coming from older tutorials, so let's be direct: **your conversations don't evaporate when you exit.**
+
+```bash
+claude -c          # continue the most recent conversation in this directory
+claude -r          # resume a previous conversation
+```
+
+`-c` is the one you'll use daily. You close your laptop, come back after lunch, `claude -c`, and you're back in the same conversation with the same context. Inside a session, `/resume` does the same job.
+
+<Callout type="tip">`claude -c` is directory-scoped — it continues the most recent conversation *in the current directory*. If you jump between repos, `-c` gives you the right thread per repo automatically. It's the closest thing Claude Code has to "just put me back where I was."</Callout>
+
+## Session Commands
+
+Once you're inside a session:
 
 | Command | What it does |
-|---------|-------------|
-| `/help` | Show all available commands |
-| `/clear` | Clear context — start fresh without losing your files |
-| `/exit` | End the session |
-| `/compact` | Summarize the conversation to free up context space |
-| `/model` | Switch models mid-session |
-| `/cost` | Show how much the current session has cost |
+|---|---|
+| `/help` | Show available commands |
+| `/clear` | Clear conversation history |
+| `/exit` (or `Ctrl+D`) | Exit Claude Code |
+| `/status` | Show the active account and auth method |
+| `/config` | Open configuration |
+| `/model` | See and change the current model |
+| `/resume` | Continue a previous conversation |
+| `/compact` | Summarize the conversation to free up context |
+| `/permissions` | Manage permission rules |
 
-**Use `/clear` often.** When you've finished one task and are starting a new one, clearing context keeps Claude focused and saves money.
+Type `/` on its own to see everything you can invoke — built-in commands plus any skills available in this project.
 
-<Callout type="tip">`/compact` and `/clear` are not the same: `/compact` summarizes the conversation and keeps important facts (good for long sessions on the same task), while `/clear` wipes everything (best when switching to a completely different task). Use the wrong one and you lose context you needed.</Callout>
+## /compact vs /clear
 
-## One-Shot Mode
+These are not interchangeable, and picking wrong costs you real work.
 
-For quick tasks, use the `-p` flag (print mode):
+- **`/compact`** summarizes the conversation and keeps going. Use it when you're deep in one task and running long — you need the earlier findings, just not every token of them.
+- **`/clear`** wipes conversation history and starts fresh. Use it when you're *switching tasks*. Stale context from an unrelated problem doesn't just waste space; it actively pulls Claude toward irrelevant patterns.
 
-```bash
-claude -p "What does the package.json scripts section do?"
-```
+The rule of thumb: **same task, `/compact`. Different task, `/clear`.**
 
-Claude reads your project, answers, and exits. No interactive session needed. Great for:
+<Callout type="info">Running `/clear` starts a new session, but the previous conversation is preserved and can be resumed with `/resume`. `/clear` isn't destructive to your history — it's destructive to your *current* context, which is the point.</Callout>
 
-- Quick questions while working in another tool
-- Running Claude Code from scripts or CI/CD
-- Automating code generation tasks
+## Shortcuts Worth Memorizing
 
-<Callout type="info">The `-p` flag is also your gateway to scripting Claude into your build pipeline — you can chain it with shell commands like `claude -p "Summarize what changed in this diff" <<< "$(git diff HEAD~1)"` to automate tasks like changelog generation or PR description drafts.</Callout>
+| Shortcut | What it does |
+|---|---|
+| `/` | List commands and skills |
+| `@` | File path autocomplete |
+| `Tab` | Complete |
+| `↑` | Command history |
+| `Shift+Tab` | Cycle permission modes |
+| `Esc` | Interrupt Claude mid-turn |
+| `Ctrl+D` | Exit |
 
-## Useful Flags
+`Shift+Tab` is the one that changes how you work rather than how fast you type — it's the whole subject of the next lesson.
 
-```bash
-# Specify a model
-claude --model claude-sonnet-4-5
+`Esc` is the underrated one. When Claude is three tool calls into an approach you can already tell is wrong, interrupt it. The work done so far is kept, and you redirect from there instead of waiting politely for a bad answer to finish arriving.
 
-# Run in a specific directory
-claude -C /path/to/project
+## Piping and Scripting
 
-# Disable file auto-scanning (faster startup for large repos)
-claude --no-auto-context
-
-# Show version
-claude --version
-
-# See all flags
-claude --help
-```
-
-## Working with Large Codebases
-
-For very large projects, Claude Code may not load every file by default. Guide it explicitly:
-
-```
-> Read the files in src/api/ and explain the route structure
-> Look at @package.json, @tsconfig.json, and @src/index.ts
-```
-
-Use `@` references to load specific files into context when they're relevant to your task.
-
-## Context Management
-
-Claude Code has a context window — it can only "see" so much at once. As conversations grow long:
-
-- Use `/compact` to summarize old turns and free up space
-- Use `/clear` when switching to a completely new task
-- Be precise about what files you're working on to avoid loading irrelevant context
-
-## Session History
-
-Claude Code doesn't keep a persistent history between sessions by default. Each `claude` command is a fresh start. This is intentional — it keeps you focused and avoids stale context causing bad suggestions.
-
-If you want to continue work from a previous session, briefly summarize what you were doing at the start of the new session:
-
-```
-> I was building a user auth system yesterday. The signup form is in 
-  src/components/SignUp.tsx and the API route is at src/api/auth.ts. 
-  I need to add email validation. Can you look at both files?
-```
-
-## Aliases & Shortcuts
-
-Speed up your workflow with shell aliases:
+`-p` is where Claude Code stops being a chat tool and starts being a Unix citizen:
 
 ```bash
-# Add to ~/.zshrc
+tail -200 app.log | claude -p "Slack me if you see any anomalies"
+```
+
+```bash
+git diff main --name-only | claude -p "review these changed files for security issues"
+```
+
+```bash
+claude -p "translate new strings into French and raise a PR for review"
+```
+
+It reads stdin and writes stdout, so it composes with everything else in your shell. This is the door to CI jobs, git hooks, and the kind of small automation that's too specific to ever be a product.
+
+<Callout type="warning">Think carefully before wiring `-p` into anything automated. A non-interactive run has no one to answer permission prompts — which means you need to have made deliberate decisions about what it's allowed to do, in advance. That's the next lesson, and it's not optional reading before you put this in a pipeline.</Callout>
+
+## Models
+
+`/model` shows and changes the model for the current session. That's the mechanism you want — not a model name memorized from a course.
+
+We're not naming a default model anywhere in this material. Defaults change without notice, and a lesson that confidently names one is wrong within weeks. `/model` is always right; a name in a tutorial has a shelf life.
+
+## Aliases
+
+Small thing, adds up:
+
+```bash
+# ~/.zshrc
 alias cc="claude"
 alias ccp="claude -p"
-alias ccnew="claude /clear"
+alias ccc="claude -c"
 ```
 
-Now `cc` opens a session, `ccp "question"` asks a quick question, and `ccnew` starts fresh.
+<KeyPoint>Learn four things and you have the CLI: `claude` for a session, `-p` for one-shot and scripting, `-c` to pick up where you left off, and `/compact` vs `/clear` to manage context deliberately. Everything else you can find with `/help`.</KeyPoint>
 
-<KeyPoint>Mastering the CLI means knowing two modes — interactive sessions for ongoing work and `-p` one-shot mode for quick questions and scripting — plus using `/compact` vs `/clear` deliberately to manage context and cost.</KeyPoint>
+Commands and shortcuts here come from the official [CLI reference](https://code.claude.com/docs/en/cli-reference), [commands reference](https://code.claude.com/docs/en/commands), and [interactive mode](https://code.claude.com/docs/en/interactive-mode) docs as verified for this course. Claude Code ships weekly and the command set grows — `/help` and the docs are the current truth.
 
-You now know everything you need to use Claude Code efficiently from the command line. Next up: the core concepts that make your prompts actually work.
+Next, the lesson that keeps all of this from hurting you: permission modes.

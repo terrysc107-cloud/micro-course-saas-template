@@ -1,0 +1,147 @@
+---
+title: "Usage and the Context Economy"
+description: "What actually consumes your usage, why long sessions cost more, and the habits that keep sessions lean."
+order: 3
+duration: "8 min"
+coverImage: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&auto=format&fit=crop&q=80"
+quiz:
+  - question: "Why does a long session cost more than a short one, even for the same amount of work?"
+    options:
+      - "Claude Code charges by wall-clock time"
+      - "Every message re-sends the accumulated conversation as context, so a bloated session pays for its own history on every turn"
+      - "Longer sessions automatically use a more expensive model"
+      - "There is a per-session surcharge after 30 minutes"
+    answer: 1
+  - question: "What is the single most effective habit for keeping usage low?"
+    options:
+      - "Typing shorter prompts"
+      - "Using /clear between unrelated tasks so stale context does not ride along on every subsequent message"
+      - "Cancelling sessions early"
+      - "Avoiding file reads entirely"
+    answer: 1
+  - question: "What does /compact do?"
+    options:
+      - "Compresses your source files on disk"
+      - "Summarizes the conversation so far, freeing context while preserving the important details"
+      - "Switches to a smaller model"
+      - "Reduces the quality of Claude's responses to save tokens"
+    answer: 1
+  - question: "Where should you look for the current cost of using Claude Code?"
+    options:
+      - "The figures published in this course"
+      - "Any pricing table found online"
+      - "claude.com/pricing for plan pricing, /status for your account and auth method, and /usage for what this session has consumed"
+      - "It is not possible to find out"
+    answer: 2
+---
+
+## Why This Lesson Has No Price Table
+
+Claude Code ships constantly. Default models change, plans change, and pricing pages move. Any number printed here would be wrong within weeks, and a confidently stale price is worse than no price — you would plan against it.
+
+So this lesson teaches the mechanism instead of the number. For current figures, go to the source:
+
+- **[claude.com/pricing](https://claude.com/pricing)** — current plan pricing
+- **`/status`** — your active account and how you are authenticated
+- **`/usage`** — what the current session has consumed, and on a paid plan, a breakdown of what is counting against your limits
+- **`/model`** — see and change the model in use
+- **`/context`** — see what is currently occupying your context window
+
+What does not go stale is the underlying economics, which is what the rest of this lesson is about. See the [cost management docs](https://code.claude.com/docs/en/costs) for current detail — like everything else, that page changes.
+
+<Callout type="info">If you are on a Pro, Max, Team, or Enterprise plan, your usage is included in your subscription and there is no per-session bill to watch. `/usage` still matters, because it shows how much of your plan's allowance you have consumed. The habits below apply either way — on a subscription they buy you more work before you hit a limit; on usage-based access they lower a bill.</Callout>
+
+## The Core Idea: Context Is the Cost
+
+One mental model explains nearly everything here.
+
+Every message you send carries the accumulated conversation with it — the files that have been read, the output of every command, every exchange so far. That history is re-sent as input on every turn. It is not stored somewhere and referenced cheaply. It rides along.
+
+Two consequences follow, and they are the whole lesson:
+
+1. **A long session pays for its own history repeatedly.** By message fifty, every message is dragging forty-nine messages behind it.
+2. **Irrelevant context costs exactly as much as relevant context.** The 1,200-line file you read an hour ago for an unrelated task is still being sent, still being paid for, and contributing nothing.
+
+<KeyPoint>You are not billed for what you ask. You are billed for everything Claude has to read in order to answer — which includes the entire session history behind your question. Context discipline is cost discipline.</KeyPoint>
+
+The happy accident: the habits that keep a session cheap are the same ones that keep it accurate. A session cluttered with stale context produces worse answers, because Claude is weighing irrelevant material when deciding what you meant. Cost and quality are the same lever.
+
+## What Actually Consumes Usage
+
+In rough order of impact:
+
+**Long-running sessions that never get cleared.** The dominant factor. A session you have kept open all day, drifting across four unrelated tasks, is paying for all four on every message.
+
+**Unfocused file reading.** "Read everything in `src/`" pulls thousands of lines into context, most of them irrelevant, all of them re-sent from then on.
+
+**Vague prompts that trigger exploration.** "Improve this codebase" makes Claude go looking. "Add input validation to the login handler in `auth.ts`" does not. The vague version costs more and produces worse results — the same trade in both directions.
+
+**Back-and-forth caused by an under-specified request.** Ten clarifying exchanges cost more than the one careful paragraph that would have prevented them.
+
+**Verbose command output.** Full test suite output, long logs, and large build dumps land in context and stay there.
+
+## The Habits
+
+**Clear between unrelated tasks.**
+
+```
+> [finish the checkout bug]
+/clear
+> [start the notification bell, fresh]
+```
+
+`/clear` costs nothing and resets the accumulation. If you take one habit from this lesson, take this one. Use `/rename` before clearing if you want to find the session again later, then `/resume` to return to it.
+
+**Load files precisely.**
+
+Not this:
+```
+> Read the entire src/ directory
+```
+
+This:
+```
+> Read @src/lib/auth.ts and @src/app/api/login/route.ts
+```
+
+Name the files. You almost always know which ones matter — and when you do not, ask Claude to find them before reading them.
+
+**Compact long sessions.**
+
+```
+/compact
+```
+
+Claude summarizes the conversation so far, keeping the important facts and dropping the bulk. You can steer it: `/compact Focus on the API design decisions and the test failures`.
+
+<Callout type="tip">Run `/compact` while the session is still healthy — after twenty or thirty minutes on a task — rather than waiting until you notice Claude losing the thread. A summary produced from a clear conversation is far better than one produced from a confused one, and by the time you feel the drift, the material worth preserving is already buried.</Callout>
+
+**Front-load the spec.** Two minutes writing a complete request beats twenty minutes of clarifying dialogue. It costs less and it lands closer to what you wanted.
+
+**Scope the work.** The largest saving is not a smaller prompt — it is not doing unnecessary work. A well-scoped task touches fewer files, produces less output, and needs less correction. Plan mode (Shift+Tab) is worth the tokens it spends on complex work, because it prevents the expensive failure: building the wrong thing well.
+
+**Use one-shot mode for questions.**
+
+```bash
+claude -p "What does this error mean: Cannot read properties of undefined"
+```
+
+`-p` runs the query and exits, with no session left to accumulate.
+
+<Callout type="info">One-shot mode is not just leaner — it is often the better answer for a quick question. It carries no state, so Claude does not try to relate your question to whatever you were working on twenty minutes ago. A focused question gets a focused answer.</Callout>
+
+**Stop early when it goes wrong.** Press Escape the moment Claude heads in the wrong direction. Every message you let it continue is spent on work you will discard — and it stays in context afterwards.
+
+## Model Choice Is a Real Lever
+
+Models differ in capability and in cost, and matching the model to the job matters. Use `/model` to see what is available to you and to switch mid-session.
+
+This course does not name specific models, for the same reason it prints no price table: the lineup and the default change, and a lesson naming today's model would mislead you within a release or two. The durable principle applies to whatever `/model` shows you — reach for a smaller, faster model on routine work (simple utilities, quick explanations, mechanical edits) and a more capable one for architecture, security-sensitive code, and multi-file changes where being wrong is expensive.
+
+<Callout type="warning">Do not economize on work where a mistake is costly. A cheaper model that produces a subtly wrong migration or a flawed auth check has not saved you anything. The saving is in routine work, not in the work that matters.</Callout>
+
+## Summary
+
+Context is the cost. Clear between unrelated tasks, name the files you need, compact long sessions before they degrade, spec well up front so you are not paying for clarification, scope work so you are not paying for the wrong thing, and match the model to the stakes. For actual numbers, use `/usage` and `/status`, and check [claude.com/pricing](https://claude.com/pricing) — not any figure written down in a course.
+
+<KeyPoint>Everything in a session is re-sent on every message, so accumulated context is what you actually pay for — in money and in answer quality. `/clear` between unrelated tasks, precise file loading, and proactive `/compact` are the whole discipline; `/usage`, `/status`, `/model`, and the official pricing page are where the real numbers live.</KeyPoint>

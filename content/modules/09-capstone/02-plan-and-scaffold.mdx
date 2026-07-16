@@ -1,0 +1,171 @@
+---
+title: "Plan and Scaffold"
+description: "Use plan mode to agree the approach before a single file is edited — and reject the plan if it's vague."
+order: 2
+duration: "13 min"
+quiz:
+  - question: "A plan says: 'Add a leads module with appropriate components and wire up state management.' What should you do?"
+    options:
+      - "Accept it — the details are implementation concerns Claude can figure out"
+      - "Reject it and ask for named files and a named state approach, because 'appropriate' means the decision hasn't been made yet"
+      - "Accept it but add a comment asking Claude to be careful"
+      - "Accept it and review the diff more closely instead"
+    answer: 1
+  - question: "Why is arguing with a plan for ten minutes usually cheaper than accepting a vague one?"
+    options:
+      - "Because plan mode sessions are billed differently from build sessions"
+      - "Because a vague plan doesn't reduce the number of decisions — it just moves them into code you'll have to read a diff to discover"
+      - "Because Claude produces better code when it has been challenged"
+      - "Because plans are permanent and code is not"
+    answer: 1
+  - question: "What is the point of asking Claude what it is uncertain about before approving a plan?"
+    options:
+      - "It is a politeness convention that improves output tone"
+      - "It surfaces the decisions it is about to make silently, while they are still cheap to change"
+      - "It forces plan mode to re-read the repository"
+      - "It makes the plan shorter"
+    answer: 1
+---
+
+## Why Plan Mode Exists
+
+Plan mode reads files and runs read-only shell commands to explore, and does not edit source files. Cycle to it with `Shift+Tab`.
+
+The mechanical description undersells it. What plan mode actually buys you is a **checkpoint that costs nothing to fail**. Rejecting a plan costs a paragraph. Rejecting an implementation costs a revert, a re-explanation, and a context now polluted with an approach you don't want — which Claude will keep gravitating back toward for the rest of the session.
+
+The asymmetry is the whole argument. Plan mode is where being difficult is free.
+
+<Callout type="info">Plan mode is a permission mode, enforced by Claude Code rather than by the model. This is why it's stronger than a politely-worded prompt: it doesn't rely on Claude choosing to comply. <a href="https://code.claude.com/docs/en/permission-modes">Permission modes docs</a> — behavior changes, check them.</Callout>
+
+## Ask for the Plan
+
+Your inspection from lesson 1 is still in context. Good — that's the point of doing them in the same session. Now hand over the brief.
+
+```
+> Read @docs/brief.md — that's the full scope for this build.
+
+  Still in plan mode. Do not write code. Propose an implementation
+  plan that covers:
+
+  1. The data model: every entity, every field, every type, and the
+     rule that decides whether a lead is overdue.
+  2. Persistence: what stores the data, and why that choice over the
+     alternatives you considered.
+  3. The file-by-file change list: exact paths, and one line on what
+     each file does.
+  4. Build order: what ships first, and what I can verify after each
+     step.
+  5. Everything in the brief's non-goals list that you were tempted
+     to build anyway.
+
+  Then, separately: list every decision you are uncertain about, and
+  what you'd need from me to resolve it.
+```
+
+Sections 5 and 6 are the ones people cut. Don't.
+
+Section 5 catches scope creep at the design stage — an agent asked to build a lead tracker will reliably want to add tags, or a search box, or a bulk import, because those things are *in* lead trackers in general. Naming the temptation out loud is a cheap way to kill it before it costs you a diff.
+
+Section 6 forces uncertainty to the surface. A model asked to produce a plan will produce a plan; the confidence in the prose tells you nothing about the confidence behind it. Asking directly is the only reliable way to find out which decisions are actually coin flips — while they are still text.
+
+## Grading the Plan
+
+Read it hostilely. You are looking for **the places where a decision has been deferred and dressed up as a description.**
+
+The tell is almost always an adjective doing work a noun should be doing.
+
+| Plan says | The unmade decision |
+|---|---|
+| "appropriate state management" | Which one? Server state, a store, plain props? |
+| "a leads module" | Which files? At which paths? |
+| "handle validation" | Where — client, server, both? What's the failure UX? |
+| "add tests" | For what behavior? Which of the six done-criteria? |
+| "wire it up" | Nobody knows, including the author |
+
+Compare against a plan that has actually decided:
+
+> Create `lib/leads/types.ts` exporting a `Lead` interface: `id` (string, uuid), `name` (string, required), `email` (string, validated), `source` (string), `note` (string, optional), `status` (union: `new` / `contacted` / `waiting` / `closed`), `createdAt` (ISO string), `lastActivityAt` (ISO string).
+>
+> Overdue rule lives in `lib/leads/overdue.ts` as a pure function `isOverdue(lead, now)`. It returns true when status is `new` or `waiting` AND `lastActivityAt` is more than 3 days before `now`. `now` is a parameter rather than a call to `Date.now()` inside the function, so it is testable without mocking the clock.
+>
+> `lastActivityAt` is set on create and updated on every status change. This is the interpretation of done-criterion 4 I'm assuming — confirm before I build, because the alternative (measuring from `createdAt`) produces a materially different Overdue view and is hard to change once there's data.
+
+Every noun is named. Every path exists in the plan. The overdue rule is a pure function taking `now` as an argument — a decision with a stated reason. And the ambiguity you found in lesson 1 came back as an explicit question rather than a silent assumption.
+
+That plan is reviewable. The first one isn't — it's a promise to decide later, in code, where you'll have to read a diff to find out what it decided.
+
+<Callout type="warning">Vagueness in a plan is not a communication problem you can fix by reading generously. It is an accurate signal that the decision has not been made. Accepting it doesn't make the decision go away; it just moves it somewhere more expensive.</Callout>
+
+## Rejecting a Plan
+
+Reject with specifics, not with disappointment. "This is too vague" gives Claude nothing to work with and usually returns you a longer version of the same plan.
+
+```
+> Rejecting this. Three specific problems:
+
+  1. "Appropriate state management" is not a decision. Name the
+     approach and say why, given what you found in this repo.
+  2. The overdue rule is described in prose but I can't tell where it
+     lives or how I'd test it. Give me a signature and a file path.
+  3. Your file list has 14 files. The brief has 6 done-criteria and
+     explicitly excludes auth and import. Justify each file against a
+     criterion or drop it.
+
+  Revise. Still no code.
+```
+
+Point 3 is a move worth stealing generally: **make the plan justify itself against the brief, item by item.** Files that can't name the criterion they serve are files you're about to review for no reason.
+
+Two, maybe three rounds of this is normal and healthy. If you're on round five, the problem usually isn't the plan — it's that the brief is ambiguous and Claude is faithfully reproducing the ambiguity. Go fix the brief.
+
+<Callout type="tip">A bad plan accepted in thirty seconds costs more than ten minutes of arguing. The argument is bounded — it ends when the plan is clear. The bad plan is unbounded: it costs you a build, a review that finds structural problems instead of bugs, a revert, and a session context now full of an approach you rejected. Ten minutes is the cheapest thing on that list.</Callout>
+
+## Scaffold
+
+Plan approved — meaning you can restate it from memory and you know what every file is for. Now let Claude edit files.
+
+Cycle out of plan mode. `acceptEdits` is a reasonable choice for scaffolding specifically: it auto-accepts file edits and common filesystem commands inside your working directory, and scaffolding is a lot of small mechanical file creation you'd be rubber-stamping anyway. Use it because you've decided the risk is low here, not because approving prompts is tedious.
+
+Scaffold means **structure, not behavior**:
+
+```
+> Approved. Scaffold only — structure, not logic:
+
+  - Create the files from the plan, in the paths from the plan.
+  - Types and function signatures, fully specified.
+  - Function bodies throw "not implemented".
+  - No UI logic, no persistence logic, no styling.
+
+  Then run the type check and show me the output.
+```
+
+The reason for empty bodies: you get to review the *shape* of the thing while it's still ten minutes of work to change. Once bodies are full, the shape is load-bearing and questioning it means questioning everything attached to it.
+
+Then read every file. All of them — this is the last point where the whole build fits in your head at once.
+
+- Does the file list match the plan? Extra files are scope creep that survived the plan review.
+- Do the signatures match what you approved?
+- Does `isOverdue(lead, now)` actually take `now`, or did it quietly become `isOverdue(lead)` with a `Date.now()` inside?
+
+That last one is a real and specific failure. Models drift toward the conventional form of a function, and the conventional form of an overdue check reads the clock internally. It's a one-word difference that decides whether lesson 5's tests are clean or require mocking time.
+
+<Callout type="warning">Scaffolding is where a plan you approved and a repo you have quietly diverge, because the changes are individually boring and nobody reads boring diffs. Read this one. It is the cheapest full review you will get in the entire build.</Callout>
+
+## Commit the Scaffold
+
+```bash
+git add -A
+git commit -m "scaffold: lead follow-up types and file structure"
+```
+
+Commit it even though nothing works. This is now a known-good floor: if lesson 3 or 4 goes sideways, `git reset --hard` to here and you've lost a lesson, not a day. Cheap floors are what make it possible to let an agent move fast without it being reckless.
+
+## Before You Move On
+
+- The plan named every file, every type, and the overdue rule's signature
+- You rejected at least one version of it — if you didn't, re-read it, because first plans are rarely that good
+- Scaffolded files match the approved plan exactly
+- Type check passes
+- The scaffold is committed on a branch that isn't `main`
+
+<KeyPoint>Plan mode is the one checkpoint where being difficult is free — rejection costs a paragraph, not a revert. Read the plan for adjectives standing in for decisions ("appropriate," "a module," "wire up"), because those aren't descriptions, they're deferrals, and every deferral you accept gets paid for later in a diff you have to reverse-engineer.</KeyPoint>

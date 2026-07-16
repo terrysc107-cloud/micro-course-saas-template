@@ -1,25 +1,30 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { BRAND, DISCLAIMER } from "@/lib/course-config";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const TITLE = `${BRAND.name} — The professional Claude Code workflow`;
+const DESCRIPTION =
+  "Learn the workflow professionals use with Claude Code: inspect, plan, build, review, test, ship. Written lessons, a guided capstone, and templates you can reuse. " +
+  DISCLAIMER;
+
 export const metadata: Metadata = {
-  title: "Claude Code Class — Learn AI-Assisted Development",
-  description:
-    "The complete beginner course to Claude Code. Build faster, debug smarter, and unlock new income streams with AI-assisted development.",
-  metadataBase: new URL("https://claudecodeclass.com"),
+  title: TITLE,
+  description: DESCRIPTION,
+  metadataBase: new URL(BRAND.siteUrl),
   openGraph: {
-    title: "Claude Code Class — Learn AI-Assisted Development",
-    description: "The complete beginner course to Claude Code. Build faster, debug smarter, and unlock new income streams with AI-assisted development.",
-    url: "https://claudecodeclass.com",
-    siteName: "Claude Code Class",
+    title: TITLE,
+    description: DESCRIPTION,
+    url: BRAND.siteUrl,
+    siteName: BRAND.name,
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Claude Code Class",
-    description: "The complete beginner course to Claude Code. Build 10× faster with AI-assisted development.",
+    title: TITLE,
+    description: DESCRIPTION,
   },
 };
 

@@ -1,0 +1,138 @@
+---
+title: "Scoping and Estimating Honestly"
+description: "How to scope and estimate client work when an agent has changed your throughput — without quoting your best case."
+order: 1
+duration: "12 min"
+coverImage: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1200&auto=format&fit=crop&q=80"
+quiz:
+  - question: "What is the central estimation trap when you start using an agentic coding tool?"
+    options:
+      - "Estimating too conservatively and losing bids"
+      - "Quoting based on the best-case run, where the agent produces working code on the first attempt"
+      - "Refusing to give estimates at all"
+      - "Charging hourly instead of fixed-price"
+    answer: 1
+  - question: "Which part of a project is least affected by an agent's speed?"
+    options:
+      - "Writing boilerplate CRUD code"
+      - "Scaffolding a new page"
+      - "Requirements ambiguity, client review cycles, integration surprises, and deployment access"
+      - "Generating test fixtures"
+    answer: 2
+  - question: "What is a reasonable way to handle uncertainty in a fixed-price quote?"
+    options:
+      - "Quote your best case and absorb any overruns"
+      - "Scope a small paid discovery step first, then quote the build once the unknowns are smaller"
+      - "Add a flat 50% to every number"
+      - "Avoid fixed-price work entirely"
+    answer: 1
+  - question: "What should you tell a client who asks whether you use AI tools?"
+    options:
+      - "Deny it — clients will ask for a discount"
+      - "Answer plainly: you use AI-assisted tooling, and you review and test everything you ship"
+      - "Refuse to discuss your process"
+      - "Say the code is fully AI-generated so they understand the speed"
+    answer: 1
+---
+
+## What Actually Changed
+
+An agentic tool changes how long some parts of a project take. It does not change how long a project takes. Those are different claims, and conflating them is how developers end up eating overruns.
+
+What tends to compress: boilerplate, scaffolding, first drafts, test fixtures, migrations between well-known patterns, writing the fiftieth CRUD endpoint.
+
+What tends not to compress:
+
+- Figuring out what the client actually wants, which is rarely what they first said
+- Waiting on client review, feedback, and decisions
+- Getting credentials, API access, and staging environments
+- Integrating with a system nobody has documented
+- The last 10% — edge cases, error states, the thing that only breaks in production
+- Your own review of what the agent produced
+
+If the compressible half of a project shrinks and the incompressible half does not, your total does not halve. It shrinks by some amount you have to measure rather than assume.
+
+<KeyPoint>Your throughput on the parts of the job that were never the bottleneck is not your throughput on the job. Estimate the whole thing, including the parts an agent does not touch.</KeyPoint>
+
+## The Trap: Quoting Your Best Case
+
+The failure mode is specific and easy to fall into. You try a task with Claude Code, it goes unusually well, and that run becomes your mental benchmark. You quote against it.
+
+But the good run is a sample of one, drawn from the top of the distribution. You remember it because it was impressive. The runs where you spent forty minutes untangling a confidently wrong refactor are less memorable and just as real.
+
+<Callout type="warning">Do not quote from your best session. Quote from your median session — and only once you have enough sessions to know what your median looks like. If you have used the tool on five projects, you do not have a median yet. You have five anecdotes.</Callout>
+
+The honest position early on: you do not yet know your own numbers. Estimate the way you did before, deliver, and record what actually happened. After enough projects you will have a real baseline. Whatever it turns out to be, it will be yours — it depends on your stack, your clients, and the kind of work you take, and it will not match anyone else's.
+
+## Estimating Under Uncertainty
+
+A useful estimate separates what you know from what you do not.
+
+**Decompose into knowns and unknowns.** List the work. For each item, mark it as *done this before* or *have not*. You can estimate the first category from experience. The second category is where overruns live, and no amount of tooling changes that — an agent cannot de-risk an integration whose docs you have not read.
+
+**Give ranges, not points.** "Three to five days" is more honest than "four days," and it carries real information: the spread tells your client how confident you are. A wide range on an unfamiliar integration is not weakness, it is accuracy.
+
+**Price the unknowns separately.** If a project has one genuinely uncertain piece, do not bury it in a single number. Scope a paid discovery step: a day or two to build a throwaway spike against the unfamiliar API, then quote the build with the unknown removed. Clients generally prefer this to a padded number they cannot interrogate, and it protects you from the case where the integration turns out to be impossible.
+
+## Using Claude Code to Scope, Not to Promise
+
+Prototyping quickly is genuinely useful for estimation — as an investigation tool, not as a source of timelines.
+
+```
+> Read the client's requirements below and help me scope this.
+  [paste requirements]
+
+  Do not write implementation code. Instead:
+  - Break this into discrete pieces of work
+  - For each piece, flag whether it depends on a third-party system
+  - List the questions I should ask the client before quoting
+  - List what could go wrong that the requirements do not mention
+```
+
+The value here is the questions, not the answers. An agent is good at noticing that "sync with their CRM" is hiding four decisions nobody has made yet. It is not a source of truth about how long *you* will take.
+
+<Callout type="tip">Spike the riskiest part before you quote — not the easiest part. The easy parts will be fine. Your estimate is only as good as your understanding of the one piece you have never done before, so buy information about that piece first.</Callout>
+
+## Writing a Proposal That Survives Contact
+
+Speed is worth something to clients. Guaranteeing speed you have not verified is worth negative something.
+
+**Overclaiming:**
+> "I will deliver your MVP in 5 business days, guaranteed. Any overruns are on me."
+
+**Defensible:**
+> "Here is the scope, broken into five deliverables. You will see a working demo of the core flow before we build the rest, so you can redirect early if it is not what you pictured. My estimate is 8–12 working days. The integration with your fulfillment system is the piece I am least certain about — I have scoped two days for it and will tell you within the first day if that is wrong."
+
+The second one is more sellable to a serious client, not less. It shows you have thought about failure modes. The guarantee in the first version is a promise about a distribution you do not control.
+
+Where you might expect a claim that clients will pay a premium for faster delivery: some will, some will not, and it depends entirely on your market. Speed commands a premium when the client has a deadline that costs them money. It is worth nothing to a client who will take three weeks to review your work. Find out which kind you are talking to before you price on speed.
+
+## Scope Creep Gets Faster Too
+
+An underrated hazard: when changes are cheap to make, clients ask for more of them — and you say yes more often, because each individual request genuinely is small.
+
+This is how a well-estimated project dies. Not one big overrun. Forty small ones you agreed to because each took ten minutes.
+
+Fixed scope matters more now, not less. Write down what is included. When a request falls outside it, say so, and price it. "That is a quick change" is true and irrelevant; the question is whether it is in scope.
+
+## Being Straight About Your Tools
+
+When a client asks whether you use AI:
+
+"Yes. I use AI-assisted development tooling. I review and test everything before it ships, and I am accountable for all of it the same way I would be for code I typed by hand."
+
+That is the whole answer. Do not oversell it as a reason you are faster, and do not hide it. Some clients have contractual or policy restrictions on AI-assisted code, particularly in regulated industries — you want to find that out at the start of the engagement, not during a security review at the end.
+
+<Callout type="info">Ask about AI tooling policy during scoping, alongside your questions about access and environments. Some clients require disclosure, some restrict what may be sent to third-party services, and some have no policy at all. All three are fine. Discovering the restriction after you have built the thing is not.</Callout>
+
+## Track Your Actuals
+
+The only way out of guessing is data about yourself.
+
+For each project, record your estimate, what you actually spent, and where the difference went. After ten projects you will know whether you systematically underestimate integration work, or client review time, or the last 10%. Most developers do. That correction factor is worth more than any tool.
+
+## Summary
+
+Estimate the whole job, not the part the agent touches. Quote from your median, not your best run. Separate knowns from unknowns and price the unknowns as discovery. Give ranges. Hold scope. Tell clients the truth about your tooling, and track your actuals until your estimates rest on your own history rather than your optimism.
+
+<KeyPoint>Honest estimation under an agentic workflow means accounting for what did not speed up — ambiguity, review cycles, integrations, and the last 10% — and quoting from your measured median rather than the best session you remember.</KeyPoint>

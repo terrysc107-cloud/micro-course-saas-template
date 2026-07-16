@@ -1,0 +1,175 @@
+---
+title: "Permission Modes"
+description: "The six permission modes, how to switch them, and why CLAUDE.md is not a security boundary."
+order: 5
+duration: "12 min"
+quiz:
+  - question: "You add a line to CLAUDE.md saying 'never run destructive git commands.' What have you actually changed?"
+    options:
+      - "Nothing enforceable — CLAUDE.md shapes what Claude tries to do, but permission rules are enforced by Claude Code, not the model"
+      - "You've created a deny rule equivalent to `Bash(git reset *)`"
+      - "You've blocked those commands in every mode including bypassPermissions"
+      - "You've blocked them, but only in default mode"
+    answer: 0
+  - question: "A colleague runs `bypassPermissions` on their laptop and says it's fine because `.git` and `.claude` are protected paths. What's wrong with that reasoning?"
+    options:
+      - "Nothing — protected paths are enforced in every mode"
+      - "bypassPermissions is the one mode where protected-path writes are allowed, so `.git`, `.claude`, `.vscode` and the rest are not protected there"
+      - "Protected paths only cover `.git`, not the others"
+      - "Protected paths are a Linux-only feature"
+    answer: 1
+  - question: "You've been handed an unfamiliar repo and asked to make a change. Which mode is the right default habit, and why?"
+    options:
+      - "`acceptEdits`, so you can move fast and review with git diff afterward"
+      - "`bypassPermissions`, since you'll be reviewing the PR anyway"
+      - "`plan`, because Claude explores and proposes without editing your source, so a bad plan costs you a read instead of a revert"
+      - "`dontAsk`, because it denies anything risky by default"
+    answer: 2
+---
+
+## The Thing to Understand First
+
+Before any of the modes, internalize this. From the official permissions documentation:
+
+> Permission rules are enforced by Claude Code, not by the model. Instructions in your prompt or `CLAUDE.md` shape what Claude tries to do, but they don't change what Claude Code allows.
+
+Read that twice. It is the most important sentence in this module.
+
+**CLAUDE.md is not a security boundary.** Writing "never touch the database" in your CLAUDE.md is a *request*. It influences what Claude attempts, the same way a good comment influences what a colleague attempts. It is not a wall. If Claude decides a database command serves your request, nothing in that file stops the call — only Claude Code's permission system does.
+
+This matters because the intuition runs the other way. Writing a rule down *feels* like enforcing it. Developers absolutely do write safety rules into CLAUDE.md, feel protected, and act accordingly. The file is genuinely useful — just not for this.
+
+To grant or revoke access, you have exactly four instruments: `/permissions`, permission rules in settings, permission modes, and `PreToolUse` hooks. Prose is not on the list.
+
+<Callout type="warning">The dangerous version of this mistake is prompt injection. If Claude reads a file, a web page, or an issue comment containing hostile instructions, your CLAUDE.md is not what decides whether those instructions get acted on. Your permission configuration is. Content Claude reads is data, and data can lie.</Callout>
+
+## The Six Modes
+
+Each mode is a different tradeoff between how often you're interrupted and how much you're watching.
+
+| Mode | What runs without asking | Best for |
+|---|---|---|
+| `default` | Reads only | Getting started, sensitive work |
+| `acceptEdits` | Reads, file edits, and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`) | Iterating on code you're reviewing |
+| `plan` | Reads only | Exploring a codebase before changing it |
+| `auto` | Everything, with background safety checks | Long tasks, reducing prompt fatigue |
+| `dontAsk` | Only pre-approved tools | Locked-down CI and scripts |
+| `bypassPermissions` | Everything | Isolated containers and VMs only |
+
+One naming quirk to get straight: **the mode that reviews every action is labeled Manual** in the CLI, in `claude --help`, in the VS Code and JetBrains extensions, and in the desktop app. Its config value is `default`, which is what hooks and SDK integrations use. `manual` is accepted as an alias wherever you type the value. So `default` and Manual are the same mode — you'll see both.
+
+## What Each Is Actually For
+
+**`default` / Manual.** Every action, your call. This is where you start and where you return for anything you'd be unhappy to explain later.
+
+**`acceptEdits`.** Claude creates and edits files in your working directory without prompting, plus common filesystem Bash commands. The scope matters: auto-approval applies only to paths inside your working directory or `additionalDirectories`. Anything outside that scope, and other Bash commands, still prompt. Use it when you intend to review the result in your editor or `git diff` rather than approving each edit inline. That's the trade — you're not skipping review, you're batching it. If you're not actually going to read the diff, you've just turned review off.
+
+**`plan`.** Claude reads files, runs shell commands to explore, and writes a plan — but does not edit your source. When the plan is ready, it presents it and asks how to proceed. Edits stay blocked until you approve.
+
+**`auto`.** Auto-approves tool calls, with a separate classifier model reviewing actions before they run and blocking anything that escalates beyond your request or looks driven by hostile content Claude read. It is genuinely more thoughtful than "yes to everything." It is also, per the docs' own warning, not a safety guarantee — use it where you trust the direction, not as a substitute for review on sensitive operations. Availability depends on your plan, provider, and model.
+
+**`dontAsk`.** The inverse of bypass. Every tool call that would prompt is *auto-denied* instead. Claude runs only what matches your `permissions.allow` rules and the built-in read-only commands. Made for CI and restricted environments where the session can never wait for input. The failure mode is a refusal, not a disaster — which is the right failure mode for automation.
+
+**`bypassPermissions`.** Covered below, honestly.
+
+<Callout type="info">In every mode except `bypassPermissions`, writes to protected paths are never auto-approved — that's `.git`, `.config/git`, `.claude`, `.vscode`, `.idea`, `.husky`, `.cargo`, `.devcontainer`, `.yarn`, `.mvn` and a set of protected files. This guards repository state and Claude's own configuration from accidental corruption. Note the exception in that sentence, because it's the whole point of the next section.</Callout>
+
+## bypassPermissions, Honestly
+
+`bypassPermissions` disables permission prompts and safety checks so tool calls execute immediately. The docs are unambiguous about where it belongs:
+
+> Only use this mode in isolated environments like containers, VMs, or dev containers without internet access, where Claude Code cannot damage your host system.
+
+And:
+
+> `bypassPermissions` offers no protection against prompt injection or unintended actions.
+
+Three specifics people get wrong:
+
+**It does not protect your protected paths.** This is the one mode where protected-path writes are *allowed*. `.git`, `.claude`, `.vscode`, `.idea`, `.husky`, `.cargo`, `.devcontainer`, `.yarn`, `.mvn` — all writable, no prompt. The safety net you assumed was structural is mode-dependent.
+
+**A few things still prompt.** Explicit `ask` rules, connector tools your organization set to `ask`, and MCP tools marked `requiresUserInteraction` still force a prompt. Removals targeting the filesystem root or home directory — `rm -rf /`, `rm -rf ~` — still prompt as a circuit breaker against model error. That circuit breaker is not a safety feature you should feel good about. It is the floor, not the floor plan.
+
+**You can't drift into it.** You cannot enter `bypassPermissions` from a session started without an enabling flag; you have to restart with `--permission-mode bypassPermissions` (or the equivalent `--dangerously-skip-permissions`). On Linux and macOS, Claude Code refuses to start in this mode as root or under `sudo`. Administrators can block it entirely with `permissions.disableBypassPermissionsMode: "disable"` in managed settings, and can disable auto mode with `permissions.disableAutoMode`.
+
+If what you want is "far fewer prompts," `auto` is the mode you actually want. `bypassPermissions` is for throwaway environments where the blast radius is the container.
+
+## Switching Modes
+
+Press **`Shift+Tab`** during a session to cycle: `default` → `acceptEdits` → `plan`. The current mode appears in the status bar.
+
+Not every mode is in that cycle by default. `dontAsk` never appears — set it with `--permission-mode dontAsk`. `bypassPermissions` only appears after you start with an enabling flag. `auto` appears when your account meets its requirements.
+
+At startup:
+
+```bash
+claude --permission-mode plan
+```
+
+As a persistent default, set `defaultMode` in settings:
+
+```json
+{
+  "permissions": {
+    "defaultMode": "plan"
+  }
+}
+```
+
+<Callout type="tip">The mode is set through these controls — not by asking Claude in chat. "Please be careful and ask me before editing anything" is a request to the model, not a change to the permission system. `Shift+Tab` is.</Callout>
+
+## Permission Rules
+
+Modes set the baseline. Rules layer on top, in `allow`, `ask`, and `deny` lists. Manage them interactively with `/permissions`, or write them in settings.
+
+The syntax is `Tool` or `Tool(specifier)`:
+
+| Rule | Effect |
+|---|---|
+| `Bash` | Matches all Bash commands |
+| `Bash(npm run build)` | Matches the exact command `npm run build` |
+| `Bash(git push *)` | Matches git push commands |
+| `Read(./.env)` | Matches reading `.env` in the current directory |
+| `WebFetch(domain:example.com)` | Matches fetch requests to example.com |
+
+```json
+{
+  "permissions": {
+    "allow": ["Bash(npm run *)", "Bash(git commit *)"],
+    "deny": ["Bash(git push *)"]
+  }
+}
+```
+
+Two details that will bite you:
+
+- **The space before `*` matters.** `Bash(ls *)` matches `ls -la` but not `lsof`. `Bash(ls*)` matches both.
+- **Deny rules and explicit `ask` rules apply in every mode**, including `bypassPermissions`. Allow rules have no effect in that mode, because everything is already approved. If you want a hard guarantee about one specific thing, a deny rule is the instrument — not a sentence in CLAUDE.md.
+
+## The Habit Worth Building
+
+**Default to `plan` mode in code you don't know.**
+
+The reasoning is economic. In plan mode, a wrong idea costs you a read. In `acceptEdits`, a wrong idea costs you a diff review and a revert. The gap widens the less you know about the codebase — which is exactly when your judgment about whether Claude's approach is right is weakest. Plan mode front-loads the cheap check.
+
+There's a second effect that's harder to quantify and matters more: a written plan is reviewable in a way that a stream of edits isn't. You can read a plan and notice "it's going to touch the auth middleware, why?" before a single line changes. You can't easily notice that in real time while approving your ninth edit prompt.
+
+Set it as your project default and opt *out* deliberately:
+
+```json
+{
+  "permissions": {
+    "defaultMode": "plan"
+  }
+}
+```
+
+## Before You Point an Agent at a Repo
+
+We put together a [preflight checklist](/downloads/preflight-checklist.md) — our own, not an Anthropic document — covering what to verify before letting an agent touch a repository. Clean working tree, permission configuration reviewed, deny rules in place for anything genuinely irreversible, and a clear answer to "what's the worst thing that happens here."
+
+It takes two minutes and it is mostly the questions you'd ask anyway, in an order that means you don't skip the third one.
+
+<KeyPoint>Permission rules are enforced by Claude Code, not the model — CLAUDE.md shapes intent, not access. Modes set your baseline, rules layer on top, and `plan` is the habit worth defaulting to in unfamiliar code. Reserve `bypassPermissions` for isolated containers, and know that it turns off protected-path safety too.</KeyPoint>
+
+Mode names, protected paths, rule syntax, and the bypass caveats here come from the official [permissions](https://code.claude.com/docs/en/permissions) and [permission modes](https://code.claude.com/docs/en/permission-modes) docs as verified for this course. This is the area of Claude Code that changes most, and the area where a stale assumption costs the most — check the docs.

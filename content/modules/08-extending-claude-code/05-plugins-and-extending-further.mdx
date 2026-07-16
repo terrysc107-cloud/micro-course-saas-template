@@ -1,0 +1,202 @@
+---
+title: "Plugins and Choosing the Right Mechanism"
+description: "Package your extensions for distribution — and decide which of the six mechanisms a given problem actually needs."
+order: 5
+duration: "14 min"
+quiz:
+  - question: "Where does a plugin's manifest file go?"
+    options:
+      - "At the plugin root, as plugin.json"
+      - "Inside .claude-plugin/, as plugin.json"
+      - "Inside .claude/, as manifest.json"
+      - "At the plugin root, as .mcp.json"
+    answer: 1
+  - question: "You have a skill at .claude/skills/hello/SKILL.md and you package it into a plugin named my-tools. What do you type to invoke it?"
+    options:
+      - "/hello"
+      - "/my-tools:hello"
+      - "/plugin run my-tools hello"
+      - "/my-tools/hello"
+    answer: 1
+  - question: "Your team keeps forgetting to run the formatter. Which mechanism gives you an actual guarantee?"
+    options:
+      - "A line in CLAUDE.md"
+      - "A skill with a clear description"
+      - "A PostToolUse hook in .claude/settings.json"
+      - "An MCP server for your formatter"
+    answer: 2
+---
+
+## Two Questions
+
+This lesson answers two things. First: what is a plugin, and when do you need one? Second, and more useful day to day: **given a problem, which of these six mechanisms should you reach for?**
+
+You now know skills, hooks, MCP, subagents, and `CLAUDE.md`. Plugins are the sixth, and they are different in kind from the others — a plugin is not a new capability, it is a **package** for the capabilities you already have.
+
+## What a Plugin Is
+
+A plugin is a self-contained directory that bundles skills, agents, hooks, MCP servers, and more, so they can be shared across projects and teams and versioned properly.
+
+The official docs draw the line clearly:
+
+| Approach | Skill names | Best for |
+|---|---|---|
+| **Standalone** (`.claude/` directory) | `/hello` | Personal workflows, project-specific customizations, quick experiments |
+| **Plugins** | `/plugin-name:hello` | Sharing with teammates, distributing to community, versioned releases, reusable across projects |
+
+**Use standalone configuration when** you are customizing for a single project, the config is personal, you are still experimenting, or you want short skill names.
+
+**Use a plugin when** you want to share with a team or community, need the same skills across multiple projects, want version control and easy updates, are distributing through a marketplace, and are fine with namespaced skills.
+
+<Callout type="tip">The documented path is: start standalone in `.claude/` for quick iteration, then convert to a plugin when you are ready to share. Do not begin by building a plugin. Begin by solving your own problem, then package what turned out to work.</Callout>
+
+## Plugin Structure
+
+Every plugin lives in its own directory. The manifest at `.claude-plugin/plugin.json` defines its identity:
+
+```json
+{
+  "name": "my-first-plugin",
+  "description": "A greeting plugin to learn the basics",
+  "version": "1.0.0",
+  "author": {
+    "name": "Your Name"
+  }
+}
+```
+
+- **`name`** — unique identifier and skill namespace. Skills are prefixed with it, so `hello/` becomes `/my-first-plugin:hello`.
+- **`description`** — shown in the plugin manager when browsing or installing.
+- **`version`** — optional. If set, users only receive updates when you bump it. If omitted and the plugin is distributed via git, the commit SHA is used and every commit counts as a new version.
+- **`author`** — optional, helpful for attribution.
+
+Everything else sits at the **plugin root**, not inside `.claude-plugin/`:
+
+| Directory | Purpose |
+|---|---|
+| `.claude-plugin/` | Contains `plugin.json` |
+| `skills/` | Skills as `<name>/SKILL.md` directories |
+| `commands/` | Skills as flat Markdown files. Use `skills/` for new plugins |
+| `agents/` | Custom agent definitions |
+| `hooks/` | Event handlers in `hooks.json` |
+| `.mcp.json` | MCP server configurations |
+| `.lsp.json` | LSP server configurations for code intelligence |
+| `monitors/` | Background monitor configurations in `monitors.json` |
+| `bin/` | Executables added to the Bash tool's `PATH` while the plugin is enabled |
+| `settings.json` | Default settings applied when the plugin is enabled |
+
+<Callout type="warning">The documented common mistake: do not put `commands/`, `agents/`, `skills/`, or `hooks/` inside `.claude-plugin/`. Only `plugin.json` goes in there. Everything else is at the plugin root.</Callout>
+
+## Build and Test One
+
+```bash
+mkdir -p my-first-plugin/.claude-plugin
+mkdir -p my-first-plugin/skills/hello
+```
+
+Write the manifest above to `my-first-plugin/.claude-plugin/plugin.json`, then `my-first-plugin/skills/hello/SKILL.md`:
+
+```markdown
+---
+description: Greet the user with a friendly message
+disable-model-invocation: true
+---
+
+Greet the user warmly and ask how you can help them today.
+```
+
+Load it without installing anything:
+
+```bash
+claude --plugin-dir ./my-first-plugin
+```
+
+Then run `/my-first-plugin:hello`.
+
+Plugin skills are **always namespaced**, which is the point — namespacing prevents conflicts when multiple plugins ship a skill with the same name. It is also the tradeoff: you give up `/hello` to get shareability.
+
+As you edit, run `/reload-plugins` to pick up changes without restarting. You can load several at once by repeating the flag:
+
+```bash
+claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
+```
+
+## Installing Plugins Other People Wrote
+
+A **marketplace** is a catalog of plugins. Using one is two steps: add the marketplace (registers the catalog — installs nothing), then install individual plugins from it.
+
+The official Anthropic marketplace (`claude-plugins-official`) is automatically available when you start Claude Code. Run `/plugin` to open the manager — it has **Discover**, **Installed**, **Marketplaces**, and **Errors** tabs.
+
+```shell
+/plugin install github@claude-plugins-official
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin list
+/plugin disable plugin-name@marketplace-name
+/plugin uninstall plugin-name@marketplace-name
+/reload-plugins
+```
+
+Installation has three scopes: **user** (you, all projects — the default), **project** (all collaborators on this repo, written to `.claude/settings.json`), and **local** (you, this repo only).
+
+For a team, `extraKnownMarketplaces` in `.claude/settings.json` points everyone at an internal catalog:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "my-team-tools": {
+      "source": {
+        "source": "github",
+        "repo": "your-org/claude-plugins"
+      }
+    }
+  }
+}
+```
+
+<Callout type="warning">Plugins and marketplaces are highly trusted components that can execute arbitrary code on your machine with your user privileges. Only install from sources you trust. Anthropic does not control what MCP servers, files, or other software are included in third-party plugins and cannot verify they work as intended. The `/plugin` detail view shows a **Will install** list of exactly what a plugin adds — read it.</Callout>
+
+## Code Intelligence Plugins
+
+One category worth calling out specifically, because it is the plugin most people benefit from without writing anything.
+
+**Code intelligence plugins enable Claude Code's built-in LSP tool** — the same Language Server Protocol technology that powers VS Code's code intelligence. Official ones exist for TypeScript (`typescript-lsp`), Python (`pyright-lsp`), Rust (`rust-analyzer-lsp`), Go (`gopls-lsp`), and others. Each requires the corresponding language server binary installed on your system.
+
+What Claude gains:
+
+- **Automatic diagnostics** — after every edit Claude makes, the language server reports errors and warnings back automatically. Claude sees type errors and missing imports without running a compiler. If it introduces an error, it notices and fixes it in the same turn.
+- **Code navigation** — jump to definitions, find references, hover types, trace call hierarchies. More precise than grep-based search, though availability varies by language and environment.
+
+The honest caveat, straight from the docs: language servers like `rust-analyzer` and `pyright` can consume significant memory on large projects. If that bites, disable the plugin and rely on Claude's built-in search tools.
+
+## The Decision Guide
+
+Here is the section to come back to. You have a problem. Which mechanism?
+
+| Mechanism | Use it when | Do not use it when |
+|---|---|---|
+| **`CLAUDE.md`** | Short, always-relevant facts. "We use pnpm." Always in context, so every line costs. | It has grown into a procedure. It is only sometimes relevant. You need a guarantee. |
+| **Skill** | A repeated procedure or checklist. Long reference material — the body loads only when used. | You have done it once. It is a one-line fact. It must happen every time. |
+| **Hook** | Mechanical certainty. "The formatter runs after every edit," no exceptions. Deterministic shell. | The task needs judgment. A suggestion is genuinely fine. |
+| **MCP** | Reaching a system outside your filesystem that you hit constantly. | Claude can already read it. A shell command would do. You have not vetted the server. |
+| **Subagent** | Work that generates output you only need conclusions from. Enforcing tool constraints structurally. | The task is small. You need the details in main context anyway. |
+| **Plugin** | Distributing any of the above to a team or community, with versioning. | It is just for you, in one project. You are still figuring out what works. |
+
+Three heuristics that resolve most cases:
+
+**Suggestion or guarantee?** If Claude forgetting means something bad happens, it is a hook. Everything else on this list persuades; hooks enforce.
+
+**Always relevant or sometimes?** Always → `CLAUDE.md`. Sometimes → skill. This is a context-budget question, and it is the one people get wrong most often, usually by letting `CLAUDE.md` sprawl.
+
+**Just me or everyone?** Just you → standalone `.claude/`. Everyone, versioned → plugin. Note that this question is *orthogonal* to the others — a plugin is the wrapper, not the thing. You still have to decide whether the thing inside it is a skill, a hook, or an agent.
+
+<Callout type="tip">Most extension problems are solved by `CLAUDE.md`, one skill, or one hook. If your answer involves four mechanisms, you have probably designed a system for a problem that wanted a file.</Callout>
+
+## When NOT to Build a Plugin
+
+- **You are the only user.** Standalone `.claude/` gives you `/hello` instead of `/my-tools:hello`, with no manifest to maintain.
+- **It is not stable yet.** Packaging locks in structure. Iterate standalone first.
+- **You are pre-optimizing for sharing that will not happen.** Build the plugin when a second person asks for it.
+
+<Callout type="info">Plugins have a large and fast-moving surface area — marketplaces, dependencies, monitors, LSP config. Everything here is drawn from the official docs as written, but Claude Code ships frequently. Check [code.claude.com/docs/en/plugins](https://code.claude.com/docs/en/plugins) and [/en/discover-plugins](https://code.claude.com/docs/en/discover-plugins) for current specifics, and [/en/plugins-reference](https://code.claude.com/docs/en/plugins-reference) for the full schema.</Callout>
+
+<KeyPoint>A plugin is a package, not a capability — it bundles skills, agents, hooks, and MCP servers for distribution and versioning. Choose the mechanism by asking three questions: suggestion or guarantee, always relevant or sometimes, just me or everyone.</KeyPoint>

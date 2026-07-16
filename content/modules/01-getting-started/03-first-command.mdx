@@ -1,145 +1,157 @@
 ---
-title: "Your First Claude Code Command"
-description: "Run your first prompt, understand the output, and learn the interactive session flow."
+title: "Your First Claude Code Session"
+description: "Start a session, ask your first questions, and handle your first approval prompt."
 order: 3
-duration: "10 min"
-videoUrl: "https://www.youtube.com/watch?v=eMZmDH3T2bY"
+duration: "9 min"
 coverImage: "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=1200&auto=format&fit=crop&q=80"
 quiz:
-  - question: "What does Claude Code do when you type a message in the interactive session?"
+  - question: "You start `claude` in an unfamiliar repo and ask 'what does this project do?' — why is this a better opening move than immediately asking for a code change?"
     options:
-      - "Sends your message to Claude, who responds in the terminal"
-      - "Opens a browser window to chat.anthropic.com"
-      - "Only works if you have files already open"
-      - "Requires you to specify a file first"
-    answer: 0
-  - question: "When Claude Code proposes a file edit, what should you do before accepting?"
-    options:
-      - "Accept immediately — Claude is always correct"
-      - "Read the diff carefully, then press y to accept or n to reject"
-      - "Copy the code to a separate file first"
-      - "Close the session and restart"
-    answer: 1
-  - question: "Which command lets you give Claude Code context about a specific file?"
-    options:
-      - "/file filename.ts"
-      - "@filename.ts"
-      - "read filename.ts"
-      - "context filename.ts"
-    answer: 1
-  - question: "What keyboard shortcut exits the Claude Code interactive session?"
-    options:
-      - "Ctrl+Q"
-      - "Escape"
-      - "Ctrl+C or type /exit"
-      - "Alt+F4"
+      - "It is required; Claude Code refuses edits until you ask a question first"
+      - "It costs nothing, unlike edit requests"
+      - "It exercises the read path and shows you whether Claude has understood the project before you let it change anything"
+      - "It permanently caches the project so later sessions are faster"
     answer: 2
+  - question: "Claude proposes an edit and offers 'Yes, don't ask again' among the options. When is that the wrong choice?"
+    options:
+      - "Always — the option exists only for automated environments"
+      - "When you haven't yet read enough of Claude's output to know whether its approach is right for this codebase"
+      - "Never — it is the recommended default for all sessions"
+      - "Only when working in a Git repository"
+    answer: 1
+  - question: "What does typing `@` do in a Claude Code session?"
+    options:
+      - "Mentions a teammate in a shared session"
+      - "Triggers file path autocomplete so you can point Claude at a specific file"
+      - "Switches to shell mode"
+      - "Marks the following text as a comment Claude should ignore"
+    answer: 1
 ---
 
-## Starting Your First Session
+## Start a Session
 
-Navigate to a project — any project, even an empty folder works:
+Open a terminal in a project directory — any project — and run:
 
 ```bash
-cd ~/my-project
+cd /path/to/your/project
 claude
 ```
 
-You'll see the Claude Code interface load. It shows your project path and a prompt. Type anything:
+You'll see the Claude Code prompt, with the version, current model, and working directory shown above it. Type `/help` for available commands, or `/resume` to pick up a previous conversation.
 
-```
-> What files are in this project?
-```
+That's it. No project configuration, no indexing step, no setup wizard. Claude Code reads your project files as needed; you don't have to manually add context.
 
-Claude Code will read your directory and respond with a breakdown of what it sees.
+## Ask Before You Edit
 
-<Callout type="info">Claude Code does not just look at your current directory — it reads config files like `package.json`, `tsconfig.json`, and any `CLAUDE.md` file to build an immediate picture of your tech stack and project conventions before you type your first prompt.</Callout>
+Resist the urge to make it write code immediately. Spend your first few prompts reading.
 
-## Your First Real Prompt
-
-Let's do something useful. Ask Claude Code to create a simple utility:
-
-```
-> Create a JavaScript function called formatDate that takes a Date object 
-  and returns a string in the format "Month DD, YYYY"
+```text
+what does this project do?
 ```
 
-Watch what happens:
-
-1. Claude thinks through the problem
-2. Proposes creating or editing a file
-3. Shows you the **diff** — what it will add/change
-4. Waits for your approval
-
-You'll see something like:
-
-```
-I'll create a new file `utils/format-date.js` with this function.
-
-  + export function formatDate(date) {
-  +   return date.toLocaleDateString('en-US', {
-  +     year: 'numeric',
-  +     month: 'long',
-  +     day: '2-digit'
-  +   });
-  + }
-
-Accept this change? (y/n)
+```text
+what technologies does this project use?
 ```
 
-Press **y** to accept. The file is written to disk.
-
-## The Edit-Review-Accept Loop
-
-This is the core Claude Code workflow:
-
-1. **You prompt** — describe what you want
-2. **Claude proposes** — shows diffs of proposed changes
-3. **You review** — read the code, ask follow-up questions
-4. **You decide** — accept with `y`, reject with `n`, or ask for changes
-
-Never just smash `y` without reading. The review step is where you stay in control.
-
-<Callout type="tip">If you are unsure about a proposed change, you do not have to accept or reject immediately. Just type a follow-up question like "Why did you choose this approach?" before deciding — Claude will explain, and you will learn something every time.</Callout>
-
-## Referencing Specific Files
-
-Use `@` to point Claude at a specific file:
-
-```
-> Look at @src/components/Button.tsx and add a loading state prop
+```text
+where is the main entry point?
 ```
 
-Claude reads that file, understands the existing code, and makes targeted edits that fit the existing style.
-
-## Asking Questions Without Making Changes
-
-Claude Code doesn't always have to write code. You can ask questions:
-
-```
-> Explain what the middleware.ts file does
-> Why is this function returning undefined?
-> What's the best way to handle this error?
+```text
+explain the folder structure
 ```
 
-It'll answer in plain English without touching your files.
+This isn't ceremony. You are checking a hypothesis: **does this tool actually understand my codebase, or is it about to confidently pattern-match its way into a mess?** You already know what your project does. Ask anyway, and read the answer critically. If the summary is subtly wrong — wrong framework, wrong architecture, confidently describing a directory that does something else — you have learned something important before any file was touched.
+
+You can also ask it about itself:
+
+```text
+what can Claude Code do?
+```
+
+```text
+how do I create custom skills in Claude Code?
+```
+
+<Callout type="info">Claude Code doesn't load your whole repo into memory up front — it reads files as it needs them, using search and file reads like you would. That's why "what does this project do?" in a large monorepo takes a moment and produces a sketch rather than an exhaustive map. It's exploring, not indexing.</Callout>
+
+## Pointing at Specific Files
+
+Type `@` in the prompt to trigger file path autocomplete. This is how you aim.
+
+```text
+explain what @src/middleware.ts does
+```
+
+```text
+compare @components/Button.tsx and @components/IconButton.tsx
+```
+
+Letting Claude find files itself works fine, and for exploratory questions it's often better. But when you already know where the relevant code lives, `@` skips the search and gets straight to the point — cheaper, faster, and less likely to drag in files you didn't want.
+
+## Your First Code Change
+
+Now ask for something small and real:
+
+```text
+add a hello world function to the main file
+```
+
+Claude Code will:
+
+1. Find the appropriate file
+2. Show you the proposed changes
+3. Ask for your approval
+4. Make the edit
+
+That third step is the entire product. Claude Code always asks for permission before modifying files.
+
+## The Approval Prompt
+
+When Claude wants to edit a file, run a shell command, or make a network request, it pauses and asks you to approve. You'll get a choice: approve this action, decline it, or — for many actions — approve and stop being asked again.
+
+The last option is the one to think about. "Yes, don't ask again" is a real time-saver once you know what you're doing and you've decided a particular action is safe in this repo. It is a bad idea on your first pass through unfamiliar work, because you're pre-approving a category of action based on a single example of it.
+
+The honest framing: **each prompt is a place where you can still cheaply say no.** Once you start waving actions through, the cost of catching a bad change moves from "read three lines" to "read a diff and a git history." That's not an argument for maximum friction forever — it's an argument for spending the friction where it buys you something.
+
+<Callout type="tip">If a proposed change looks off but you're not sure why, you don't have to decide immediately. Decline it and ask "why did you take that approach?" Claude will explain its reasoning, and you'll either learn something about the codebase or catch a bad assumption. Both are worth more than the thirty seconds.</Callout>
+
+## Reviewing the Diff
+
+Read the changed lines. Not the summary — the lines.
+
+The failure mode with agentic coding tools is not that they write nonsense; it's that they write plausible code that's subtly wrong for your codebase. Uses a pattern you migrated away from. Duplicates a helper that already exists two directories over. Handles the happy path and quietly drops an error case. None of that reads as wrong in a prose summary. All of it is obvious in a diff.
+
+<Callout type="warning">Slow down on any change touching authentication, payment logic, permissions, or database queries. These are the areas where a subtly wrong edit is both most likely and most expensive — and they're exactly the areas where a confident summary is least informative.</Callout>
 
 ## Ending a Session
 
-When you're done:
-- Type `/exit` and press Enter
-- Or press `Ctrl+C`
+- Type `/exit`, or press `Ctrl+D`
+- `Ctrl+C` interrupts a running operation. If nothing is running, the first press clears your input and a second press exits
+- `Esc` interrupts Claude mid-turn so you can redirect — the work done so far is kept
 
-Your files stay exactly as they were (with any accepted changes written). Sessions don't auto-save a transcript — your code changes are your record.
+That last one is more useful than it sounds. When you see Claude heading somewhere wrong three tool calls in, you don't have to sit through it. Hit `Esc` and steer.
 
-## Quick Tips for Your First Week
+## Prompts That Work
 
-- **Be specific.** "Fix the bug" is weak. "The login form submits but shows a 404 — check the API route" is strong.
-- **Review everything.** Claude is very good but not infallible. Your job is to stay the architect.
-- **Ask follow-ups.** If the first response isn't right, just say "That's not quite right — try X instead."
+Be specific. The docs' own example is a good one:
 
-<Callout type="warning">Before accepting any diff that touches authentication, payment logic, or database queries, slow down and read every changed line — these are the areas where AI-generated code is most likely to have subtle security issues or miss edge cases.</Callout>
+> Instead of: "fix the bug"
+>
+> Try: "fix the login bug where users see a blank screen after entering wrong credentials"
 
-<KeyPoint>The edit-review-accept loop is your core Claude Code workflow — Claude proposes, you read the diff carefully, then you decide; this review step is what keeps you the architect and prevents bugs from slipping into your codebase.</KeyPoint>
+Break big work into steps rather than one enormous request:
 
-In the next lesson you'll learn to navigate and use Claude Code's CLI features more efficiently.
+```text
+1. create a new database table for user profiles
+2. create an API endpoint to get and update user profiles
+3. build a webpage that allows users to see and edit their information
+```
+
+And let Claude explore before it changes anything — `analyze the database schema` before `add a migration` produces meaningfully better results than the reverse.
+
+<KeyPoint>Read before you write: ask questions until you're satisfied Claude actually understands the project, then make one small change and read the diff line by line. The approval prompt is the cheapest place in the whole workflow to catch a bad idea — spend your attention there.</KeyPoint>
+
+The session behavior and shortcuts described here come from the official [quickstart](https://code.claude.com/docs/en/quickstart) and [interactive mode](https://code.claude.com/docs/en/interactive-mode) docs as verified for this course. Claude Code ships weekly; when something looks different on your machine, check the docs.
+
+Next: the commands and flags worth committing to memory.

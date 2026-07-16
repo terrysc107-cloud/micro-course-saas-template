@@ -1,0 +1,135 @@
+---
+title: "Shipping a Small Product Solo"
+description: "What it actually takes to put a small product into the world alone — and why the code is rarely the hard part."
+order: 2
+duration: "14 min"
+coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop&q=80"
+quiz:
+  - question: "For a solo developer shipping a small product, which parts are usually the hardest?"
+    options:
+      - "Writing the code and choosing a framework"
+      - "Distribution, support, and long-term maintenance"
+      - "Setting up the database schema"
+      - "Deploying to production"
+    answer: 1
+  - question: "Why does building faster not necessarily mean succeeding faster?"
+    options:
+      - "Faster code is always lower quality"
+      - "Building was rarely the constraint — finding people who want the product and will pay for it is a separate problem that tooling does not solve"
+      - "Users distrust software built quickly"
+      - "It does — building faster is the whole game"
+    answer: 1
+  - question: "What is the value of validating an idea before building it?"
+    options:
+      - "It guarantees the product will sell"
+      - "It is cheap relative to building, and an early signal is worth more than a late opinion — though talking to people is evidence, not proof"
+      - "It replaces the need to build an MVP"
+      - "None — you should always just build and see"
+    answer: 1
+  - question: "What ongoing obligation do you take on the moment you charge someone money?"
+    options:
+      - "Nothing beyond delivering the initial product"
+      - "Support, uptime, security updates, dependency upgrades, and billing correctness — indefinitely, until you shut it down"
+      - "Only bug fixes for the first 30 days"
+      - "Only what is written in your terms of service"
+    answer: 1
+---
+
+## Read This First
+
+You can build a working, deployed, payment-collecting web product by yourself in a few weeks. That part is real, and it is genuinely more accessible than it used to be.
+
+Whether anyone buys it is a completely separate question, governed by completely different skills, and nothing in this course — or in any tool — moves that needle for you. Most small products do not find customers. That is not a failure of the builder's tooling or effort. It is the base rate.
+
+This lesson is about doing it anyway, with clear eyes about which parts are hard.
+
+<KeyPoint>Shipping is not the hard part, and it was not the hard part before either. Distribution, support, and maintenance are the hard parts. A faster build gets you to the real difficulty sooner — it does not remove it.</KeyPoint>
+
+## The Part That Is Actually Hard
+
+New builders assume the ranking of difficulty is: code, then design, then everything else. The real ranking, for a small solo product, is closer to:
+
+**1. Distribution.** Finding people who have the problem, reaching them, and convincing them to try a thing made by someone they have never heard of. This is the wall. It is a skill — writing, community presence, SEO, sales, paid acquisition — and it is largely orthogonal to being a good developer. If you have no channel to an audience, that is your actual project, not the app.
+
+**2. Support.** The moment someone pays, they can email you. They will email you about things that are not bugs. They will email you on a Sunday. A product with twenty customers generates real, non-optional work that arrives on someone else's schedule.
+
+**3. Maintenance.** Dependencies drift. Your payment provider changes an API. A security advisory lands on a package you have never heard of. The platform deprecates something. This continues for as long as the product exists, whether or not it is making money, and it does not respect your interest level.
+
+**4. Everything else, including the code.**
+
+An agentic tool helps with #4. It helps a little with #2 and #3 — drafting support replies, doing dependency upgrades, triaging errors. It does essentially nothing for #1.
+
+<Callout type="warning">If you have never sold anything to anyone, the risk is not that you will build the wrong thing. It is that you will build the right thing, launch it into silence, and conclude that you are bad at building. Be honest about which skill you are actually missing before you spend three weeks exercising the one you already have.</Callout>
+
+## Choosing Something Small
+
+Constraints that make a solo product tractable:
+
+- **Narrow** — a specific problem for a specific group. "Invoice reminders for freelance designers" gives you something to search for and someone to talk to. "Invoicing" does not.
+- **A problem people already spend on** — existing tools in the space are a good sign, not a bad one. They prove people will pay. Creating demand from nothing is a much harder project than taking a slice of demand that exists.
+- **Reachable customers** — can you name the forum, subreddit, Slack, conference, or mailing list where these people already are? If you cannot, you have no distribution plan, only a hope.
+- **A problem you understand** — domain knowledge you already have is a genuine and durable edge. It is one of the few things that is hard for anyone else to copy.
+
+## Validation: Cheap, Useful, Not Proof
+
+Talk to people before you build. Five conversations cost you an afternoon; building costs you weeks. That asymmetry is the whole argument.
+
+But be precise about what validation buys you. People are agreeable in conversation and stingy with their credit cards. "That sounds useful, I'd definitely try that" is worth almost nothing. Signals worth something, in ascending order: they describe the problem unprompted; they tell you in detail what they currently do instead; they are already paying for a bad solution; they pre-pay you.
+
+Validation reduces the odds of building something nobody wants. It does not raise the odds of building something people buy to anywhere near certain.
+
+<Callout type="tip">Use Claude to draft your outreach messages and structure your interview questions — but write the follow-ups yourself, live. The value in a validation call is in the unscripted "wait, why do you do it that way?" No agent gets you that.</Callout>
+
+## Building the First Version
+
+The principle is unchanged from before any of this tooling existed: ship the smallest thing that solves the problem end to end for one person, and charge for it.
+
+Pick a stack you already know. Familiarity matters more than optimality — you have to maintain this alone, at speed, possibly at 11pm when a customer is blocked. This course uses Next.js, Supabase, Stripe, and Vercel throughout, and those are a reasonable default, but the version of this advice that matters is *the stack you can debug under pressure*.
+
+**Establish the ground rules first.** Before feature work, put a CLAUDE.md in the repo covering your stack, your patterns, and your constraints. You are going to be moving fast and reviewing a lot of generated code — consistent conventions are what make that review tractable.
+
+```
+> I am building a tool that lets freelancers create branded PDF invoices
+  and send payment reminders.
+
+  First milestone: a user can create an invoice with line items,
+  see a preview, and download it as a PDF.
+
+  Start with the database schema — invoices, line_items, clients.
+  Follow the patterns in @CLAUDE.md. Ask me about anything ambiguous
+  before you write it.
+```
+
+Then payments, then a landing page. Each of these is a session, or several.
+
+<Callout type="info">Claude can draft your landing copy, your FAQ, and your launch emails as well as your code. Treat all of it as a first draft. Marketing copy written by an agent that has never spoken to your customers reads exactly like marketing copy written by someone who has never spoken to their customers — which is why the validation conversations pay off twice.</Callout>
+
+## The Review Burden Scales With Your Speed
+
+A specific hazard of building alone at speed: nobody else is reading this code.
+
+There is no colleague to notice that the endpoint trusts a client-supplied ID, no reviewer to catch that the webhook has no signature verification. The generated code is plausible, it works in the happy path, and you are the only line of defense — while moving faster than you have ever moved.
+
+Be deliberate about it. The security habits from Module 7 are not optional here; they are the entire quality system. Payment and auth code gets read line by line, every time, no exceptions.
+
+## Pricing
+
+Pricing depends on your market, your buyer, and your product. Anyone quoting you a specific number without knowing those things is guessing.
+
+The durable principles are few. A product bought by a business tolerates a higher price than one bought by an individual out of pocket — you are competing with the cost of their time, not their discretionary spending. Raising prices later is easier than lowering them, since lowering suggests the original number was wrong. And underpricing does not primarily cost you revenue; it costs you the customers who read a low price as a signal that the thing is unserious or will be abandoned.
+
+Beyond that: pick a number, ask for money, and let the market correct you. That feedback is the only pricing research that counts.
+
+## What Happens After Launch
+
+Plan for the likeliest outcome, which is quiet. A few signups, no conversions, no feedback. This is not a signal that you built badly. It is a signal that nobody knows the thing exists — the default state of everything on the internet, and the problem that distribution work exists to solve.
+
+The work after launch is distribution work: writing, showing up where your users are, talking to the people who did sign up, finding out why the ones who left, left. This phase has no defined end, and it is the part most solo builders quit during.
+
+And if it does work, you have not won a prize — you have acquired an obligation. Customers who depend on your thing. Uptime you are responsible for. A support inbox. Decide up front whether you want that, because success is what commits you to it.
+
+## Summary
+
+The build is the accessible part, and always was. Choose something narrow, validate cheaply while remembering that validation is evidence and not proof, ship a small version, charge for it, and expect the real work to start at launch rather than end there. What you get out of this depends on your market, your channel, and how long you are willing to keep going — not on how fast you can write the code.
+
+<KeyPoint>Building a small product solo is realistic; selling one is a separate skill with a low base rate of success. Go in knowing that distribution, support, and maintenance are the actual job, and that the tooling only helps with the part that was never the constraint.</KeyPoint>

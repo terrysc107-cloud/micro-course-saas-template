@@ -1,0 +1,184 @@
+---
+title: "Data and Schema"
+description: "Model the data and write the migration — the one place in this build where mistakes are genuinely hard to reverse."
+order: 3
+duration: "14 min"
+quiz:
+  - question: "Why does the schema step deserve more of your attention than the UI step?"
+    options:
+      - "Schemas are more technically difficult than interfaces"
+      - "Because a UI mistake is a revert, while a schema mistake that has shipped and collected data is a migration with a correctness risk"
+      - "Because Claude is less reliable at SQL than at React"
+      - "Because migrations cannot be tested"
+    answer: 1
+  - question: "Claude proposes storing lead status as a free-text string column. Why push back?"
+    options:
+      - "Free text uses more storage than an enum"
+      - "Because nothing then prevents 'Waiting', 'waiting', and 'WAITING' from all existing, and the Overdue query silently misses rows"
+      - "Because strings cannot be indexed"
+      - "Because Next.js requires enums for union types"
+    answer: 1
+  - question: "You wrote a migration that changes a column type on a table that already has production data. What is the actual risk?"
+    options:
+      - "The migration will fail loudly and you will fix it"
+      - "It may succeed while silently mangling or dropping existing rows — a failure you find later, from users, with no clean undo"
+      - "Migrations always run inside a transaction, so there is no risk"
+      - "Claude will refuse to write a destructive migration"
+    answer: 1
+---
+
+## Slow Down Here
+
+Everything else in this build is reversible.
+
+Bad component? Delete it. Bad route? Delete it. Bad styling? Nobody died. You can `git reset --hard` your way out of every mistake in lesson 4 and lose an hour.
+
+Schema is different, and it's different for a reason that has nothing to do with difficulty. **Code is state you control. Data is state your users created.** Once a schema has shipped and collected rows, changing it isn't an edit — it's a migration, against data you can't regenerate, with a correctness risk and a blast radius. `git revert` on the migration file doesn't put the dropped column back.
+
+So this is the lesson where you go slower on purpose. Not because the SQL is hard. Because this is the only place in the build where being wrong is expensive.
+
+<Callout type="warning">Agents are good at writing migrations and have no concept of what your data is worth. A migration that drops and recreates a column is the tidy solution to a type change, and it is also, in production, a data loss event. The model isn't being reckless — it's optimizing for clean SQL. You're the one who knows there are rows in there.</Callout>
+
+## Model the Data First
+
+Before any migration, settle the shape. In plan mode, with the brief in context:
+
+```
+> Plan mode. We're settling the data model before any migration runs.
+
+  For the Lead entity, give me a table with: field name, type,
+  nullable?, default, and the reason it exists — mapped to a specific
+  done-criterion from the brief.
+
+  Then answer these directly:
+  1. Every field that can be null, and what null MEANS for it as
+     distinct from empty.
+  2. Every field with a constrained set of values, and how the
+     constraint is enforced at the storage layer — not just in
+     TypeScript.
+  3. What happens on delete: hard delete, soft delete, or nothing?
+  4. Which fields the Overdue query filters on, and whether they need
+     an index.
+  5. Anything in this model that gets painful if the brief's non-goals
+     become goals in six months.
+```
+
+Question 1 is the one that repays reading carefully. `note` is nullable — fine, no note. But if `lastActivityAt` is nullable, what does null mean? Never contacted? Or data from before the column existed? Those are different facts, and if they share a representation, your Overdue query has to guess. Nullable columns are where meaning goes to hide.
+
+Question 5 is the honest version of future-proofing. You are not going to build multi-user — it's a non-goal and it stays one. But knowing that adding a `userId` later is a nullable column plus a backfill, versus a restructure, is worth thirty seconds now. Know the cost; don't pay it.
+
+## The Status Field
+
+Watch this one specifically, because it's where the generic answer is wrong.
+
+Claude will often propose `status: string`. In TypeScript, backed by a union type, that reads fine:
+
+```ts
+type LeadStatus = "new" | "contacted" | "waiting" | "closed";
+```
+
+The type checker enforces that at compile time. **Nothing enforces it in the database.** A string column accepts `"Waiting"`, `"waiting "`, `"WAITING"`, `"pending"`, and `""`. Every one of those is invisible to your type system and invisible to your Overdue query, which filters on `status IN ('new', 'waiting')` and quietly returns fewer rows than it should. Not an error. Not a crash. Just a lead that silently stops being overdue and never gets called.
+
+The fix depends on your store — a check constraint, a native enum, a foreign key to a status table. What matters is that you asked the question:
+
+```
+> The status field: what stops a row with status "Waiting" (capital W)
+  from existing in the database? Answer for the storage layer
+  specifically. TypeScript's union type is compile-time only and does
+  not constrain what a migration, a manual query, or a seed script can
+  insert.
+```
+
+The general principle, and it generalizes past this build: **a constraint that only exists in application code is a constraint that only exists when your application is the only thing writing.** It never is. There's a seed script, a fix-up query, a future you at 11pm.
+
+<Callout type="tip">Every column where the valid values are a known finite list is a column where you should ask what enforces the list. If the answer is "our code," the answer is "nothing."</Callout>
+
+## The Overdue Rule Is a Data Decision
+
+Lesson 1 surfaced the ambiguity: overdue since *what*?
+
+Settle it now, in writing, because it determines whether `lastActivityAt` needs to exist at all:
+
+- **Since `createdAt`** — no second timestamp needed. Also wrong: a lead you emailed yesterday goes overdue on day 4 regardless, and shouts at you about work you already did.
+- **Since `lastActivityAt`** — a real field, written on create and updated on every status change. Correct behavior, one more field to keep honest.
+
+Take `lastActivityAt`. It's the version that matches what the user actually needs. But notice what you just committed to: **every write path that changes status must update that timestamp.** Miss one — a bulk update, an admin fix, a seed script — and leads silently go overdue while looking fine. That's an invariant, and invariants that live in scattered write paths are invariants that get broken.
+
+```
+> lastActivityAt must update on every status change. Where does that
+  get enforced? Give me the options — application code at each call
+  site, a single choke-point function, or a database-level trigger —
+  and tell me which one you'd pick for this codebase and why.
+
+  Then tell me what breaks if a write path forgets.
+```
+
+That last line is the useful one. Asking what breaks on failure gets you a description of a silent bug, in advance, in text — instead of in three months when a lead never surfaces and you don't notice, because nothing errors.
+
+## Write the Migration
+
+Now, and only now:
+
+```
+> Write the migration for the model we settled.
+
+  Requirements:
+  - Constraints at the storage layer, not just in TypeScript.
+  - An index on whatever the Overdue query filters.
+  - A down migration that actually reverses it.
+  - Comment every non-obvious constraint with the reason.
+
+  Then show me exactly what this does to existing rows. This table is
+  empty today, so also tell me: what would this migration do if it
+  weren't?
+```
+
+That last question is the one that teaches you something. Today the table is empty and any migration is safe. The point is to build the habit of asking *before* the day it isn't — because on that day, the migration will look exactly as reasonable as this one does.
+
+### Review the migration by hand
+
+Read the SQL. Not the summary of the SQL. The SQL.
+
+- Does the down migration reverse the up migration, or does it just drop the table? A down that drops a table isn't a rollback, it's a different disaster.
+- Are constraints named? Unnamed constraints are painful to drop later, and "later" is always under pressure.
+- Any `DROP` or destructive `ALTER`? On an empty table, harmless. Understand what it would do on a full one.
+- Does the index cover the columns the Overdue query filters on, in an order that helps?
+
+<Callout type="warning">"It ran without errors" is not "it did the right thing." A migration can succeed completely and leave you with a column that accepts garbage, an index that never gets used, or a down migration that destroys data. The exit code tells you the SQL parsed.</Callout>
+
+## Prove It Works
+
+Run the migration. Then verify it from outside your app, in a database client or a shell — because your app is written to only send valid data, so testing constraints through your app tests your app, not your constraints.
+
+```
+> Give me the exact queries to run directly against the database to
+  verify:
+  1. A valid lead inserts.
+  2. A lead with status "Waiting" (capital W) is REJECTED.
+  3. A lead with a status not in the list is REJECTED.
+  4. The Overdue query returns the right rows given seed data
+     spanning the boundary — 2 days, 3 days, 4 days old.
+
+  I'm running these by hand, not through the app.
+```
+
+Case 4 is where you find your off-by-one. "More than 3 days" — is a lead at exactly 72 hours overdue? Your brief says "more than," so no. Does your query say `<` or `<=`? Find out now, with a real row, at the boundary. This exact bug is the one lesson 5's test suite exists to lock down, and you want to have met it in person first.
+
+## Commit Separately
+
+```bash
+git add migrations/ lib/leads/types.ts
+git commit -m "data: lead schema with status constraint and overdue index"
+```
+
+Its own commit, separate from anything else. If the feature work in lesson 4 needs reverting, you want to revert the feature without touching the schema. Commits that mix schema and feature code are commits you can't unwind cleanly — and "can't unwind cleanly" is a thing you discover under exactly the conditions where you needed to.
+
+## Before You Move On
+
+- Every field maps to a done-criterion from the brief
+- Status is constrained at the storage layer, and you watched it reject a bad value
+- The overdue boundary is verified with real rows at 2, 3, and 4 days
+- The down migration reverses the up migration
+- Schema is committed on its own
+
+<KeyPoint>Schema is the one part of this build where being wrong is expensive, because code is state you control and data is state your users made. Constrain values at the storage layer — a rule that only exists in TypeScript is a rule that only holds while your app is the only writer, which it never is — and verify the overdue boundary with real rows before you build anything on top of it.</KeyPoint>

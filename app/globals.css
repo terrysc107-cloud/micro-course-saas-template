@@ -12,6 +12,9 @@
   --color-brand-700: #0369a1;
   --color-brand-800: #075985;
   --color-brand-900: #0c4a6e;
+  /* Referenced by lesson callouts and marketing surfaces; without a token here
+     Tailwind won't emit the brand-950 utilities they use. */
+  --color-brand-950: #082f49;
 }
 
 body {

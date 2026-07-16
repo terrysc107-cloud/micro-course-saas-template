@@ -1,0 +1,142 @@
+---
+title: "Surfaces and CI/CD"
+description: "Claude Code beyond the terminal — IDEs, web, Slack, CI pipelines, and the pipe."
+order: 6
+duration: "13 min"
+quiz:
+  - question: "Why do your CLAUDE.md, settings, and MCP servers work the same in VS Code, Desktop, and the web?"
+    options:
+      - "Each surface ships its own copy of your configuration"
+      - "Every surface connects to the same underlying Claude Code engine"
+      - "Configuration is synced to Anthropic's servers and pushed to each client"
+      - "They do not — each surface must be configured separately"
+    answer: 1
+  - question: "What does `claude setup-token` produce, and what is it for?"
+    options:
+      - "An ANTHROPIC_API_KEY for billing, used in any environment"
+      - "A one-year OAuth token for CLAUDE_CODE_OAUTH_TOKEN, for CI — inference-scoped and requiring a Pro/Max/Team/Enterprise plan"
+      - "A session token that expires in 24 hours, used for Remote Control"
+      - "A signing key for verifying plugin authenticity"
+    answer: 1
+  - question: "You want a one-off answer piped from a shell command, with no interactive session. Which invocation?"
+    options:
+      - "claude -c"
+      - "claude -r"
+      - "claude -p \"query\""
+      - "claude --teleport"
+    answer: 2
+---
+
+## One Engine, Many Doors
+
+The most useful fact in this lesson is structural, not a feature list:
+
+**Every surface connects to the same underlying Claude Code engine.** Your `CLAUDE.md` files, your settings, and your MCP servers work across all of them.
+
+That means the work you did in the last five lessons is not terminal-specific. The skill you wrote, the auto-format hook, the read-only investigator subagent — those come with you when you open VS Code, when you hand a session to the Desktop app, when a teammate `@Claude`s in Slack, when a GitHub Action runs on a PR.
+
+You are not learning a terminal tool that happens to have integrations. You are learning an engine, and the surfaces are doors into it.
+
+<KeyPoint>Configure once, in your repo. Every surface reads the same CLAUDE.md, settings, and MCP servers.</KeyPoint>
+
+## The Surfaces
+
+| Surface | What it is for | Docs |
+|---|---|---|
+| **Terminal CLI** | Full-featured. The reference implementation. | [/en/quickstart](https://code.claude.com/docs/en/quickstart) |
+| **VS Code** | Inline diffs, @-mentions, plan review, history. Also works in Cursor. | [/en/vs-code](https://code.claude.com/docs/en/vs-code) |
+| **JetBrains** | IntelliJ, PyCharm, WebStorm. Requires the CLI installed separately. | [/en/jetbrains](https://code.claude.com/docs/en/jetbrains) |
+| **Desktop app** | macOS/Windows. Visual diffs, parallel sessions, scheduled tasks, cloud sessions. Paid subscription required. | [/en/desktop](https://code.claude.com/docs/en/desktop) |
+| **Web** | claude.ai/code — no local setup, long-running tasks, parallel work. Desktop browsers plus the Claude iOS app. | [/en/claude-code-on-the-web](https://code.claude.com/docs/en/claude-code-on-the-web) |
+| **Slack** | `@Claude` a bug report, get a PR back. | [/en/slack](https://code.claude.com/docs/en/slack) |
+| **Chrome** | Debug live web apps. | [/en/chrome](https://code.claude.com/docs/en/chrome) |
+| **Remote Control** | Continue a local session from your phone or another device. | [/en/remote-control](https://code.claude.com/docs/en/remote-control) |
+| **Channels** | Push events from Telegram, Discord, iMessage, or custom webhooks into a running session. | [/en/channels](https://code.claude.com/docs/en/channels) |
+| **Routines** | Scheduled runs on Anthropic-managed infrastructure — they survive your machine being off. Trigger on API calls or GitHub events. Create from web, Desktop, or `/schedule`. | [/en/routines](https://code.claude.com/docs/en/routines) |
+
+Two of these are more interesting than the list makes them look.
+
+**Routines run on Anthropic-managed infrastructure.** The distinction from a local cron job is that it does not need your laptop to be open. That is the difference between "a script I run" and "a thing that happens."
+
+**Channels invert the direction.** Every other surface is you reaching into a session. Channels are external events reaching *into* a running session — a webhook fires, and the session knows.
+
+## Session Portability
+
+Sessions are not trapped where they started.
+
+```bash
+claude --teleport
+```
+
+Pulls a web or iOS session into your terminal. Requires a claude.ai subscription. You start something on your phone on the train, and finish it at your desk with your full local environment.
+
+```
+/desktop
+```
+
+Hands a terminal session to the Desktop app — useful when a diff has grown past what you want to review in a terminal pager.
+
+<Callout type="tip">The pattern worth internalizing: pick the surface that fits the *moment*, not the project. Terminal for building, Desktop for reviewing a large diff, web for kicking something off from a machine that is not yours. Same session, same config.</Callout>
+
+## CI/CD
+
+Three integrations, each with a different shape:
+
+| Integration | What it does | Docs |
+|---|---|---|
+| **GitHub Actions** | CI automation, PR review, issue triage. | [/en/github-actions](https://code.claude.com/docs/en/github-actions) |
+| **GitLab CI/CD** | CI automation. | [/en/gitlab-ci-cd](https://code.claude.com/docs/en/gitlab-ci-cd) |
+| **GitHub Code Review** | Automatic review on every PR. | [/en/code-review](https://code.claude.com/docs/en/code-review) |
+
+The same engine principle applies here and it is the reason CI is worth doing. Your review checklist skill — the one you wrote in lesson 1, that lives in your repo — is available to the Action that runs on the PR. You do not maintain a separate CI prompt that drifts out of sync with local reality. The repo is the configuration.
+
+## Authenticating in CI
+
+CI has no browser, so there is no interactive login. The answer:
+
+```bash
+claude setup-token
+```
+
+This prints a **one-year OAuth token**. Put it in your CI secrets as `CLAUDE_CODE_OAUTH_TOKEN`.
+
+Three constraints to know before you build a pipeline around it:
+
+- It **requires a Pro, Max, Team, or Enterprise plan.**
+- It is **inference-scoped** — it cannot establish Remote Control sessions.
+- **Bare mode (`--bare`) does not read it.**
+
+<Callout type="warning">A one-year token in CI secrets is a real credential with a long life. Treat it like any other long-lived secret: scope the repository access it sits alongside, know who can read your CI secrets, and have a plan for rotating it that is not "we will remember next July."</Callout>
+
+<Callout type="info">If you have a stale `ANTHROPIC_API_KEY` set in an environment, it takes precedence over your subscription auth and causes confusing failures. In CI, be explicit about which credential you are providing. Locally, `unset ANTHROPIC_API_KEY` and check `/status`.</Callout>
+
+## Headless and Scripting
+
+This is where Claude Code stops being an app and starts being a Unix tool. It is composable and follows the Unix philosophy:
+
+```bash
+tail -200 app.log | claude -p "Slack me if you see any anomalies"
+claude -p "translate new strings into French and raise a PR for review"
+git diff main --name-only | claude -p "review these changed files for security issues"
+```
+
+`claude -p "query"` runs one-off and exits. Read those three lines carefully, because each demonstrates a different pattern:
+
+1. **stdin as context.** `tail` produces the input; Claude reasons over it. Anything that writes to stdout is now a source.
+2. **No pipe at all.** A complete task, expressed as a sentence, run from a script or a cron entry.
+3. **A shell command as the file selector.** `git diff main --name-only` decides *what* gets reviewed; Claude decides *whether it is safe*. Deterministic selection, model judgment. That is the composition that makes this powerful.
+
+The related flags: `claude -c` continues the most recent conversation in the current directory, and `claude -r` resumes a previous conversation.
+
+<Callout type="tip">The third example is the one to steal. `git diff main --name-only | claude -p "..."` is a pre-push security review that costs one line in a git alias — and it is the same command your CI can run, with the same skills and CLAUDE.md behind it.</Callout>
+
+## When NOT to Reach for Another Surface
+
+- **Adding CI before the local workflow is good.** If Claude does not do the review well in your terminal, automating it produces bad reviews on a schedule. Get it right by hand first.
+- **Automating something you have not done manually.** `claude -p` in a cron job that you have never run interactively is a machine confidently doing a thing nobody has checked.
+- **Surface-hopping instead of working.** The terminal is full-featured. Novelty is not a workflow.
+- **Piping without bounding the input.** `cat huge.log | claude -p` will happily consume an enormous amount of context. `tail -200` is in that example for a reason.
+
+<Callout type="info">Surfaces and integrations change faster than anything else in Claude Code — features ship weekly and availability varies by plan. Treat the table above as a map, not a spec, and check [code.claude.com/docs](https://code.claude.com/docs) for what is current before you build on any single one.</Callout>
+
+<KeyPoint>Every surface runs the same engine, so your repo's CLAUDE.md, settings, skills, and hooks follow you from terminal to IDE to Slack to CI. `claude -p` makes that engine pipeable — and `git diff main --name-only | claude -p "review these changed files for security issues"` is the whole idea in one line.</KeyPoint>

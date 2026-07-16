@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "check:content": "node scripts/check-content.mjs",
+    "check": "npm run check:content && npm run build"
   },
   "dependencies": {
     "@stripe/stripe-js": "^9.2.0",

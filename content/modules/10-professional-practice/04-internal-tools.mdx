@@ -1,0 +1,146 @@
+---
+title: "Internal Tools for a Team"
+description: "Building internal software people actually use — where the real difficulty is adoption, ownership, and the long tail."
+order: 4
+duration: "12 min"
+coverImage: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&auto=format&fit=crop&q=80"
+quiz:
+  - question: "Why is an ROI calculation for an internal tool usually weaker evidence than it looks?"
+    options:
+      - "The arithmetic is normally wrong"
+      - "It assumes the saved time converts into other valuable work, that adoption is total, and that the process stays stable — none of which are guaranteed"
+      - "Businesses do not care about ROI"
+      - "It is strong evidence and should be the centerpiece of the pitch"
+    answer: 1
+  - question: "What most often determines whether an internal tool succeeds?"
+    options:
+      - "The quality of the code"
+      - "Whether people actually adopt it — a tool that is worse than the spreadsheet in any way people care about will be quietly abandoned"
+      - "How many features it has"
+      - "The framework it was built with"
+    answer: 1
+  - question: "Why do internal tools need real authorization, not just a hidden URL?"
+    options:
+      - "They do not — internal tools are behind the firewall"
+      - "'Internal' describes who is supposed to use it, not who can; internal tools concentrate sensitive data and are frequently under-secured because they feel private"
+      - "Only for compliance paperwork"
+      - "Because the framework requires it"
+    answer: 1
+  - question: "What should you settle before delivering an internal tool?"
+    options:
+      - "Nothing — delivery is the end of the engagement"
+      - "Who owns it after you leave, who handles support, and what happens when it breaks or needs to change"
+      - "Which color scheme the client prefers"
+      - "Whether to open-source it"
+    answer: 1
+---
+
+## The Real Opportunity, Stated Carefully
+
+Businesses run on manual processes. Someone exports a CSV every Monday, someone re-keys data between two systems, someone chases approvals over email. A modest web app would remove most of that friction, and often nobody has built one because the business has no developer relationship and the problem is not big enough to hire for.
+
+That is a genuine gap, and it is work that suits this toolchain well: bounded scope, clear requirements, familiar patterns, a real user you can talk to.
+
+What follows is the honest version of what that work involves — including the parts that have nothing to do with code, which are the parts that decide whether it works out.
+
+## What These Tools Look Like
+
+- **Admin dashboards** — manage users, orders, inventory, tickets in one place
+- **Employee portals** — time tracking, expenses, PTO, onboarding checklists
+- **Operations dashboards** — a live view of the numbers people currently rebuild by hand
+- **Client portals** — request submission, status, file exchange
+- **Approval workflows** — purchase orders, content sign-off, compliance
+- **Data entry tools** — a form and a database, replacing a shared spreadsheet
+
+The pattern is the same: a process running in spreadsheets and email that would be better as software.
+
+## The ROI Pitch, and Why It Is Weaker Than It Looks
+
+The standard move is arithmetic. Fifty orders a day, five minutes each, times a loaded hourly rate, times a working year — a large number. Your fee is a smaller number. Therefore, obviously, build the tool.
+
+The arithmetic is fine. The inference is shakier than it appears, and you should understand why before you stake your credibility on it:
+
+- **Saved time only counts if it becomes something else.** Twenty minutes a day recovered across five people does not reliably convert into twenty minutes of other valuable work. Often it converts into twenty minutes of something else, or into nothing. The business feels this, even if they cannot articulate it, which is why the slide with the big number sometimes lands flat.
+- **The 80% is doing a lot of work.** "The tool automates 80% of it" is an assumption, and the residual 20% is usually the messy part — the exceptions, the special customers, the entries that need a human to look at them. Exceptions do not shrink proportionally.
+- **Adoption is not free.** The saving is zero until people use it, and people are attached to the spreadsheet in ways they will not tell you about in the scoping call.
+- **You are not the only cost.** Their team's time to learn it, review it, and integrate it into how they already work is real, and it lands on people who did not ask for your project.
+
+None of this means the tool is not worth building. It usually is. It means the ROI number is a way of framing a decision, not a proof — and a client who has been burned by a software project before will know that, and will trust you more for saying it than for presenting a two-week payback as fact.
+
+<Callout type="info">Present the business case as a range with its assumptions visible: "If your team adopts this fully and the exception rate is what you have described, this removes roughly X hours a week. If adoption is partial, it is closer to half that — still worth it, but I would rather you hear that from me now than discover it in month three." Clients have been sold certainty before. Most of them can tell the difference.</Callout>
+
+## Adoption Is the Whole Game
+
+The most common way an internal tool fails is not a bug. It is that the tool ships, works correctly, and people keep using the spreadsheet.
+
+Reasons this happens, all of them predictable and none of them technical:
+
+- The spreadsheet does one thing your tool does not, and that thing matters to the one person who uses it most
+- Your tool is slower for the common case — three clicks where the spreadsheet was one
+- Nobody was told why it exists, so it reads as surveillance rather than help
+- The person who championed it left, and nobody else feels ownership
+- It requires a login they do not have and cannot be bothered to get
+
+So the highest-leverage work is not building. It is watching the person do the task the manual way, in full, without interrupting. You will learn what the process actually is, as opposed to what the manager thinks it is — and those differ, reliably, in ways that determine whether your tool fits.
+
+<Callout type="tip">Ask "what is the most painful thing your team does every week?" and then ask to watch them do it. The answer to the first question gives you a project. The observation gives you the requirements — including the exceptions nobody mentions because to them they are not exceptions, they are just Tuesday.</Callout>
+
+## Building One
+
+The mechanics are familiar. Scope it narrowly, build it role by role, demo each piece.
+
+```
+> Build an admin panel at /admin for our e-commerce app.
+
+  Pages:
+  1. /admin/orders — list orders, filter by status, mark as shipped
+  2. /admin/customers — list customers, view order history, add notes
+  3. /admin/products — list/edit/toggle products active/inactive
+
+  Authorization: every /admin route must verify the authenticated user
+  has role = 'admin' in user_profiles. Enforce this in middleware AND
+  check it again in every data-fetching path — do not rely on the
+  route being hidden.
+
+  Follow the patterns in @CLAUDE.md.
+```
+
+Delivering role by role — employee, then manager, then finance, then admin — lets the client see progress and, more usefully, gives them something concrete to react to. Clients cannot tell you what they want in the abstract. They can tell you what is wrong with a thing in front of them.
+
+## Internal Does Not Mean Safe
+
+Internal tools are a soft target and are consistently under-secured, because "internal" sounds like a security property. It is not. It describes who is supposed to use the tool, not who can.
+
+These tools tend to concentrate exactly the data that hurts to lose: customer records, employee details, financials, everything in one convenient dashboard. Meanwhile the surrounding assumptions are lax — it is behind the VPN, everyone here is trustworthy, nobody knows the URL.
+
+Hold the line from Module 7. Every endpoint verifies both authentication and authorization. Ownership checks on every mutation. No trusting client-supplied IDs. The fact that only twelve people are supposed to use it does not change the checks, and an agent following your instructions to build an "internal" tool will not add rigor you did not ask for.
+
+<Callout type="warning">Ask about the client's regulatory exposure before you build anything that touches personal, health, or payment data. A tool handling employee records or customer PII may carry obligations — retention, access logging, deletion — that are considerably cheaper to design in than to retrofit. Neither you nor an agent will infer these from the requirements; you have to ask.</Callout>
+
+## Pricing and What Determines It
+
+There is no price table here, because a defensible one does not exist. What internal tools are worth varies by market, industry, company size, your track record, and what the client's alternatives are — and any specific numbers would be invented.
+
+What does hold:
+
+**Price against the client's alternative, not your hours.** Their options are a commercial SaaS product with a per-seat fee forever, an agency, an internal hire, or continuing to suffer. Where you sit against those is what sets your ceiling, and it has nothing to do with how long the work takes you.
+
+**Fixed price transfers risk to you.** That is what the client is buying and it is often worth paying for. It also means you own every estimate error, which is why the scoping lesson comes first in this module.
+
+**Maintenance is a real obligation, so price it as one.** A retainer is not free money. It is a commitment to respond when their thing breaks, on their timeline, for as long as the arrangement lasts. Decide what response time you are actually willing to honor before you name a number, because the first time you fail to honor it is the last time they trust you.
+
+**Whether any of this becomes recurring work depends on factors outside your control.** Sometimes a first project leads to a second and a referral. Sometimes the champion leaves, the company reorganizes, and the tool you built runs untouched for three years with no further contact. Both happen. Build the relationship deliberately rather than assuming the work compounds on its own.
+
+## Settle Ownership Before You Leave
+
+The question that separates a delivery from an abandonment: who owns this now?
+
+Get explicit answers before the engagement ends. Who has the credentials? Who is called when it breaks at month end? Is there a retainer, or is this genuinely done? If their team is taking it over, can they actually run it — have they cloned it, run it locally, deployed a change?
+
+An internal tool with no owner degrades quietly. It works until a dependency breaks or a key rotates, and then it stops, and nobody knows why, and the last person who understood it invoiced eighteen months ago. That is a bad outcome for the client and a worse one for your reputation, regardless of how good the code was.
+
+## Summary
+
+Internal tools are real work with real demand, and the build is the easy part. The difficulty is in seeing the actual process rather than the described one, getting people to adopt something that competes with a spreadsheet they like, securing a tool whose "internal" label invites carelessness, and leaving it with an owner. Outcomes depend on your market and your effort — but the failure modes above are predictable, and most of them are avoidable if you name them out loud.
+
+<KeyPoint>The hard parts of internal tools are adoption, honest scoping of the exceptions, real authorization despite the "internal" label, and settled ownership after handover — none of which the code addresses, and all of which decide whether the tool is still in use a year later.</KeyPoint>

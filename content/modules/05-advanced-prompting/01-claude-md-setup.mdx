@@ -3,7 +3,6 @@ title: "CLAUDE.md Setup"
 description: "Create a CLAUDE.md that gives every session perfect project context automatically."
 order: 1
 duration: "10 min"
-videoUrl: "https://www.youtube.com/watch?v=h7QJL2_gEXA"
 coverImage: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "What is CLAUDE.md?"
@@ -13,12 +12,12 @@ quiz:
       - "A configuration file for the Claude API"
       - "A file that replaces your README"
     answer: 1
-  - question: "Where should CLAUDE.md be placed?"
+  - question: "Where does a project CLAUDE.md go?"
     options:
       - "In the src/ folder"
-      - "In a hidden .claude/ directory"
-      - "In the project root, alongside package.json"
       - "In the docs/ folder"
+      - "In the project root as ./CLAUDE.md, or as ./.claude/CLAUDE.md — both are loaded"
+      - "Anywhere, as long as you reference it in your first prompt"
     answer: 2
   - question: "What is the most important section to include in CLAUDE.md?"
     options:
@@ -27,12 +26,12 @@ quiz:
       - "The entire project README"
       - "A list of all your files"
     answer: 1
-  - question: "Can you have CLAUDE.md files in subdirectories?"
+  - question: "Is CLAUDE.md a security boundary?"
     options:
-      - "No — only one CLAUDE.md per project"
-      - "Yes — subdirectory CLAUDE.md files add context specific to that module"
-      - "Only if you rename them module.md"
-      - "Only in the src/ directory"
+      - "Yes — anything you forbid in CLAUDE.md cannot happen"
+      - "No — it is context that shapes what Claude tries to do; what Claude Code allows is enforced by permissions, not by the model"
+      - "Yes, but only for files listed under 'Do Not Touch'"
+      - "Only when combined with a .gitignore entry"
     answer: 1
 ---
 
@@ -40,11 +39,28 @@ quiz:
 
 `CLAUDE.md` is a file you create in your project root that Claude Code reads automatically at the start of every session. It is your persistent project brief — once written, you never have to re-explain your stack, conventions, or constraints.
 
-Without CLAUDE.md, every session starts cold. With it, Claude arrives already knowing your project inside and out.
+Without CLAUDE.md, every session starts cold. With it, Claude arrives already knowing your project.
+
+It can live at `./CLAUDE.md` or `./.claude/CLAUDE.md` — both are loaded. Keep it in version control so your whole team gets the same context.
+
+<Callout type="warning">CLAUDE.md is context, not a security boundary. Writing "never touch the payment code" shapes what Claude *tries* to do — it does not constrain what Claude Code is *allowed* to do. Permissions are enforced by Claude Code itself, not by the model. If something must not be modified, enforce it with a `/permissions` deny rule; a line in a markdown file is a request, not a lock. See the [permissions docs](https://code.claude.com/docs/en/permissions).</Callout>
+
+## CLAUDE.md and Auto Memory
+
+CLAUDE.md is not the only thing carrying knowledge between sessions. Claude Code also builds **auto memory** as it works — saving learnings like build commands and debugging insights across sessions without you writing anything.
+
+The division of labor is worth understanding:
+
+- **CLAUDE.md** — what *you* write. Standards, architecture, conventions, constraints. Deliberate and version-controlled.
+- **Auto memory** — what *Claude* writes. Things it discovers while working, which it judges worth keeping.
+
+They complement each other. Auto memory captures what you would never think to write down; CLAUDE.md captures what Claude would never infer. Both are loaded at the start of a session. See the [memory docs](https://code.claude.com/docs/en/memory) for current behavior — this area changes.
 
 ## Creating Your CLAUDE.md
 
-Here is a complete template for a Next.js + Supabase project:
+To skip the blank page, start from [our CLAUDE.md template](/downloads/claude-md-template.md) and edit it down to your project. It is a starting point built for this course, not an official Anthropic artifact — delete anything that does not apply to you.
+
+Here is a filled-in example for a Next.js + Supabase project:
 
 ```markdown
 # Project Name — Claude Code Context
@@ -131,7 +147,9 @@ All routes in this directory:
 - Use createServiceClient() for any admin database operations
 ```
 
-Now any session working in `src/api/` automatically picks up those conventions.
+Subdirectory files are not loaded at launch — they load on demand, when Claude reads a file in that directory. That is a feature: the API conventions cost you nothing during a session that never touches `src/api/`.
+
+Claude Code also supports path-scoped rules in `.claude/rules/`, which use the same glob format as a skill's `paths` field to load instructions only when Claude works with matching files. If your CLAUDE.md is growing past a couple of hundred lines, that is the mechanism to reach for — long files consume context on every session and, past a point, get followed less reliably.
 
 <Callout type="info">CLAUDE.md is not a set-it-and-forget-it file — update it every time you establish a new pattern, add a significant dependency, or agree on a new team convention. A stale CLAUDE.md is worse than none because it actively gives Claude wrong assumptions about your project.</Callout>
 
@@ -148,6 +166,6 @@ Think of it as living documentation. It costs two minutes to update and saves te
 
 ## Summary
 
-CLAUDE.md is the single highest-leverage thing you can do for long-term Claude Code productivity. Write it once, maintain it as you go, and every session starts perfectly calibrated to your project.
+CLAUDE.md is the highest-leverage file in your project for long-term Claude Code work. Start from [our template](/downloads/claude-md-template.md), keep it short and specific, maintain it as you go, and let auto memory handle what you would not have thought to write down. Just remember what it is: context that guides, not configuration that enforces.
 
-<KeyPoint>CLAUDE.md is the single highest-leverage file you can create — it turns every new session from a cold start into one where Claude already knows your stack, conventions, and constraints, saving minutes of re-explanation on every single session for the life of the project.</KeyPoint>
+<KeyPoint>CLAUDE.md turns every new session from a cold start into one where Claude already knows your stack, conventions, and constraints — but it is context, not a security boundary. It shapes intent; permissions enforce limits.</KeyPoint>

@@ -1,0 +1,111 @@
+---
+title: "MCP"
+description: "Connect Claude Code to external systems with the Model Context Protocol — and know when not to."
+order: 3
+duration: "11 min"
+quiz:
+  - question: "Your organization forces a connector's tools to `ask`. You are running in `bypassPermissions` mode. What happens when Claude calls one of those tools?"
+    options:
+      - "It runs without a prompt, because bypassPermissions skips all prompts"
+      - "It still prompts you, because forced `ask` rules survive bypassPermissions"
+      - "It is silently denied"
+      - "The session exits with an error"
+    answer: 1
+  - question: "What is the single most important security consideration when adding an MCP server?"
+    options:
+      - "MCP servers can slow down your terminal"
+      - "An MCP server is code you are trusting with your session, so it must be vetted"
+      - "MCP servers store your conversation history publicly"
+      - "MCP servers require an ANTHROPIC_API_KEY"
+    answer: 1
+  - question: "You want Claude to work with a config file that lives in your repo. Is MCP the right tool?"
+    options:
+      - "Yes — MCP is the standard way to give Claude access to any file"
+      - "Yes, but only if the file is larger than 500 lines"
+      - "No — Claude can already read files in your project; MCP is for systems outside the filesystem"
+      - "No — MCP cannot read configuration files"
+    answer: 2
+---
+
+## What MCP Actually Is
+
+The Model Context Protocol is an **open standard for connecting AI tools to external data sources**. Design docs in Google Drive. Jira tickets. Slack data. Your company's custom internal tooling that has an API and no public documentation.
+
+The word doing the work in that sentence is **external**. MCP is how Claude Code reaches things that are not sitting on your disk.
+
+That framing gets you most of the way to knowing when to use it.
+
+## When It Is Worth It vs. Just Letting Claude Read Files
+
+The most common MCP mistake is reaching for it to solve a problem that does not exist.
+
+Claude Code already reads your filesystem. It runs shell commands. It can `curl` an API. If the information is in your repo, or reachable by a command you could type yourself, you do not need a protocol — you need to point at it.
+
+**Skip MCP when:**
+
+- The data is a file in your project. Just `@` the file.
+- A one-line shell command gets it. `gh pr view 431` is a perfectly good integration and it took zero setup.
+- You need it once. Setup cost exceeds task cost.
+
+**MCP is worth it when:**
+
+- The system is genuinely external and has no clean CLI — a Drive doc, a Confluence page, an internal service behind an SDK.
+- You hit it constantly. The setup amortizes over hundreds of uses.
+- You want structured, typed access rather than Claude parsing scraped output and getting it subtly wrong.
+- The connection needs auth you do not want to hand-manage in shell commands.
+
+<Callout type="tip">Rough test: if you would write a shell alias for it, write the shell alias. If you would write a client library for it, that is MCP territory.</Callout>
+
+## The Security Framing
+
+This is the part of the lesson that matters most, so it is not buried at the bottom.
+
+**An MCP server is code you are trusting with your session.**
+
+It is not a config file. It is not a plugin in the sandboxed-browser-extension sense. It is a running process that Claude Code talks to, that can be handed your context, and that returns content the model will act on.
+
+Two distinct risks, and people usually only think about the first:
+
+1. **The server does something bad.** It is software you installed. It has the access you gave it.
+2. **The server returns something bad.** Content coming back from an MCP server flows into the model's context. A server that returns attacker-controlled text — an issue tracker where anyone can file a ticket, a support inbox — is a channel for injecting instructions into your session.
+
+So: vet it. Concretely —
+
+- Who wrote it? Is the source available and does anyone else use it?
+- What credentials does it want, and what is the blast radius if they leak?
+- Does it reach systems where the *content* is user-generated and untrusted?
+- Would you run this code on your laptop if it were not connected to Claude? Because you are.
+
+<Callout type="warning">"It is on a list somewhere" is not vetting. Anthropic does not control what third-party MCP servers do and cannot verify they work as intended. The trust decision is yours, and it is a real one.</Callout>
+
+## Organization Controls
+
+If you are in a company, MCP access is probably not entirely up to you — and the rules are more interesting than "allowed or blocked."
+
+**Organizations can force connector tools to `ask`.** The important consequence: those tools **still prompt even in `auto` and `bypassPermissions` modes.** They are **denied in `dontAsk`.**
+
+Read that again if you skimmed it. `bypassPermissions` does not bypass a forced `ask`. This surprises people who assume `bypassPermissions` is a global off-switch — it is not, and this is one of several places where it does not do what its name suggests.
+
+**Connector tools appear as `mcp__claude_ai_<server>__<tool>`.** That naming is not cosmetic. It is what you write permission rules against, and it is how you tell at a glance in a transcript that a tool call went to an external system rather than to your disk.
+
+**MCP tools can be marked `requiresUserInteraction`.** A tool marked this way prompts regardless of mode. It is the mechanism for "this action is consequential enough that a human confirms it, always."
+
+Together these mean an admin can hand you a connector that is genuinely useful in automated workflows while keeping a hard human checkpoint on the operations that matter. That is a better design than all-or-nothing, and it is worth understanding rather than fighting.
+
+## Getting Started
+
+Setup is a short doc rather than a long one, and it changes as the ecosystem moves, so read it at the source: the **[MCP quickstart](https://code.claude.com/docs/en/mcp-quickstart)** walks through connecting your first server. The broader **[MCP reference](https://code.claude.com/docs/en/mcp)** covers configuration in depth.
+
+Start with one server you actually need, for a task you actually do. The failure mode here is connecting six servers on day one, none of which you use, all of which cost context and carry trust surface.
+
+<Callout type="info">Claude Code ships frequently and MCP is evolving quickly as an open standard. Verify configuration details against the official docs rather than a blog post — including this one.</Callout>
+
+## When NOT to Use MCP
+
+To be direct about it:
+
+- **You have not tried without it.** Most "I need MCP for this" turns out to be a file read.
+- **You cannot answer the vetting questions.** If you do not know what the server does, that is the answer.
+- **You are adding it speculatively.** Every connected server adds tools to the pool and surface to your trust boundary. Servers should earn their place.
+
+<KeyPoint>MCP is an open standard for reaching systems outside your filesystem — worth it for external systems you hit constantly, unnecessary for anything Claude can already read. Every server is code you are trusting with your session; vet it accordingly.</KeyPoint>

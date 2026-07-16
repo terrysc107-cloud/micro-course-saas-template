@@ -1,0 +1,171 @@
+---
+title: "Hooks"
+description: "Run deterministic shell commands around Claude Code actions, so the important things happen every time."
+order: 2
+duration: "12 min"
+quiz:
+  - question: "You put 'Always run the formatter after editing a file' in CLAUDE.md. Why might it still not happen?"
+    options:
+      - "CLAUDE.md is only read on the first session in a project"
+      - "CLAUDE.md instructions shape what Claude tries to do; they are not enforced by Claude Code"
+      - "Formatters cannot be run from CLAUDE.md for security reasons"
+      - "CLAUDE.md is ignored whenever a skill is active"
+    answer: 1
+  - question: "What are the three levels of a hook configuration, in order?"
+    options:
+      - "hook handler → event → matcher group"
+      - "matcher group → event → hook handler"
+      - "event → matcher group → hook handler"
+      - "event → hook handler → matcher group"
+    answer: 2
+  - question: "Which settings file holds hooks you want committed and shared with your whole team?"
+    options:
+      - "~/.claude/settings.json"
+      - ".claude/settings.local.json"
+      - ".claude/settings.json"
+      - "~/.claude/.credentials.json"
+    answer: 2
+---
+
+## Suggestion vs. Guarantee
+
+Your `CLAUDE.md` says "always run `prettier` after editing a file." Claude usually does. Usually.
+
+Then one day it does not, because the conversation was long and that line was competing with forty others, and you push unformatted code and CI goes red.
+
+This is not a bug. It is what `CLAUDE.md` is. It is context handed to a model, and a model weighs context. It is an extremely good suggestion. It is not a guarantee.
+
+A hook is a shell command that Claude Code runs at a defined point, every time, regardless of what the model decided. It is not persuasion. It is plumbing.
+
+<KeyPoint>Hooks are deterministic. CLAUDE.md is a suggestion. When the answer to "what if Claude forgets?" is "something bad happens," you want a hook.</KeyPoint>
+
+## Where Hooks Are Configured
+
+Hooks live in settings files, and the file you choose determines the scope:
+
+| Location | Scope |
+|---|---|
+| `~/.claude/settings.json` | You, across all projects |
+| `.claude/settings.json` | This project, shared — commit it, the team gets it |
+| `.claude/settings.local.json` | This project, just you — gitignored |
+| Plugin `hooks/hooks.json` | Ships with a plugin |
+| Skill or agent frontmatter | Scoped to that skill's or agent's lifecycle |
+| Managed policy settings | Set by an administrator |
+
+The distinction that matters day to day: `.claude/settings.json` is the team contract. `.claude/settings.local.json` is your personal setup. Put the auto-formatter in the shared file. Put your noisy desktop notification in the local one.
+
+## The Three-Level Structure
+
+Hook configuration is three levels deep, and it looks over-nested until you understand why. Here it is:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(rm *)",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-rm.sh",
+            "args": []
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Read it outside-in:
+
+1. **Event** — `PreToolUse`. *When* does this fire?
+2. **Matcher group** — `"matcher": "Bash"`. *Which* tool calls does this group care about?
+3. **Hook handler** — the object with `type`, `command`, `args`. *What* actually runs.
+
+The nesting exists because one event can have several matcher groups, and one matcher group can run several handlers. You might want two different things to happen before `Bash` calls and a third before `Edit` calls, all under `PreToolUse`.
+
+Note `${CLAUDE_PROJECT_DIR}` — use it so the path resolves regardless of the directory Claude Code was launched from.
+
+## The Events
+
+There are around thirty hook events. You do not need to know them all. Here is the map, grouped:
+
+- **Session lifecycle** — `SessionStart`, `Setup`, `SessionEnd`
+- **Per-turn** — `UserPromptSubmit`, `UserPromptExpansion`, `Stop`, `StopFailure`
+- **Tool loop** — `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`, `PostToolBatch`
+- **Notifications and display** — `Notification`, `MessageDisplay`
+- **Subagents and tasks** — `SubagentStart`, `SubagentStop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`
+- **File and config** — `FileChanged`, `CwdChanged`, `ConfigChange`, `InstructionsLoaded`, `PreCompact`, `PostCompact`
+- **Worktrees** — `WorktreeCreate`, `WorktreeRemove`
+- **MCP** — `Elicitation`, `ElicitationResult`
+
+In practice, the ones people actually use are:
+
+- **`PreToolUse`** — inspect or block a tool call before it runs. Guardrails.
+- **`PostToolUse`** — react after a tool succeeds. Formatting, linting, tests.
+- **`SessionStart`** — set something up when a session begins.
+- **`UserPromptSubmit`** — inject context or validate every prompt you send.
+- **`Stop`** — do something when Claude finishes its turn.
+- **`PreCompact`** — capture state before context gets compacted away.
+
+Learn those six. Look the rest up when you have a problem that needs them.
+
+## The Best Worked Example: Auto-Format After Every Edit
+
+This is the hook to write first, because the value is immediate and the failure mode of not having it is one you have already lived.
+
+In `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs npm run lint:fix"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+What is happening:
+
+- `PostToolUse` — fire after the tool has run.
+- `"matcher": "Write|Edit"` — only for tool calls that changed a file.
+- The command receives the hook input as **JSON on stdin**. `jq -r '.tool_input.file_path'` pulls out the path of the file that was just touched, and `xargs` hands it to the formatter.
+
+Now formatting is not something Claude remembers to do. It is something that happens. You can delete that line from your `CLAUDE.md` and reclaim the context.
+
+<Callout type="tip">Deleting the CLAUDE.md line is the point, not a side effect. Every instruction you move from CLAUDE.md into a hook is context you get back *and* a guarantee you did not have before. That is a rare trade where both sides win.</Callout>
+
+## Hooks Are Code You Are Running
+
+A hook is a shell command that runs automatically, triggered by a model's activity, with your user's privileges. That is a real thing to be deliberate about.
+
+<Callout type="warning">A hook in `.claude/settings.json` is committed to your repository and will run on your teammates' machines. Review hook changes in a PR with the same attention you would give any other executable code in the repo — because that is exactly what it is.</Callout>
+
+Practical hygiene:
+
+- Keep hook scripts in `.claude/hooks/` and reference them by path, rather than inlining long shell one-liners into JSON. They become reviewable, testable files.
+- Hooks add latency to the loop. A `PostToolUse` hook that runs your full test suite after every single edit will make the session miserable. Format on edit; test on `Stop`.
+- If a hook is flaky, it will look like Claude Code is broken. Make failures loud and specific.
+
+## When NOT to Use a Hook
+
+- **When a suggestion is genuinely fine.** "Prefer named exports" does not need enforcement machinery. `CLAUDE.md` is the right home.
+- **When the logic needs judgment.** Hooks are deterministic shell commands. "Run the formatter" is a hook. "Review this for security issues" is not — that needs a model, which means a skill or a subagent.
+- **When you would be fighting a linter you already have.** If your pre-commit hook already does it, adding a Claude Code hook is duplicate enforcement in a second place to maintain.
+
+The dividing line is honest and simple: **hooks for mechanical certainty, prompts and skills for judgment.**
+
+<Callout type="info">Claude Code ships frequently and the event list grows. Check [code.claude.com/docs/en/hooks](https://code.claude.com/docs/en/hooks) for the current reference and the full input schema each event provides on stdin.</Callout>
+
+<KeyPoint>Structure every hook as event → matcher group → hook handler, put team hooks in `.claude/settings.json`, and reach for a hook whenever "Claude usually remembers" is not good enough.</KeyPoint>

@@ -1,0 +1,140 @@
+---
+title: "Subagents and Agent Teams"
+description: "Delegate work to a subagent with its own context window — and untangle subagents, agent teams, background agents, and the SDK."
+order: 4
+duration: "13 min"
+quiz:
+  - question: "What is the primary reason to use a subagent for a large exploration task?"
+    options:
+      - "Subagents are faster than the main conversation"
+      - "The exploration happens in the subagent's own context window, so it does not flood your main conversation"
+      - "Subagents can access files the main conversation cannot"
+      - "Subagents are billed at a lower rate regardless of model"
+    answer: 1
+  - question: "How does Claude decide when to delegate a task to a custom subagent?"
+    options:
+      - "It picks the subagent whose file was modified most recently"
+      - "It uses the subagent's `description` field"
+      - "It always asks you to choose"
+      - "It uses the subagent's `tools` list"
+    answer: 1
+  - question: "Which statement correctly distinguishes subagents from agent teams?"
+    options:
+      - "They are two names for the same feature"
+      - "Subagents work within a single session; agent teams are sessions that communicate with each other"
+      - "Agent teams work within a single session; subagents are separate sessions"
+      - "Subagents require the Agent SDK; agent teams do not"
+    answer: 1
+---
+
+## The Case for Delegation
+
+You ask Claude to find every place your app touches the payments API. It reads thirty files. Twenty-eight of them turn out to be irrelevant, but all thirty are now in your context window forever, competing for attention with the actual task you were doing.
+
+You got a two-sentence answer and paid for thirty files' worth of context to get it.
+
+A subagent fixes exactly this.
+
+## What a Subagent Is
+
+A subagent is a specialized assistant for a specific type of task. Each one runs in:
+
+- **Its own context window** — separate from your main conversation
+- **With a custom system prompt** — the body of the file becomes its instructions
+- **With specific tool access** — you decide what it can touch
+- **With independent permissions** — its own permission mode
+
+Claude delegates to a subagent based on the subagent's **`description`**. The subagent works independently and returns results.
+
+Subagents live in `.claude/agents/`.
+
+<Callout type="info">A subagent receives only its own system prompt plus basic environment details like the working directory — not the full Claude Code system prompt, and not your conversation. It starts clean. Write the description and system prompt as if the subagent knows nothing about what you have been discussing, because it does not.</Callout>
+
+## The Real Value
+
+Four reasons, and the first is the one that actually earns its keep:
+
+**1. Context preservation.** This is the headline. Exploration, log-reading, and search happen in the subagent's window. Your main conversation receives the summary, not the file dumps. Your thirty-file search costs you two sentences of context.
+
+**2. Constraint enforcement.** A subagent given `tools: Read, Grep, Glob` cannot edit your files. Not "has been told not to" — *cannot*. That is a structural guarantee, the same category of thing a hook gives you, and it is worth more than an instruction.
+
+**3. Reuse.** A user-level subagent in `~/.claude/agents/` follows you across every project.
+
+**4. Cost control.** Route mechanical work to a cheaper, faster model with the `model` field. A subagent that greps for a pattern does not need your most capable model. Check `/model` for what is available to you.
+
+<Callout type="tip">If you are unsure whether something deserves a subagent, ask: "will this generate output I need to read, or output I only need conclusions from?" Conclusions-only work is subagent work.</Callout>
+
+## A Worked Example
+
+A read-only investigator. File: `.claude/agents/log-investigator.md`
+
+```markdown
+---
+name: log-investigator
+description: Investigates application logs and stack traces to find the root cause of an error. Use when debugging a production incident, reading log output, or tracing an exception back to its source.
+tools: Read, Grep, Glob, Bash
+model: inherit
+---
+
+You investigate errors in logs. You do not fix them.
+
+When invoked:
+1. Identify the earliest error in the trace, not the loudest one. The last
+   exception is usually a symptom.
+2. Trace it to the specific source file and line responsible.
+3. Read enough surrounding code to explain the mechanism.
+4. Check whether the same pattern exists elsewhere in the codebase.
+
+Report back with exactly this structure, and nothing else:
+- **Root cause**: one sentence.
+- **Location**: file:line.
+- **Mechanism**: two to three sentences on why this fails.
+- **Blast radius**: other places with the same pattern, or "none found".
+- **Suggested fix**: one paragraph. Do not implement it.
+
+Never edit files. Never write files. You are a diagnostician, not a surgeon.
+```
+
+Only `name` and `description` are required. Note the choices:
+
+- **`description`** is written for a dispatcher, not a human. It says what the agent does *and when to use it*, with the phrases that should trigger it. This field is doing all the routing work — a vague description means Claude never delegates.
+- **`tools: Read, Grep, Glob, Bash`** is an allowlist. This agent cannot write or edit, no matter what it concludes. If it omitted `tools`, it would inherit everything.
+- **`model: inherit`** keeps the session's model. Set it to a cheaper tier for high-volume mechanical agents.
+- **The body** is the system prompt. The rigid output structure is deliberate: the whole point is a small, predictable payload coming back into your main context.
+
+Now when you paste a stack trace and say "figure out what is going on here," Claude delegates, the subagent chews through logs in its own window, and you get five lines back.
+
+<Callout type="tip">Write the report format into the system prompt. A subagent that returns three paragraphs of prose has spent its context budget and given you back a wall of text — you have moved the problem, not solved it.</Callout>
+
+## Four Things People Conflate
+
+This is where the terminology gets genuinely confusing, and the confusion is not your fault — these names all sound like each other. They are four different things.
+
+| Thing | What it actually is | Docs |
+|---|---|---|
+| **Subagents** | Specialized assistants **within a single session**. Own context, own tools, own permissions. | [/en/sub-agents](https://code.claude.com/docs/en/sub-agents) |
+| **Agent teams** | **Sessions that communicate with each other.** | [/en/agent-teams](https://code.claude.com/docs/en/agent-teams) |
+| **Background agents** | **Many independent sessions running in parallel**, monitored from one place. | [/en/agent-view](https://code.claude.com/docs/en/agent-view) |
+| **Agent SDK** | Build **fully custom agents** on top of Claude Code's tools. | [/en/agent-sdk/overview](https://code.claude.com/docs/en/agent-sdk/overview) |
+
+The axis that separates them:
+
+- A **subagent** is inside your session. You are in one conversation; it spawns a helper, the helper reports back, you keep going. One session.
+- An **agent team** is multiple sessions that talk to each other. The unit is the session, and the sessions coordinate.
+- **Background agents** are multiple sessions that do *not* especially need to talk — they run in parallel on separate work, and agent view is how you watch them all without opening ten terminals.
+- The **Agent SDK** is not a Claude Code feature at all. It is a toolkit for building your own agent product on the same foundations.
+
+<Callout type="warning">If someone tells you to "just use agent teams" for what is plainly a one-session delegation problem, they mean subagents. The words get swapped constantly in blog posts and conference talks. Check whether the thing being described involves more than one session — that is the tell.</Callout>
+
+Ninety percent of the time, the thing you actually want is a subagent. Start there. Reach for the others when you have a concrete reason that involves more than one session.
+
+## When NOT to Use a Subagent
+
+- **The task is small.** Delegation has overhead. A subagent to read one file is slower and more complicated than reading the file.
+- **You need the details in your main context anyway.** If you are going to want those thirty files loaded to do the follow-up work, moving them to a subagent just means reading them twice.
+- **It is a one-off.** Define a custom subagent when you keep spawning the same kind of worker with the same instructions. Once is not a pattern.
+- **The work is interactive.** Subagents work independently and report back. If you need to steer mid-task, stay in the main conversation.
+
+<Callout type="info">Check [code.claude.com/docs/en/sub-agents](https://code.claude.com/docs/en/sub-agents) for the full frontmatter reference — the field list grows and Claude Code ships frequently.</Callout>
+
+<KeyPoint>A subagent gets its own context window, so exploration returns conclusions instead of flooding your conversation — and its `tools` list is a structural constraint, not a request. Subagents live inside one session; agent teams, background agents, and the Agent SDK are three different things people routinely confuse with them.</KeyPoint>

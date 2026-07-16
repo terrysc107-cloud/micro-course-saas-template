@@ -5,6 +5,7 @@ import { getCompletedLessons } from "@/lib/progress";
 import LessonLayout from "@/components/course/LessonLayout";
 import CourseSidebar from "@/components/course/CourseSidebar";
 import LessonContent from "@/components/course/LessonContent";
+import LessonVideo from "@/components/course/LessonVideo";
 import LessonQuiz from "@/components/course/LessonQuiz";
 import LessonNav from "@/components/course/LessonNav";
 
@@ -58,16 +59,8 @@ export default async function LessonPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Video embed */}
-        {lesson.frontmatter.videoUrl && (
-          <div className="mb-8 rounded-xl overflow-hidden aspect-video bg-slate-800">
-            <iframe
-              src={lesson.frontmatter.videoUrl.replace("watch?v=", "embed/")}
-              className="w-full h-full"
-              allowFullScreen
-            />
-          </div>
-        )}
+        {/* Renders nothing until a Terry-owned recording exists for this lesson */}
+        <LessonVideo videoUrl={lesson.frontmatter.videoUrl} title={lesson.frontmatter.title} />
 
         {/* Lesson content */}
         <LessonContent content={lesson.content} />

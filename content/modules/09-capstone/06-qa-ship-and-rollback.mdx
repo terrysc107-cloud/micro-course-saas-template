@@ -1,0 +1,176 @@
+---
+title: "QA, Ship, and Rollback"
+description: "Browser QA against the done-criteria, then ship behind a rollback path you decided before you deployed."
+order: 6
+duration: "14 min"
+quiz:
+  - question: "Why must the rollback path be decided before you deploy rather than when something breaks?"
+    options:
+      - "Deployment tools require it to be configured in advance"
+      - "Because at 2am with users affected you have neither the calm nor the time to invent one, and the cheap decisions were all available beforehand"
+      - "Because rollbacks cannot be performed without prior setup"
+      - "Because it makes the deploy faster"
+    answer: 1
+  - question: "Your tests are green. Why still do a browser pass against the done-criteria?"
+    options:
+      - "To take screenshots for the client"
+      - "Because tests check the behavior you thought to specify, and the empty state, the error message nobody wired up, and the two-second flash of wrong data all pass a green suite"
+      - "Because browsers execute code differently than test runners"
+      - "It is optional if coverage is high enough"
+    answer: 1
+  - question: "A migration ran in production. What does 'roll back the deploy' now actually mean?"
+    options:
+      - "Reverting the code also reverts the schema"
+      - "Only the code goes back — the schema does not, so the safe rollback requires the previous code to still work against the new schema"
+      - "Nothing; migrations cannot be deployed"
+      - "The database automatically restores its prior state"
+    answer: 1
+---
+
+## The Loop Closes Here
+
+Inspect, plan, build, review, test — and now ship. This lesson closes the loop, and it closes it against the same brief you wrote in lesson 1. That symmetry is the design: the document you wrote before you had any code is the thing that decides whether the code is done.
+
+That's why it had to be written first. A done-criteria list written now would be a list of things your feature already does.
+
+## Browser QA
+
+Your suite is green. That is not the same as working.
+
+Tests check behavior you thought to specify. Browser QA catches the rest — and "the rest" is a real category, not a formality:
+
+- The empty state renders a bare table header and looks broken
+- Validation fires but the message renders white-on-white
+- The list flashes stale data for two seconds before the real data arrives
+- Status changes work, but nothing indicates anything happened, so users click twice
+- Everything works and the Overdue view is at the bottom of the page, below the fold, in an app whose entire purpose is the Overdue view
+
+None of those fail a test. Every one of them is a bug for a real user.
+
+### Walk the criteria, literally
+
+Open the brief. Open the app. Go one by one, in order, and check them off — not "does the app feel right," but "does criterion 3 pass, yes or no."
+
+For this build:
+
+**1. Paste in a lead, it persists across reload.** Actually reload. Cmd+R. The failure mode here is in-memory state that looks perfect until refresh, and it survives every test that doesn't reload.
+
+**2. The list shows every lead with its status.** Add five. All five there? Statuses correct, or is one showing the default because a render path forgot?
+
+**3. Change status to each of New, Contacted, Waiting, Closed.** All four. The fourth one is where the switch statement's missing case lives.
+
+**4. Overdue shows New/Waiting older than 3 days.** Seed leads at 2, 3, and 4 days. This is the boundary you tested in lesson 3 and unit-tested in lesson 5 — check it through the UI anyway, because between the pure function and the screen sits a query, a serializer, and a timezone.
+
+**5. Zero leads and one lead both render.** Delete everything. Look at it. An empty table with a header is not an empty state. Then one lead — layouts written against three-item mock data have a way of falling apart at one.
+
+**6. Malformed email rejected with a message, not saved.** Type `notanemail`. Message appears? Now reload — is it saved anyway? Then, if you can, POST directly with a tool that isn't your form. Your form is the one client that behaves.
+
+<Callout type="warning">Criterion 6 is where client-only validation dies. The form says no, the user sees a message, everything looks correct — and the endpoint accepts anything that reaches it. Manual QA through the UI will never catch it, because you're driving the one client that follows the rules.</Callout>
+
+### Then try to break it
+
+The criteria are the floor. Five minutes of hostility on top:
+
+- Submit the form twice fast. Two leads?
+- A name that's 500 characters. Layout survives?
+- Unicode, emoji, an apostrophe in a name. `O'Brien` is a real name and a real bug.
+- Navigate away mid-submit
+- A lead at exactly 72 hours. Which side of the boundary?
+
+If you're doing this against a running app, Claude Code's Chrome surface can debug live web apps ([docs](https://code.claude.com/docs/en/chrome)) — useful for driving the page and reading what actually happened rather than what you assume happened.
+
+Every real bug you find here becomes a test in the lesson-5 sense: one that would have failed before the fix. Fix, test, commit.
+
+<Callout type="tip">Write down each bug before you fix any of them. Fix-as-you-find means you stop QA at the first bug and never finish the pass — and the interesting bugs cluster at the end, in criteria 5 and 6, where nobody's attention reaches.</Callout>
+
+## Decide the Rollback First
+
+Before the deploy. Not after. Not "if something goes wrong."
+
+The reason is unsentimental: **the moment you need a rollback plan is the worst possible moment to invent one.** Users are affected, you're guessing at causes, and every option that was cheap an hour ago — a snapshot, a feature flag, a known-good build id — required a decision you didn't make. You are now improvising under time pressure against a system you're not sure about. That's how a small bug becomes an outage.
+
+Decide it while it's boring. Three questions, and you need real answers, not gestures:
+
+**1. What exactly do I do to undo this?** A command. A button. A specific promotion of a specific build id. If the answer is "revert the commit and redeploy," time it — is your build five minutes or forty? Forty minutes of a broken production is a different decision than five.
+
+**2. What does rollback NOT undo?** This is the one people miss, and this build has it. **You ran a migration.** Rolling back the deploy puts the code back. It does not put the schema back. So the real question is: does the previous version of the code still work against the current schema? For an additive migration — new table, new nullable column — usually yes. For anything that dropped or retyped a column, no, and your rollback makes it worse.
+
+If code and schema can't roll back independently, you don't have a rollback. You have a hope.
+
+**3. How will I know I need it?** "Users complain" is a monitoring strategy with a latency measured in days. What do you check, and when? For this build it might be: open the app fifteen minutes after deploy, add a lead, confirm the Overdue view. That's crude. It's also infinitely better than nothing, and takes a minute.
+
+### For this capstone
+
+```
+ROLLBACK PLAN
+
+Undo: promote the previous known-good build. Build id recorded
+      before deploy. Roughly 2 minutes.
+
+Does NOT undo: the migration. Schema stays. This is safe because
+      the migration is purely additive — the previous code ignores
+      the new columns and runs fine against the new schema. I
+      verified this by running the previous build against a copy of
+      the migrated database before deploying.
+
+Data: snapshot taken immediately before deploy. Restore is a manual
+      last resort and loses anything written since — acceptable for
+      a single-user tool, not acceptable if this had real users.
+
+Detection: check the app 15 min post-deploy — add a lead, confirm
+      Overdue renders. Check again next morning.
+```
+
+Read the "does NOT undo" section again. It contains an actual verification — running the old code against the new schema — not an assertion that it should be fine. That's the difference between a rollback plan and a paragraph about rollback.
+
+<Callout type="warning">"Additive migrations are backward compatible" is true right up until the old code has a `SELECT *` and a strict deserializer that rejects unknown fields. Don't reason about it. Run the old build against the migrated schema once, before you need to know.</Callout>
+
+## Ship
+
+Run [our ship checklist](/downloads/ship-checklist.md) end to end. It's the gate: review, tests, browser QA, deploy, rollback. No step skipped because you're confident — confidence is the condition under which people skip steps and is therefore not evidence of anything.
+
+Order that works:
+
+1. **Preview first.** A preview deploy of the exact build you intend to promote. Not "basically the same." The same.
+2. **QA the preview, not localhost.** The environment differs — env vars, build mode, real network latency. Bugs live in the gap. Re-walk the six criteria. Yes, again. It's ten minutes.
+3. **Record the current known-good build id.** Write it down where you'll find it while panicking. This is the entire rollback and it takes five seconds.
+4. **Snapshot the data.** Before the migration. Not after.
+5. **Migration first, then code.** Additive migrations are safe to run before the code that uses them — the old code ignores the new columns. The reverse ordering ships code that queries columns that don't exist yet.
+6. **Promote.**
+7. **Check.** Right now, and at your stated interval. Add a lead. Look at Overdue. Thirty seconds.
+
+<Callout type="tip">Step 3 is the cheapest insurance in this entire course. One build id, written down before the deploy. It converts "roll back" from an investigation into a command — and the investigation is the part that costs you twenty minutes while production is broken.</Callout>
+
+## Roll Back Without Shame
+
+If the checks fail: **roll back first, diagnose after.**
+
+The instinct is to fix forward — you can see the bug, the fix is small, one commit and it's done. Sometimes right. Usually a trap. You're reasoning under pressure about a system that just surprised you, which means your model of it is currently wrong in at least one place you haven't found. That is the worst possible state in which to write code and put it in front of users.
+
+Roll back. Production is healthy. Now debug on your own schedule with a clear head and a reproduction, which is how debugging is supposed to work.
+
+A rollback is not a failure. It's the plan executing correctly. The failure would have been not having one.
+
+## You've Run the Loop
+
+Inspect, plan, build, review, test, ship — once, end to end, on something real.
+
+The lead tracker is disposable. What isn't: you wrote a brief before you had opinions about the code, argued with a plan while arguing was free, went slow at the schema because that's where mistakes cost, built in increments small enough to actually review, reset instead of arguing with a poisoned context, wrote tests that would fail, got a reviewer who wasn't invested, and shipped behind an undo you'd tested.
+
+None of that is Claude Code-specific. It's engineering discipline that happens to be more necessary — not less — when the code arrives faster than you can read it. The tool changes how fast the diff shows up. It doesn't change who signs it.
+
+Run this loop on your own next feature. That's the deliverable.
+
+<Callout type="info">Claude Code ships changes weekly, so specific flags, modes, and file formats move. The loop doesn't. When a lesson and the <a href="https://code.claude.com/docs/en/overview">official docs</a> disagree, the docs win — and tell us so we can fix it.</Callout>
+
+## Before You Call It Done
+
+- All six done-criteria checked in a browser, individually, against the written brief
+- Five minutes of deliberate hostility, bugs written down and fixed
+- Rollback plan written before deploy, including what it does not undo
+- Old code verified against the new schema
+- Known-good build id recorded somewhere you'll find in a panic
+- Preview QA'd before promotion
+- Post-deploy check done at a time you decided in advance
+
+<KeyPoint>Every deploy needs a rollback path decided before the deploy, because the moment you need one is the moment you have no time to invent one — and it has to name what it does not undo, since rolling back code does not roll back a migration. Browser QA against the written brief, not against your memory of what you meant.</KeyPoint>

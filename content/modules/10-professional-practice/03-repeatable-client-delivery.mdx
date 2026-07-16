@@ -1,0 +1,166 @@
+---
+title: "Repeatable Client Delivery"
+description: "Use CLAUDE.md, Skills, and checklists to make delivery consistent — and keep quality control intact while moving fast."
+order: 3
+duration: "11 min"
+coverImage: "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=1200&auto=format&fit=crop&q=80"
+quiz:
+  - question: "Why does repeatability matter more once you are delivering faster?"
+    options:
+      - "It does not — speed makes process unnecessary"
+      - "Speed multiplies whatever process you have, including the gaps; without a repeatable checklist you make the same omissions faster and across more projects"
+      - "Clients require documented processes"
+      - "It makes the code run faster"
+    answer: 1
+  - question: "What is the right way to encode a delivery checklist you run on every project?"
+    options:
+      - "Keep it in your head"
+      - "Put it in a Skill, whose body loads only when invoked, rather than in CLAUDE.md where it occupies context on every session"
+      - "Paste it into every prompt"
+      - "Email it to the client"
+    answer: 1
+  - question: "What is the most important quality-control principle when an agent is producing code quickly?"
+    options:
+      - "Review only the files you did not expect to change"
+      - "Your review is the bottleneck and the safeguard — code you have not read is code nobody has read, and you are accountable for it either way"
+      - "Trust the agent on routine code and review only new features"
+      - "Run the tests and skip the diff"
+    answer: 1
+  - question: "Before delivering an automation that touches client data, what must you do?"
+    options:
+      - "Run it directly in production to confirm it works"
+      - "Test in a staging environment and support a dry-run mode, since a destructive first run against real data is not recoverable by apology"
+      - "Ask the client to test it themselves"
+      - "Nothing — review the code carefully and ship"
+    answer: 1
+---
+
+## Why Repeatability, Not Just Speed
+
+Doing a thing quickly once is a story. Doing it the same way every time is a practice — and it is the practice, not the speed, that clients experience as competence.
+
+There is a sharper reason too. Speed multiplies whatever process you already have. If your process has a gap — you sometimes forget to check that the error states are handled, you occasionally ship without reviewing the migration — moving faster does not surface that gap. It replicates it, faster, across more projects.
+
+The tools in this course are how you make the process the fast path rather than the disciplined path.
+
+<KeyPoint>An agent amplifies your process, including its gaps. If quality currently depends on you remembering things, speed will not improve your work — it will scale your omissions.</KeyPoint>
+
+## CLAUDE.md: The Per-Project Contract
+
+Every client repo gets a CLAUDE.md before the first feature. It is the cheapest quality intervention available, because it front-loads all the corrections you would otherwise make one prompt at a time.
+
+What belongs in it for client work specifically:
+
+- **Stack and versions** — what is actually installed, not what you would have chosen
+- **Patterns to follow** — how this codebase does auth, data access, error handling
+- **Off-limits areas** — migrations, payment code, anything the client's team owns
+- **Client constraints** — browser support, compliance requirements, the integration that must not break
+- **Definition of done** — does the client expect tests? A staging deploy? A changelog?
+
+Keep it tight. CLAUDE.md is read at the start of every session, so everything in it costs context on every session — including the sessions where it is irrelevant. Standards and constraints belong here. Long procedures do not.
+
+<Callout type="warning">CLAUDE.md is not a security boundary. Writing "never touch the payment code" shapes what Claude tries to do; it does not constrain what Claude Code is permitted to do. Permissions are enforced by the tool, not by the model — if something must not be modified, enforce it with `/permissions` deny rules, not with a sentence in a markdown file.</Callout>
+
+## Skills: Where Your Procedures Live
+
+A [Skill](https://code.claude.com/docs/en/skills) is a `SKILL.md` file that Claude uses when relevant, or that you invoke directly with `/skill-name`. The critical property for delivery work: **a skill's body loads only when it is used**. Long reference material costs nothing until you need it — unlike CLAUDE.md, which is always in context.
+
+That makes Skills the right home for the procedures you run repeatedly but not constantly.
+
+```
+.claude/skills/
+  preflight/SKILL.md      → /preflight  — pre-delivery checks
+  handover/SKILL.md       → /handover   — client handover docs
+  new-integration/SKILL.md → /new-integration
+```
+
+The command name comes from where the file lives, not from the frontmatter `name` — which is the display label. All frontmatter fields are optional, but `description` is worth writing carefully, since it is how Claude decides whether to apply the skill on its own.
+
+A pre-delivery skill might encode exactly the checks you would otherwise hope to remember:
+
+```markdown
+---
+description: Pre-delivery checks before handing work to a client.
+  Run before any client-facing deploy.
+---
+
+# Pre-delivery checklist
+
+Work through each item and report pass/fail with evidence:
+
+1. Every mutation endpoint verifies the authenticated user owns the resource
+2. No secrets in tracked files — check the diff, not just .env
+3. Error states handled in the UI for every network call
+4. Migrations reviewed and reversible
+5. README updated with any new env vars
+6. The feature works in a fresh clone with a clean database
+```
+
+Docs change; check [the Skills reference](https://code.claude.com/docs/en/skills) for the current frontmatter fields before you build against them.
+
+<Callout type="tip">Build your checklist skill from your own postmortems, not from a template. After each project, ask what you nearly shipped broken and add a check for it. After five projects the skill encodes your actual failure modes — which are more specific and more useful than anything generic.</Callout>
+
+## Where the Repetition Actually Is
+
+Look at the work you have done and find the shape that recurs. For most consultants doing delivery work, the same handful of patterns keep showing up: scheduled reports pulling from an API, syncing data between two systems the client already pays for, admin views over existing tables, replacing a spreadsheet with a form and a database.
+
+The value of noticing this is that the second instance should not cost what the first did. Package each one so it can be picked up again — its own repo, its own `.env.example`, its own README explaining what it does and how it fails. When something similar comes up, you are adapting rather than rediscovering.
+
+How much time this actually saves you depends entirely on how similar your projects really are. Two "weekly report" automations against different APIs with different auth and different edge cases may share less than you would like. Build the abstraction after you have three real instances and can see what is genuinely common — not after one, when you are extrapolating from a sample of one.
+
+## Scoping an Automation
+
+The scoping conversation is where the risk lives, and it is worth doing before you quote:
+
+```
+> I am scoping a weekly sales report automation for a client.
+  They use Shopify for orders and want an email report every Monday.
+
+  Do not write code yet. Map out:
+  - The data flow and where it can fail
+  - Edge cases: API down, no sales that week, partial data, timezone boundaries
+  - What happens if it runs twice, or not at all
+  - What access I need from the client before I can start
+  - The questions I should be asking that I have not
+```
+
+The failure modes and the access list are the useful outputs. Access in particular: "waiting three weeks for API credentials" is a real project risk that has nothing to do with how fast you write code.
+
+## Quality Control at Speed
+
+This is the part that matters most, and the part that erodes first.
+
+**You are the review.** On client work there is often no second engineer. Code you did not read is code nobody read. It does not matter that it was generated rather than typed — you are the one who is accountable for it, in the contract and in the relationship.
+
+**Review the diff, not the summary.** Claude will tell you what it did. That description is generally accurate and is not evidence. Read the diff.
+
+**Scale your scrutiny to the blast radius.** A CSS tweak and a migration are not the same object. Auth, payments, data deletion, and anything touching production data get read line by line. Presentation code gets skimmed. Spend your attention where being wrong is expensive.
+
+**Never let a destructive thing run against production first.** Build every automation with a dry-run mode and run it that way, every time, before it touches real data. An automation that sends five hundred duplicate emails or overwrites a live table is not a bug you apologize for — it is the end of the engagement.
+
+<Callout type="warning">Test automations in staging before delivery, and add a `--dry-run` flag to every one you build. The speed at which you can now produce a working script is exactly the speed at which you can produce a working script that does the wrong thing to real data, confidently, on a schedule, while you are asleep.</Callout>
+
+**Watch for the plausible-but-wrong.** The specific danger of generated code is not that it looks broken — it is that it looks fine. It follows your conventions, it has reasonable names, and it handles the case you described. The gap is usually the case you did not mention, and it will not announce itself.
+
+## Handover
+
+The engagement ends. What you leave behind determines whether it ends well.
+
+```
+> Write a handover document for this project covering:
+  - What this does and the problem it solves, in plain language
+  - Every environment variable and where its value comes from
+  - How to run it locally, and how it is deployed
+  - What breaks first when it breaks, and how to tell
+  - What I would do next if I were continuing
+
+  Read the codebase. Do not describe anything you cannot verify in the code.
+```
+
+Then read it and fix it. Claude does not know which of your decisions were deliberate and which were expedient, and the handover doc is exactly where that distinction matters.
+
+## Summary
+
+Make delivery repeatable with the tools you already have: CLAUDE.md for the per-project contract, Skills for the procedures you run every time, permissions for the things that must be enforced rather than requested. Then hold the quality line — read the diff, scale scrutiny to blast radius, dry-run everything destructive. Speed is only an asset if the process underneath it is sound.
+
+<KeyPoint>Repeatable delivery means encoding your standards where they get applied automatically — CLAUDE.md for context, Skills for procedures, permission rules for hard limits — and accepting that your review is the only quality gate on client work, whoever or whatever wrote the code.</KeyPoint>
