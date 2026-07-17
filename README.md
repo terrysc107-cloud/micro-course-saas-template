@@ -120,24 +120,18 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 
 ## Ops
 
-⚠️ **There is no CI/CD. Pushing to `main` does not deploy anything.**
+**Merging to `main` deploys to production.** PRs get preview URLs.
 
-The Vercel project `claude-code-platform` has **no Git connection**. It was originally linked to the dead V1 repo (`claudecodeclass`) and auto-deployed from that repo's `main`; the link was later removed. Every deploy since is a manual CLI push from a laptop:
+Vercel project `claude-code-platform` → GitHub `terrysc107-cloud/micro-course-saas-template`, production branch `main`. Connected 2026-07-17.
 
-```bash
-vercel deploy --prod    # from a local checkout of this repo
-```
+Some history worth knowing, because it explains the state you may find things in: the project was originally linked to the **dead V1 repo** (`claudecodeclass`) and auto-deployed from *its* `main`. That link was removed at some point, and V2 shipped on 2026-07-16 as a manual CLI deploy (`source: cli`, sha `f110983`, from branch `feat/claude-code-v2-refresh`). For roughly a day there was no pipeline at all and nothing forcing prod to match this repo. It happened to match. Now it's enforced.
 
-Production today is commit `f110983` ("feat: relaunch Claude Code Class V2"), deployed 2026-07-16 via CLI from branch `feat/claude-code-v2-refresh`. It matches `main` — but that is a coincidence of discipline, not a guarantee. **Nothing enforces that prod matches this repo.** Check before assuming:
+`.github/workflows/ci.yml` runs `npm run check` on every PR and every push to `main`, so the truth linter gates the deploy rather than trailing it.
 
-```bash
-vercel inspect <prod-url>   # compare meta.githubCommitSha against git log
-```
-
-Reconnecting the Git integration would fix this, and is worth doing — it needs the Vercel GitHub App granted access to the now-private repo, and a decision about whether merging to `main` should go straight to production.
-
-- **Deploy:** manual, `vercel deploy --prod`
-- **Rollback:** promote the previous deployment in the Vercel dashboard. Known-good as of 2026-07-17: `claude-code-platform-dj7ljmn2z-terrysc107-9627s-projects.vercel.app`
+- **Deploy:** merge to `main`
+- **Manual deploy** (still works, avoid unless recovering): `vercel deploy --prod`
+- **Check what prod is actually running:** `vercel inspect <prod-url>` → compare `meta.githubCommitSha` against `git log`
+- **Rollback:** promote the previous deployment in the Vercel dashboard. Known-good as of 2026-07-17: `claude-code-platform-dj7ljmn2z-terrysc107-9627s-projects.vercel.app` (sha `f110983`)
 - **Docs:** `docs/LAUNCH-READINESS.md` (status/blockers), `docs/PAYMENT-GATE-SECURITY.md` (RLS verification procedure), `docs/CURRICULUM-V2-MAP.md` (what changed from V1 and why)
 
 ---
