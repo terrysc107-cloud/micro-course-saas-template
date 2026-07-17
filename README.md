@@ -1,120 +1,90 @@
-# Micro Course SaaS Template
+# Claude Code Class
 
-> A production-ready paid course platform. Ship a new niche course in a day — built with Next.js 16, Supabase, Stripe & MDX.
+The course platform behind **[claudecodeclass.com](https://claudecodeclass.com)** — a self-paced Claude Code course, $97 one-time, lifetime access. An **AI by Design** product ([aixdesign.dev](https://aixdesign.dev)).
 
-**Live example:** [claudecodeclass.com](https://claudecodeclass.com)
+**This is a private repository containing paid course content.** It is not a template and not a public example. It was previously published as `micro-course-saas-template`; that role has been retired.
 
----
-
-## What You Get
-
-A fully working course SaaS with:
-
-- 💳 **One-time Stripe payment** — hosted checkout, webhook-gated access
-- 🔐 **Supabase auth** — email sign-up, session management, Row Level Security
-- 📚 **MDX content pipeline** — lessons are markdown files, no CMS needed
-- 🧠 **Quiz engine** — per-lesson quizzes with scoring, pass/fail state, auto-completion
-- 📊 **Progress tracking** — dashboard with completion % per module, resume button
-- 🎨 **Rich lesson components** — `<Callout>`, `<KeyPoint>`, `<LessonImage>` for engaging content
-- 📱 **Mobile-friendly** — collapsible sidebar, responsive layout
-- ⚡ **Vercel-ready** — deploys in minutes
+> **Live and selling.** Changes here move real money. Read [Working on this repo](#working-on-this-repo) before touching the payment path.
 
 ---
 
-## Tech Stack
+## The two products
+
+| | Self-paced course | The Build Lab |
+|---|---|---|
+| What | 48 lessons, 10 modules, MDX | Live single session, small group |
+| Price | $97 one-time, lifetime | $297 (working number) |
+| Status | **Live, selling** | **Waitlist only — no date set** |
+| Checkout | Here | Here, gated behind `BUILD_LAB.status` |
+
+`aixdesign.dev/education` is a marketing/referral surface only — it takes no payment and holds no enrollment state. It links here with UTM tags. See `docs/CLAUDE-CODE-COURSE-INTEGRATION.md` in the `by-design-ai-` repo for that boundary.
+
+---
+
+## Tech stack
 
 | Layer | Tool |
 |-------|------|
-| Framework | Next.js 16 (App Router, TypeScript) |
-| Styling | Tailwind CSS v4 + Typography plugin |
+| Framework | Next.js 16.2.4 (App Router, TypeScript) — see `AGENTS.md`, the APIs have breaking changes |
+| Styling | Tailwind CSS v4 (`@theme` in `app/globals.css`) + Typography plugin |
 | Auth | Supabase native (no Clerk) |
-| Database | Supabase Postgres + RLS |
-| Payments | Stripe Checkout |
+| Database | Supabase Postgres + RLS — project `supabase-crimson-ladder` (`acouuzccqkcpyrckrgwg`) |
+| Payments | Stripe Checkout, webhook-gated |
 | Content | MDX + `next-mdx-remote/rsc` + `gray-matter` |
-| Deployment | Vercel |
+| Deployment | Vercel project `claude-code-platform` |
+
+**The Supabase project is shared** with AI by Design (`bda_*`) and several other apps. Course tables are `course_purchases`, `lesson_progress`, `quiz_results`, `user_course_state` — unprefixed, predating the convention. **New tables use the `ccc_` prefix.**
 
 ---
 
-## Adapt for Any Niche — Change 5 Things
+## Where things live
 
 | What | Where |
 |------|-------|
-| Lesson content | `content/modules/**/*.mdx` |
-| Landing page copy | `app/(marketing)/page.tsx` |
-| Brand name | `app/layout.tsx` + global find/replace |
+| **Brand, price, curriculum meta, FAQ, disclaimer** | `lib/course-config.ts` — single source of truth |
 | Brand colors | `app/globals.css` `@theme` block |
-| Stripe price ID | `NEXT_PUBLIC_STRIPE_PRICE_ID` env var |
+| Lesson content | `content/modules/NN-slug/NN-lesson.mdx` |
+| Content loader | `lib/content.ts` — reads `MODULE_META` from course-config, so they can't drift |
+| Entitlement gate | `proxy.ts` |
+| Payment | `app/api/stripe/checkout/route.ts`, `app/api/stripe/webhook/route.ts`, `lib/stripe.ts` |
+| Schema | `course-schema.sql`, `supabase/migrations/` |
+| **Truth linter** | `scripts/check-content.mjs` |
 
-Everything else — auth, payments, progress, quiz engine, sidebar — works unchanged.
+Module and lesson titles live in `MODULE_META`, **not** in the MDX. Lesson frontmatter carries only `title`, `description`, `order`, `duration`, `coverImage?`, `quiz[]`.
 
 ---
 
-## Quick Start
+## Working on this repo
 
-### 1. Clone and install
+### The truth linter is not optional
+
+`npm run check:content` fails the build on speed multipliers, income promises, named model versions, implied Anthropic affiliation, invented seat counts, urgency theatre, student counts, and any hardcoded Build Lab date. It runs on every PR via `.github/workflows/ci.yml`.
+
+This exists because V1 of this course shipped three testimonials from students who did not exist, an entire module promising income, and "10× faster" claims. V2 was written to undo that. The linter is what keeps it undone.
+
+**`videoUrl` is banned.** All of V1's video embeds were unlicensed third-party YouTube. The linter fails on any `videoUrl` or YouTube link. See `docs/VIDEO-TRACKER.csv` for the recording backlog.
+
+### Scarcity must be real
+
+The Build Lab has a genuine seat cap, because it's a live session. Real caps, real countdowns, real sold-out states are fine and wanted. **Numbers the database can't back are not.** Seat counts come from `ccc_lab_sessions.capacity` minus actual registrations — never from a literal in a component.
+
+`ccc_lab_sessions` carries a CHECK constraint making this structural: a run cannot be `scheduled` without a real `starts_at` **and** a real price.
+
+### The payment path
+
+`app/api/stripe/webhook/route.ts` is the only thing standing between a customer's money and their access. It is deliberately conservative — signature verification, `payment_status` check, a 200 on missing `userId`, a 500 on DB error so Stripe retries. **Do not tidy it.** Changes there ship alone.
+
+Never grant entitlement from the client. `course_purchases` is service-role-write-only; the RLS migration in `supabase/migrations/` documents the exploit that made that necessary.
+
+---
+
+## Local setup
+
 ```bash
-git clone https://github.com/terrysc107-cloud/micro-course-saas-template.git
-cd micro-course-saas-template
-npm install
+npm ci
 ```
 
-### 2. Set up Supabase
-- Create a project at [supabase.com](https://supabase.com)
-- Run `course-schema.sql` in the SQL editor
-- Add your production URL to Authentication → Redirect URLs
-
-### 3. Set up Stripe
-- Create a product + one-time price
-- Create a webhook pointing to `/api/stripe/webhook` with event `checkout.session.completed`
-
-### 4. Configure environment variables
-```bash
-cp .env.local.example .env.local
-# Fill in your Supabase + Stripe keys
-```
-
-### 5. Run locally
-```bash
-npm run dev
-```
-
-### 6. Deploy
-```bash
-vercel deploy --prod
-```
-
----
-
-## Content Format
-
-Each lesson is an MDX file with frontmatter:
-
-```mdx
----
-title: "Lesson Title"
-description: "One sentence description."
-order: 1
-duration: "8 min"
-videoUrl: "https://www.youtube.com/watch?v=VIDEO_ID"
-coverImage: "https://images.unsplash.com/photo-{ID}?w=1200&auto=format&fit=crop&q=80"
-quiz:
-  - question: "Question text?"
-    options: ["A", "B", "C", "D"]
-    answer: 1
----
-
-Lesson prose here...
-
-<Callout type="tip">Pro tip for readers.</Callout>
-
-<KeyPoint>The single most important takeaway from this lesson.</KeyPoint>
-```
-
-See `COURSE-TEMPLATE.md` for the complete replication guide.
-
----
-
-## Environment Variables
+Create `.env.local` (there is no example file to copy — this is the list):
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=
@@ -124,11 +94,38 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 NEXT_PUBLIC_STRIPE_PRICE_ID=
+NEXT_PUBLIC_STRIPE_BUILD_LAB_PRICE_ID=
 NEXT_PUBLIC_SITE_URL=
+```
+
+Pull the real values with `vercel env pull .env.local` (project `claude-code-platform`).
+
+```bash
+npm run dev     # localhost:3000
+npm run check   # check:content && build — run before every push
+```
+
+`npm run build` succeeds without any env vars: Stripe resolves lazily and the Supabase clients are built per-request.
+
+### Testing payments
+
+`stripe trigger checkout.session.completed` is **not sufficient** — it produces a session with no `metadata.userId`, which the webhook correctly ignores. Drive a real test-mode checkout through the UI:
+
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+# then buy with 4242 4242 4242 4242
 ```
 
 ---
 
-## License
+## Ops
 
-MIT — use it for your own courses, sell courses built on it, or build and sell the setup service. Attribution appreciated but not required.
+- **Deploy:** push to `main` → Vercel auto-deploys `claude-code-platform` → claudecodeclass.com
+- **Rollback:** promote the previous deployment in the Vercel dashboard
+- **Docs:** `docs/LAUNCH-READINESS.md` (status/blockers), `docs/PAYMENT-GATE-SECURITY.md` (RLS verification procedure), `docs/CURRICULUM-V2-MAP.md` (what changed from V1 and why)
+
+---
+
+© AI by Design. All rights reserved. This repository contains paid course content — it is not licensed for reuse or redistribution.
+
+Independent educational product by AI by Design. Not affiliated with or endorsed by Anthropic.
