@@ -120,8 +120,24 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 
 ## Ops
 
-- **Deploy:** push to `main` → Vercel auto-deploys `claude-code-platform` → claudecodeclass.com
-- **Rollback:** promote the previous deployment in the Vercel dashboard
+⚠️ **There is no CI/CD. Pushing to `main` does not deploy anything.**
+
+The Vercel project `claude-code-platform` has **no Git connection**. It was originally linked to the dead V1 repo (`claudecodeclass`) and auto-deployed from that repo's `main`; the link was later removed. Every deploy since is a manual CLI push from a laptop:
+
+```bash
+vercel deploy --prod    # from a local checkout of this repo
+```
+
+Production today is commit `f110983` ("feat: relaunch Claude Code Class V2"), deployed 2026-07-16 via CLI from branch `feat/claude-code-v2-refresh`. It matches `main` — but that is a coincidence of discipline, not a guarantee. **Nothing enforces that prod matches this repo.** Check before assuming:
+
+```bash
+vercel inspect <prod-url>   # compare meta.githubCommitSha against git log
+```
+
+Reconnecting the Git integration would fix this, and is worth doing — it needs the Vercel GitHub App granted access to the now-private repo, and a decision about whether merging to `main` should go straight to production.
+
+- **Deploy:** manual, `vercel deploy --prod`
+- **Rollback:** promote the previous deployment in the Vercel dashboard. Known-good as of 2026-07-17: `claude-code-platform-dj7ljmn2z-terrysc107-9627s-projects.vercel.app`
 - **Docs:** `docs/LAUNCH-READINESS.md` (status/blockers), `docs/PAYMENT-GATE-SECURITY.md` (RLS verification procedure), `docs/CURRICULUM-V2-MAP.md` (what changed from V1 and why)
 
 ---
