@@ -7,6 +7,12 @@ const PUBLIC_ROUTES = [
   "/sign-up",
   "/auth/callback",
   "/api/stripe/webhook",
+  // The Build Lab surface is deliberately reachable signed-out: the waitlist
+  // measures demand, and requiring an account first would measure sign-ups.
+  // These would pass through anyway (they aren't in PROTECTED_ROUTES) — listed
+  // so the intent is legible rather than incidental.
+  "/build-lab",
+  "/api/build-lab",
 ];
 
 const PROTECTED_ROUTES = ["/dashboard", "/learn"];

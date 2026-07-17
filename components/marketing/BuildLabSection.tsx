@@ -1,4 +1,5 @@
-import { CalendarClock } from "lucide-react";
+import Link from "next/link";
+import { CalendarClock, ArrowRight } from "lucide-react";
 import { BUILD_LAB } from "@/lib/course-config";
 import Section from "./Section";
 
@@ -39,7 +40,15 @@ export default function BuildLabSection() {
         </div>
 
         <p className="text-slate-300 text-sm leading-relaxed mb-3">{BUILD_LAB.description}</p>
-        <p className="text-slate-500 text-sm leading-relaxed">{BUILD_LAB.waitlistNote}</p>
+        <p className="text-slate-500 text-sm leading-relaxed mb-5">{BUILD_LAB.waitlistNote}</p>
+
+        <Link
+          href="/build-lab"
+          className="inline-flex items-center gap-2 text-brand-400 hover:text-gold text-sm font-medium transition-colors"
+        >
+          {scheduled ? "See the details" : "Join the waitlist"}
+          <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
     </Section>
   );
