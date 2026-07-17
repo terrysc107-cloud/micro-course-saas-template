@@ -33,7 +33,7 @@ export default function PricingSection() {
 
         <BuyButton
           label={PRODUCT.ctaLabel}
-          className="w-full bg-brand-600 hover:bg-brand-500 text-white py-4 rounded-xl text-lg shadow-lg shadow-brand-950/50"
+          className="w-full bg-gold hover:bg-brand-400 text-background py-4 rounded-xl text-lg shadow-[0_0_28px_rgba(201,168,76,0.28)] hover:shadow-[0_0_36px_rgba(201,168,76,0.42)] transition-shadow"
         >
           <Lock className="w-4 h-4" />
         </BuyButton>

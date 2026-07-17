@@ -14,7 +14,8 @@ export default function Badge({ children, variant = "default", className }: Badg
         {
           "bg-slate-800 text-slate-300": variant === "default",
           "bg-green-900/40 text-green-400": variant === "success",
-          "bg-amber-900/40 text-amber-400": variant === "warning",
+          // amber-500 not -400: see mdx-components.tsx — 400 collides with gold.
+          "bg-amber-900/40 text-amber-500": variant === "warning",
           "bg-brand-900/40 text-brand-400": variant === "info",
           "bg-slate-800/60 text-slate-500": variant === "locked",
         },

@@ -46,7 +46,7 @@ export default function LessonQuiz({
         {nextLesson && (
           <button
             onClick={() => router.push(`/learn/${nextLesson.moduleSlug}/${nextLesson.lessonSlug}`)}
-            className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 bg-gold hover:bg-brand-400 text-background px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
           >
             Next Lesson <ChevronRight className="w-4 h-4" />
           </button>
@@ -187,7 +187,7 @@ export default function LessonQuiz({
                   onClick={() =>
                     router.push(`/learn/${nextLesson.moduleSlug}/${nextLesson.lessonSlug}`)
                   }
-                  className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors ml-4 shrink-0"
+                  className="inline-flex items-center gap-2 bg-gold hover:bg-brand-400 text-background px-4 py-2 rounded-lg text-sm font-semibold transition-colors ml-4 shrink-0"
                 >
                   Next Lesson <ChevronRight className="w-4 h-4" />
                 </button>
@@ -205,7 +205,7 @@ export default function LessonQuiz({
           <button
             onClick={handleSubmit}
             disabled={!allAnswered || submitting}
-            className="mt-6 bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 bg-gold hover:bg-brand-400 text-background px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? "Checking..." : "Submit Answers"}
           </button>

@@ -16,12 +16,15 @@ const CALLOUT_CONFIG: Record<
     titleColor: "text-brand-400",
     defaultTitle: "Pro Tip",
   },
+  // amber-500 (#f59e0b), not amber-400 (#fbbf24): 400 is one hue-step from
+  // brand gold (#C9A84C) and on a gold-accented page reads as a broken accent
+  // instead of a caution. 500 is distinctly orange, so the signal survives.
   warning: {
     icon: AlertTriangle,
-    iconColor: "text-amber-400",
+    iconColor: "text-amber-500",
     borderColor: "border-amber-500",
     bgColor: "bg-amber-950/30",
-    titleColor: "text-amber-400",
+    titleColor: "text-amber-500",
     defaultTitle: "Watch Out",
   },
   info: {
@@ -91,9 +94,12 @@ interface KeyPointProps {
   children: ReactNode;
 }
 
+// The old treatment was a from-brand-950/40 -> to-slate-900 gradient, which
+// under the gold palette is brown fading into brown. A left gold rule over a
+// flat gold wash carries the same emphasis and survives the warm background.
 export function KeyPoint({ children }: KeyPointProps) {
   return (
-    <div className="not-prose my-8 rounded-xl bg-gradient-to-r from-brand-950/40 to-slate-900 border border-brand-800/50 px-6 py-5">
+    <div className="not-prose my-8 rounded-xl border-l-2 border-gold bg-gold/[0.06] border-y border-r border-slate-800 px-6 py-5">
       <div className="flex items-start gap-3">
         <Zap className="w-5 h-5 text-brand-400 shrink-0 mt-0.5" />
         <p className="text-brand-100 font-medium leading-relaxed text-sm">{children}</p>

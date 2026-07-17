@@ -73,7 +73,7 @@ export default async function DashboardPage() {
             <div className="mt-4">
               <Link
                 href={`/learn/${resumeLesson.split("/")[0]}/${resumeLesson.split("/")[1]}`}
-                className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors"
+                className="inline-flex items-center gap-2 bg-gold hover:bg-brand-400 text-background px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors"
               >
                 <PlayCircle className="w-4 h-4" />
                 {completedCount === 0 ? "Start Course" : "Continue Learning"}

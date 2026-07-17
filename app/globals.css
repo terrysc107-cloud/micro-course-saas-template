@@ -1,22 +1,226 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* ─────────────────────────────────────────────────────────────────────────
+   AI by Design visual system.
+
+   Claude Code Class is an AI by Design product, so it uses the AI by Design
+   palette: gold #C9A84C on #1E1B17, Geist Sans, grain, gold radial. The
+   canonical source is docs/BRAND-KIT.md in the by-design-ai- repo.
+
+   This file is the entire visual rebrand. There are no hardcoded colors
+   anywhere else in app/ or components/ — every color is a Tailwind token,
+   which is why remapping the ramps here reaches ~290 utilities without
+   touching a single component.
+   ───────────────────────────────────────────────────────────────────────── */
+
 @theme {
-  --color-brand-50: #f0f9ff;
-  --color-brand-100: #e0f2fe;
-  --color-brand-200: #bae6fd;
-  --color-brand-300: #7dd3fc;
-  --color-brand-400: #38bdf8;
-  --color-brand-500: #0ea5e9;
-  --color-brand-600: #0284c7;
-  --color-brand-700: #0369a1;
-  --color-brand-800: #075985;
-  --color-brand-900: #0c4a6e;
-  /* Referenced by lesson callouts and marketing surfaces; without a token here
-     Tailwind won't emit the brand-950 utilities they use. */
-  --color-brand-950: #082f49;
+  /* ── Canonical brand tokens ───────────────────────────────────────────
+     Names match by-design-ai's tailwind.config.ts character-for-character
+     so markup can move between the two repos unchanged. THIS is the brand
+     API — prefer `gold` and slash-opacity (`bg-gold/15`, `border-gold/40`)
+     in new code, not the brand-* ramp below.
+
+     gold-dim / gold-border exist only for copy-paste parity with Repo B;
+     they are just gold at 15% / 40%. Never write `bg-gold-dim/50` — that
+     stacks alpha on baked-in alpha. */
+  --color-gold: #c9a84c;
+  --color-gold-dim: rgba(201, 168, 76, 0.15);
+  --color-gold-border: rgba(201, 168, 76, 0.4);
+  --color-background: #1e1b17;
+
+  /* ── Warm neutral chrome ──────────────────────────────────────────────
+     These OVERRIDE Tailwind's built-in slate ramp. That is the trick: 202
+     existing slate-* utilities go warm with zero component edits.
+
+     slate-950 must stay identical to --color-background — it is the page
+     surface, and the hairline-grid card pattern relies on them matching.
+     slate-400 is BRAND-KIT.md §3's "text secondary" (#A8A29E) exactly. */
+  --color-slate-50: #fafaf9;
+  --color-slate-100: #f5f5f4;
+  --color-slate-200: #e7e5e4;
+  --color-slate-300: #d6d3d1;
+  --color-slate-400: #a8a29e; /* BRAND-KIT §3 text secondary */
+  --color-slate-500: #78716c;
+  --color-slate-600: #57534e;
+  --color-slate-700: #3d382f;
+  --color-slate-800: #2e2a24;
+  --color-slate-900: #23201b; /* card surface */
+  --color-slate-950: #1e1b17; /* == --color-background */
+
+  /* ── Gold ramp — a MIGRATION SHIM, not the design system ──────────────
+     ~90 brand-* utilities predate the gold tokens and still render through
+     this. Real usage is concentrated in three steps: brand-400 (accents,
+     24 uses), brand-600 (button fills, 10), brand-500 (borders, 9). The
+     other eight steps exist so two gradients and a shadow don't error.
+
+     ⚠️ DO NOT DELETE THIS BLOCK until `grep -rE "brand-[0-9]" app components`
+     returns nothing. Tailwind v4 emits NOTHING for an undefined token — no
+     error, no warning — so `bg-brand-600` would silently become no
+     background and the buy button would turn into white text floating on a
+     dark card. The failure is invisible until someone looks at the page. */
+  --color-brand-50: #fbf7ec;
+  --color-brand-100: #f5ebcf;
+  --color-brand-200: #ebd9a6;
+  --color-brand-300: #dfc57a;
+  --color-brand-400: #d4b75f;
+  --color-brand-500: #c9a84c; /* the canonical gold */
+  --color-brand-600: #b08f3a;
+  --color-brand-700: #8c7029;
+  --color-brand-800: #5e4b1c;
+  --color-brand-900: #3a2f13;
+  --color-brand-950: #241d0c;
+
+  /* ── Corners ──────────────────────────────────────────────────────────
+     AI by Design is sharp-cornered: Repo B uses only rounded-sm and
+     rounded-full across its entire surface. This repo has 44 soft corners
+     (rounded-lg/xl/2xl). Flattening the scale retires all of them without
+     touching markup.
+
+     rounded-full is hardcoded to 9999px in v4 and does not read these, so
+     status dots, avatars, and progress bars stay round — which is correct. */
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 2px;
+  --radius-3xl: 2px;
 }
 
-body {
-  font-family: Inter, Arial, Helvetica, sans-serif;
+/* `inline` is REQUIRED. The value dereferences --font-geist-sans, which
+   next/font declares on <html> at runtime. A plain @theme block would emit
+   the unresolved var() into :root and font-sans would silently fall back to
+   system-ui — with no error, and looking almost right. */
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Ported from by-design-ai app/globals.css ────────────────────────────
+   Hand-ported, not copied: Repo B is on Tailwind v3 (@tailwind base) and
+   this repo is on v4 (@import "tailwindcss"). Values are identical. */
+
+/* v4 has no backgroundImage theme namespace (that was a v3 config key), so
+   this is a plain class rather than a token. */
+.bg-gold-radial {
+  background-image: radial-gradient(
+    ellipse at center,
+    rgba(201, 168, 76, 0.08) 0%,
+    transparent 70%
+  );
+}
+
+/* Film grain. Max z-index in this app is z-40 (LessonLayout), so z-999 sits
+   above everything; pointer-events:none keeps it inert. */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  animation: grain 8s steps(10) infinite;
+  will-change: transform;
+}
+
+@keyframes grain {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-2%, -3%);
+  }
+  20% {
+    transform: translate(3%, 1%);
+  }
+  30% {
+    transform: translate(-1%, 4%);
+  }
+  40% {
+    transform: translate(4%, -2%);
+  }
+  50% {
+    transform: translate(-3%, 2%);
+  }
+  60% {
+    transform: translate(2%, -4%);
+  }
+  70% {
+    transform: translate(-4%, 1%);
+  }
+  80% {
+    transform: translate(1%, 3%);
+  }
+  90% {
+    transform: translate(-2%, -1%);
+  }
+}
+
+/* The AI by Design outline CTA. Used for nav and secondary actions here.
+   The two money buttons (hero + pricing) use solid `bg-gold text-background`
+   instead — see the note in components/marketing/PricingSection.tsx. */
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-gold);
+  color: var(--color-gold);
+  background: transparent;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.cta-btn:hover {
+  box-shadow:
+    0 0 24px rgba(201, 168, 76, 0.35),
+    inset 0 0 24px rgba(201, 168, 76, 0.06);
+}
+.cta-btn:active {
+  box-shadow:
+    0 0 12px rgba(201, 168, 76, 0.4),
+    inset 0 0 12px rgba(201, 168, 76, 0.1);
+}
+
+/* ── Lesson prose ────────────────────────────────────────────────────────
+   @tailwindcss/typography ships its OWN hardcoded invert palette and does not
+   read the --color-slate-* overrides above. Verified against the compiled CSS:
+   it emits #45556c for bullets and #90a1b9 for captions — cool blue-grey, on a
+   warm page.
+
+   LessonContent.tsx already overrides p / li / a / code / pre / blockquote /
+   table via prose-* utilities, so those are fine. What it does not cover —
+   bullets, counters, captions, kbd, lead — would stay cold. Remapping the
+   variables fixes every one at once, and keeps working if someone adds a
+   <figcaption> or a lead paragraph later.
+
+   Values track the warm ramp in @theme; keep them in sync. */
+.prose-invert {
+  --tw-prose-invert-body: #d6d3d1; /* slate-300 */
+  --tw-prose-invert-headings: #ffffff;
+  --tw-prose-invert-lead: #a8a29e; /* slate-400 */
+  --tw-prose-invert-links: #c9a84c; /* gold */
+  --tw-prose-invert-bold: #ffffff;
+  --tw-prose-invert-counters: #a8a29e;
+  --tw-prose-invert-bullets: #57534e; /* slate-600 */
+  --tw-prose-invert-hr: #3d382f; /* slate-700 */
+  --tw-prose-invert-quotes: #d6d3d1;
+  --tw-prose-invert-quote-borders: #c9a84c;
+  --tw-prose-invert-captions: #a8a29e;
+  --tw-prose-invert-kbd: #ffffff;
+  --tw-prose-invert-kbd-shadows: 201 168 76; /* gold, as the plugin wants RGB triplets */
+  --tw-prose-invert-code: #ffffff;
+  --tw-prose-invert-pre-code: #d6d3d1;
+  --tw-prose-invert-pre-bg: #2e2a24; /* slate-800 */
+  --tw-prose-invert-th-borders: #3d382f;
+  --tw-prose-invert-td-borders: #2e2a24;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .noise-overlay {
+    animation: none;
+  }
 }

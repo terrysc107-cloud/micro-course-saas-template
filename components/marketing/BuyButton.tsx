@@ -60,8 +60,11 @@ export default function BuyButton({ label, className, showChevron, children }: B
         {pending ? "Starting checkout…" : label}
         {!pending && showChevron && <ChevronRight className="w-5 h-5" />}
       </button>
+      {/* red, not amber: this is a checkout failure (role="alert"), not a
+          caution. Amber also sat one hue-step from brand gold and read as a
+          broken accent rather than a problem. */}
       {error && (
-        <p role="alert" className="text-amber-400 text-sm mt-2 text-center">
+        <p role="alert" className="text-red-300 text-sm mt-2 text-center">
           {error}
         </p>
       )}

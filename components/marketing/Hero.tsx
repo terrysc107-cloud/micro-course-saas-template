@@ -63,7 +63,7 @@ export default function Hero({ moduleCount, lessonCount, templateCount }: HeroPr
             <BuyButton
               label={PRODUCT.ctaLabel}
               showChevron
-              className="bg-brand-600 hover:bg-brand-500 text-white px-7 py-4 rounded-xl text-base sm:text-lg shadow-lg shadow-brand-950/50"
+              className="bg-gold hover:bg-brand-400 text-background px-7 py-4 rounded-xl text-base sm:text-lg shadow-[0_0_28px_rgba(201,168,76,0.28)] hover:shadow-[0_0_36px_rgba(201,168,76,0.42)] transition-shadow"
             />
             <Link
               href="#curriculum"

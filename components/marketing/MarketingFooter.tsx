@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Terminal } from "lucide-react";
 import { BRAND, PARENT_BRAND, DISCLAIMER, DOCS_NOTE, LAST_VERIFIED } from "@/lib/course-config";
 
 export default function MarketingFooter() {
@@ -8,9 +7,13 @@ export default function MarketingFooter() {
       <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-8">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-brand-600/15 border border-brand-500/30 flex items-center justify-center">
-              <Terminal className="w-4 h-4 text-brand-400" />
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/brand/aix-mark.svg"
+              alt=""
+              aria-hidden="true"
+              className="w-8 h-8 shrink-0"
+            />
             <div>
               <p className="text-white font-semibold text-sm">{BRAND.name}</p>
               <p className="text-slate-500 text-xs">{BRAND.tagline}</p>
