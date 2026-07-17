@@ -21,8 +21,21 @@
 -- bypasses RLS. Table-level grants are tightened too, so a future permissive
 -- policy cannot silently re-open writes on its own.
 --
--- STATUS: NOT APPLIED TO PRODUCTION. Requires Terry's approval.
+-- STATUS: APPLIED TO PRODUCTION. Verified 2026-07-17 against project
+-- acouuzccqkcpyrckrgwg (supabase-crimson-ladder): course_purchases has exactly
+-- one policy — course_purchases_select_own, SELECT, {authenticated},
+-- USING (auth.uid() = user_id), WITH CHECK null — and anon/authenticated hold
+-- only REFERENCES, SELECT, TRIGGER. The self-grant path is closed.
 -- See docs/PAYMENT-GATE-SECURITY.md for the verification procedure.
+--
+-- NOTE: the sibling tables lesson_progress, quiz_results, and user_course_state
+-- still carry the exact anti-pattern described above — "own rows" FOR ALL
+-- USING (auth.uid() = user_id) with no WITH CHECK, plus full write grants to
+-- anon and authenticated. Harm is low (USING confines writes to the caller's
+-- own rows; anon evaluates auth.uid() = NULL and is denied; TRUNCATE is not
+-- reachable through PostgREST), which is why they were left alone here rather
+-- than widening a security migration to a live paid product. They still want
+-- their own migration.
 
 BEGIN;
 

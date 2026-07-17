@@ -1,0 +1,28 @@
+name: CI
+
+# `npm run check` is check:content && build. The content linter is the guardrail
+# that keeps the marketing copy honest — it fails the build on speed multipliers,
+# income promises, invented seat counts, urgency theatre, student counts, and any
+# hardcoded Build Lab date. Running it only by hand meant it ran only when someone
+# remembered. Now it gates every PR.
+#
+# No secrets are needed: Stripe config resolves lazily (see lib/stripe.ts) and the
+# Supabase clients are constructed inside request handlers, so `next build`
+# completes without env vars. Verified 2026-07-17.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
