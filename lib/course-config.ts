@@ -53,16 +53,55 @@ export const PRODUCT = {
 } as const;
 
 /**
- * The live Build Lab is PLANNED ONLY. There is no date, no checkout, and no
- * registration. Do not add a price or a Stripe product for this until Terry
- * explicitly approves one.
+ * The Build Lab — the live session the course funnels up to.
+ *
+ * Terry approved a price and a checkout on 2026-07-16. He has NOT approved a
+ * date, and that distinction is the whole design: a checkout you build ahead of
+ * time is preparation, a date you invented is false scarcity.
+ *
+ * TWO SOURCES OF TRUTH, DELIBERATELY:
+ *   - This config decides what RENDERS.
+ *   - The `ccc_lab_sessions` row decides what CHARGES.
+ * They are asserted against each other at request time, so a typo here cannot
+ * take someone's money, and a date here without a dated row sells nothing.
+ *
+ * TO OPEN REGISTRATION, all three must happen together:
+ *   1. Create the Stripe price; set NEXT_PUBLIC_STRIPE_BUILD_LAB_PRICE_ID.
+ *   2. UPDATE ccc_lab_sessions SET status='scheduled', starts_at=…, capacity=…,
+ *      stripe_price_id=…, price_cents=… WHERE slug='founding-run';
+ *      (a CHECK constraint refuses 'scheduled' without a real date and price)
+ *   3. Set status:'scheduled' + dateDisplay here.
+ *
+ * SCARCITY: real only. Seats remaining are computed from capacity minus actual
+ * paid registrations, server-side. Never write a seat count, a date, or a
+ * countdown as a literal — check-content.mjs fails the build on it.
  */
-export const WORKSHOP = {
+export const BUILD_LAB = {
   name: "The Build Lab",
-  status: "Planned — no date yet",
+  /** Must match LIVE_LAB_NAME in by-design-ai's lib/education.ts. Two
+   *  spellings of one product is two products. */
+  sessionSlug: "founding-run",
+
+  /** 'waitlist' | 'scheduled' — the single switch for the whole funnel. */
+  status: "waitlist" as "waitlist" | "scheduled",
+
+  /** MUST be null while status is 'waitlist'. Enforced by check-content.mjs. */
+  dateDisplay: null as string | null,
+
+  /** $297 for the founding run: 3x the course is a real step without
+   *  colliding with the $499 sprint, and there is no social proof yet to buy
+   *  premium pricing with. Asserted against the live Stripe price at
+   *  checkout — if they disagree, checkout refuses rather than surprising
+   *  someone. Raising it is this line plus a new Stripe price id. */
+  priceDisplay: "$297",
+  priceCents: 29700,
+  priceIdEnvVar: "NEXT_PUBLIC_STRIPE_BUILD_LAB_PRICE_ID",
+
   description:
     "A live, small-group session where we build one real feature end to end and you watch every decision, including the ones that go wrong.",
-  note: "Not open for registration. No date has been set and there is nothing to buy yet. Course members will hear about it first.",
+
+  waitlistNote:
+    "No date is set yet. Join the list and you'll hear when there is one, before it goes anywhere else. The waitlist costs nothing and holds nothing — no deposit.",
 } as const;
 
 // ── Curriculum ───────────────────────────────────────────────────────────────
@@ -275,7 +314,10 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "What about the live Build Lab?",
-    a: WORKSHOP.note + " The $97 course is self-paced and available today; that is the only thing on sale.",
+    // Said "that is the only thing on sale" — true until the Lab got a price.
+    // Kept the useful half: the course does not depend on the Lab.
+    a:
+      "It is a separate, live, one-off session — we build one real feature end to end and you watch every decision, including the ones that go wrong. It is not scheduled yet, so there is a waitlist rather than a date, and the waitlist costs nothing. The $97 course is self-paced, complete on its own, and does not depend on the Lab.",
   },
   {
     q: "Can I get a refund?",

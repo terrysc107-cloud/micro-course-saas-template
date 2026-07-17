@@ -22,7 +22,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const MODULES_DIR = path.join(ROOT, "content", "modules");
 const PUBLIC_DIR = path.join(ROOT, "public");
 
-const { MODULE_META, TEMPLATES, DISCLAIMER } = await import(
+const { MODULE_META, TEMPLATES, DISCLAIMER, BUILD_LAB } = await import(
   path.join(ROOT, "lib", "course-config.ts")
 );
 
@@ -74,6 +74,36 @@ const BANNED = [
   {
     re: /\b(Marcus T\.|Priya S\.|Derek L\.)/g,
     why: "Fabricated V1 testimonial.",
+  },
+
+  // ── Scarcity ───────────────────────────────────────────────────────────────
+  // Real scarcity is allowed and wanted: the Build Lab is a live session, so
+  // the seat cap is genuine. What is banned is a number no row can back. Every
+  // count must come from ccc_lab_sessions.capacity minus actual paid
+  // registrations, rendered from data — never typed into a component.
+  //
+  // These rules did not exist before 2026-07-17. The no-invented-dates rule was
+  // documented in BRAND-KIT and the integration doc and enforced by nothing,
+  // which is the same as not existing.
+  {
+    re: /\b(only|just)\s+\d+\s+(seats?|spots?|places?|tickets?)\s+(left|remaining|available)/gi,
+    why: "Hardcoded seat count. Real counts render from ccc_lab_sessions.capacity minus registrations.",
+  },
+  {
+    re: /\b\d+\s+(seats?|spots?)\s+(left|remaining)\b/gi,
+    why: "Hardcoded seat count — must be computed from real registrations.",
+  },
+  {
+    re: /\b(last chance|doors close|ends (tonight|today)|act now|hurry|don'?t miss out|final hours?)\b/gi,
+    why: "Urgency theatre. If the deadline is real it comes from starts_at; if it isn't, it's manufactured.",
+  },
+  {
+    re: /\b\d{1,3}(,\d{3})*\+?\s+(students|developers|engineers|people|founders)\s+(have|already|enrolled|joined|trust)/gi,
+    why: "Student count. There is no verifiable number, so there is no number.",
+  },
+  {
+    re: /\b(join|trusted by)\s+\d{2,}(,\d{3})*\+?\s+(students|developers|engineers|people)/gi,
+    why: "Social proof by headcount — unverifiable.",
   },
 ];
 
@@ -229,6 +259,50 @@ for (const file of marketing) {
       if (CORRECTION_MARKERS.test(lineText)) continue;
       fail(`${rel(file)}:${line}`, `"${m[0].trim()}" — ${why}`);
     }
+  }
+}
+
+// ── 4b. The Build Lab date guarantee ─────────────────────────────────────────
+// Regexes catch phrasings. These two catch the actual failure: a date existing
+// when there is no session to attend.
+//
+// The invariant: BUILD_LAB.dateDisplay is null unless status is 'scheduled',
+// and a scheduled run must say when. The database enforces the other half —
+// ccc_lab_sessions has a CHECK refusing 'scheduled' without a real starts_at
+// and price — so config and data cannot drift into selling a run that does not
+// exist.
+if (BUILD_LAB.status === "waitlist" && BUILD_LAB.dateDisplay !== null) {
+  fail(
+    "lib/course-config.ts",
+    `BUILD_LAB.dateDisplay is "${BUILD_LAB.dateDisplay}" while status is 'waitlist'. ` +
+      "A date with no scheduled session is an invented date — the one thing this file exists to prevent."
+  );
+}
+if (BUILD_LAB.status === "scheduled" && !BUILD_LAB.dateDisplay) {
+  fail(
+    "lib/course-config.ts",
+    "BUILD_LAB.status is 'scheduled' but dateDisplay is empty. A run people can pay for must say when it is."
+  );
+}
+if (!["waitlist", "scheduled"].includes(BUILD_LAB.status)) {
+  fail("lib/course-config.ts", `BUILD_LAB.status "${BUILD_LAB.status}" is not 'waitlist' or 'scheduled'.`);
+}
+
+// A date literal in a marketing component is by definition invented: real dates
+// render from BUILD_LAB.dateDisplay, which is fed by ccc_lab_sessions.starts_at.
+const DATE_LITERAL =
+  /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(st|nd|rd|th)?\b|\b\d{4}-\d{2}-\d{2}\b/g;
+for (const file of walk(path.join(ROOT, "components", "marketing"), ".tsx")) {
+  const raw = fs.readFileSync(file, "utf8");
+  for (const m of raw.matchAll(DATE_LITERAL)) {
+    const line = raw.slice(0, m.index).split("\n").length;
+    const lineText = raw.split("\n")[line - 1] ?? "";
+    // Comments are how we explain the rule; they aren't shipping the claim.
+    if (/^\s*(\/\/|\*|\/\*)/.test(lineText)) continue;
+    fail(
+      `${rel(file)}:${line}`,
+      `Date literal "${m[0]}" in a marketing component. Dates render from BUILD_LAB.dateDisplay, never a literal.`
+    );
   }
 }
 
