@@ -1,9 +1,65 @@
 import { getStripe, getWebhookConfig, StripeConfigError } from "@/lib/stripe";
 import { createServiceClient } from "@/lib/supabase/server";
+import { recordLabRegistration } from "@/lib/build-lab";
 import { NextResponse, type NextRequest } from "next/server";
 import type Stripe from "stripe";
 
 export const runtime = "nodejs";
+
+/**
+ * Grant a Build Lab seat. Reached only via the `product === "build-lab"` branch
+ * below, which means the signature is verified and the session is paid.
+ *
+ * Deliberately separate from the course grant: a Lab seat and a course
+ * entitlement are different rows in different tables with different shapes, and
+ * course_purchases must not be touched by a Lab purchase.
+ */
+async function grantLabSeat(session: Stripe.Checkout.Session, userId: string) {
+  const labSessionId = session.metadata?.labSessionId;
+
+  if (!labSessionId) {
+    // Should be unreachable — /api/build-lab/checkout always sets it. If it
+    // happens, someone paid and there is no way to know which run they bought.
+    // 200 because a retry cannot add metadata that was never set; the log is
+    // what gets them seated or refunded by hand.
+    console.error(
+      `[stripe/webhook] CRITICAL: build-lab session ${session.id} has no labSessionId. ` +
+        `User ${userId} PAID and has NO SEAT. Reconcile manually.`
+    );
+    return NextResponse.json({ received: true, ignored: "missing labSessionId" });
+  }
+
+  const email = session.customer_details?.email ?? session.customer_email;
+  if (!email) {
+    console.error(
+      `[stripe/webhook] CRITICAL: build-lab session ${session.id} has no email. ` +
+        `User ${userId} PAID and has NO SEAT. Reconcile manually.`
+    );
+    return NextResponse.json({ received: true, ignored: "missing email" });
+  }
+
+  const ok = await recordLabRegistration({
+    labSessionId,
+    userId,
+    email,
+    // amount_total is what Stripe actually charged. Trust it over any local
+    // constant — if they ever disagree, the charge is the truth.
+    amountCents: session.amount_total ?? 0,
+    currency: session.currency ?? "usd",
+    stripeSessionId: session.id,
+    stripeCustomerId: typeof session.customer === "string" ? session.customer : null,
+    stripePaymentIntentId:
+      typeof session.payment_intent === "string" ? session.payment_intent : null,
+  });
+
+  if (!ok) {
+    // 500 so Stripe retries — a paying attendee must not lose their seat to a
+    // transient database error.
+    return NextResponse.json({ error: "DB error" }, { status: 500 });
+  }
+
+  return NextResponse.json({ received: true });
+}
 
 /**
  * The ONLY path that grants course access.
@@ -67,6 +123,18 @@ export async function POST(request: NextRequest) {
       `[stripe/webhook] session ${session.id} completed with payment_status=${session.payment_status}; not granting`
     );
     return NextResponse.json({ received: true, ignored: "not paid" });
+  }
+
+  // ── The one branch between a customer's money and their access ────────────
+  //
+  // `?? "course"` IS LOAD-BEARING. Sessions created BEFORE this deploy carry no
+  // `product` metadata. Without the default, anyone mid-checkout during rollout
+  // pays and gets nothing — and Stripe retries a 200 exactly zero times. Do not
+  // "tidy" this into a required field.
+  const product = session.metadata?.product ?? "course";
+
+  if (product === "build-lab") {
+    return await grantLabSeat(session, userId);
   }
 
   const supabase = createServiceClient();

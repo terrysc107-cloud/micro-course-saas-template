@@ -104,6 +104,66 @@ export async function getLabAvailability(): Promise<LabAvailability> {
   return { session, taken, seatsLeft, soldOut, open };
 }
 
+/**
+ * Record a paid seat. Called ONLY by the Stripe webhook, after signature
+ * verification and a payment_status === 'paid' check.
+ *
+ * Returns true when the seat is safely recorded (including when it already
+ * was). Returns false only for errors worth a Stripe retry.
+ *
+ * IDEMPOTENT TWO WAYS, because Stripe retries on any non-2xx and can deliver
+ * the same event more than once:
+ *   - same stripe_session_id  → upsert updates the one row (unique index)
+ *   - same (session_id, user_id) via a DIFFERENT stripe session → 23505, which
+ *     is NOT retried. That state means someone paid twice for one seat, and no
+ *     amount of retrying fixes it. Retrying would only wedge the queue; the log
+ *     line is the thing that gets them a refund.
+ */
+export async function recordLabRegistration(input: {
+  labSessionId: string;
+  userId: string;
+  email: string;
+  amountCents: number;
+  currency: string;
+  stripeSessionId: string;
+  stripeCustomerId: string | null;
+  stripePaymentIntentId: string | null;
+}): Promise<boolean> {
+  const db = createServiceClient();
+
+  const { error } = await db.from("ccc_lab_registrations").upsert(
+    {
+      session_id: input.labSessionId,
+      user_id: input.userId,
+      email: input.email,
+      status: "paid",
+      amount_cents: input.amountCents,
+      currency: input.currency,
+      stripe_session_id: input.stripeSessionId,
+      stripe_customer_id: input.stripeCustomerId,
+      stripe_payment_intent_id: input.stripePaymentIntentId,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "stripe_session_id" }
+  );
+
+  if (!error) return true;
+
+  // 23505 here can only be the (session_id, user_id) constraint — the
+  // stripe_session_id collision is what the upsert above absorbs.
+  if (error.code === "23505") {
+    console.error(
+      `[build-lab] DOUBLE PAYMENT — user ${input.userId} already holds a seat on run ` +
+        `${input.labSessionId}; stripe session ${input.stripeSessionId} paid ` +
+        `${input.amountCents} and needs a REFUND. Seat is intact; not retrying.`
+    );
+    return true;
+  }
+
+  console.error("[build-lab] failed to record registration:", error.message);
+  return false;
+}
+
 /** Has this user already got a seat on this run? Used to avoid double-charging. */
 export async function hasLabRegistration(userId: string, sessionId: string): Promise<boolean> {
   const db = createServiceClient();

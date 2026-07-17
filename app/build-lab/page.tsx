@@ -6,6 +6,7 @@ import MarketingNav from "@/components/marketing/MarketingNav";
 import MarketingFooter from "@/components/marketing/MarketingFooter";
 import Section from "@/components/marketing/Section";
 import WaitlistForm from "@/components/marketing/WaitlistForm";
+import LabBuyButton from "@/components/marketing/LabBuyButton";
 
 export const metadata: Metadata = {
   title: `${BUILD_LAB.name} — ${BRAND.name}`,
@@ -92,11 +93,12 @@ export default async function BuildLabPage() {
         </div>
 
         <div className="mt-8">
+          {/* Unreachable until a run is genuinely scheduled — `open` requires
+              config AND the row to agree, with a real date, price, and seat
+              left. That is what lets the checkout ship cold: live, testable,
+              and unable to take a cent until Terry flips the switch. */}
           {open ? (
-            // Phase 5 replaces this with the Stripe checkout button. Until a run
-            // is genuinely scheduled this branch is unreachable, which is why
-            // the checkout can ship cold and be tested before it is ever shown.
-            <p className="text-slate-400 text-sm">Registration is open. Checkout lands next.</p>
+            <LabBuyButton className="bg-gold text-background px-6 py-3 rounded-md hover:bg-gold/90" />
           ) : (
             <>
               <WaitlistForm source="build-lab-page" />
