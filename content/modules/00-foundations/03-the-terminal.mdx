@@ -1,0 +1,119 @@
+---
+title: "The Terminal"
+description: "What the terminal is, how to open one, and the few commands you need before Claude Code."
+order: 3
+duration: "10 min"
+quiz:
+  - question: "What is a terminal?"
+    options:
+      - "A website where you buy software"
+      - "A text window where you type commands for the computer to run"
+      - "A kind of file that stores passwords"
+      - "The same thing as a web browser"
+    answer: 1
+  - question: "You type `cd` and a folder name. What are you asking the computer to do?"
+    options:
+      - "Delete that folder"
+      - "Copy that folder to the desktop"
+      - "Move your current location into that folder"
+      - "Create a git commit"
+    answer: 2
+  - question: "A command looks like it did nothing and the prompt came back. What should you check first?"
+    options:
+      - "Whether the computer is broken"
+      - "The prompt — many commands succeed quietly, and the next prompt means it finished"
+      - "Whether you need an API key"
+      - "Whether Claude Code is already running"
+    answer: 1
+---
+
+## A Window That Takes Orders
+
+The **terminal** (also called the command line, or the shell) is a text window. You type a line, press Enter, and the computer runs that line.
+
+That is all. It is not a programming language. It is a way to give the computer short instructions: go to this folder, list the files, run this program.
+
+Claude Code is a program you start from the terminal. If you can open a terminal, change folder, and run a command, you can start the course. You do not need to be "good at the terminal." You need these few moves.
+
+## Open One
+
+- **macOS:** open Spotlight (`Cmd + Space`), type `Terminal`, press Enter
+- **Windows:** open the Start menu, type `PowerShell` or `Windows Terminal`, press Enter
+- **Linux:** open the app named Terminal
+
+You will see a line waiting for you. That line is the **prompt**. It often shows the folder you are in, then a `$` or `>`.
+
+<Callout type="info">
+On Windows you may see `PS C:\Users\you>` (PowerShell) or `C:\Users\you>` (CMD). Those are two different shells. A later lesson will tell you which install command belongs to which. For this lesson, either is fine.
+</Callout>
+
+## Four Commands
+
+Type each one, then press Enter. Use your practice folder from the last lesson.
+
+**See where you are**
+
+```bash
+pwd
+```
+
+On Windows PowerShell, `pwd` also works. The computer prints the path of the current folder.
+
+**List files**
+
+```bash
+ls
+```
+
+On older Windows CMD, the cousin is `dir`. You should see `hello.md` if you are in `claude-code-practice`.
+
+**Go into a folder**
+
+```bash
+cd Documents
+```
+
+`cd` means "change directory." After it works, `pwd` should show you inside `Documents`.
+
+To go up one folder:
+
+```bash
+cd ..
+```
+
+**Print a file**
+
+```bash
+cat hello.md
+```
+
+On Windows PowerShell, `type hello.md` or `Get-Content hello.md` does the same job. You should see the sentence you typed.
+
+<Callout type="tip">
+If the computer says `No such file or directory` or `cannot find path`, you are in the wrong folder. Run `pwd`, then `ls`, then `cd` toward the folder you meant. This is the most common terminal mistake, and it is not a character flaw.
+</Callout>
+
+## What Success Looks Like
+
+Many commands print nothing when they work. `cd` is like that. The proof is a new prompt, and `pwd` showing the place you intended.
+
+If a command is taking a long time and you want to stop it, press `Ctrl + C`. That cancels the current command. It does not shut down the computer.
+
+## You Will Type Commands You Do Not Fully Understand
+
+That is normal. Two rules keep it safe:
+
+1. **Do not run a command you cannot read at all.** If a lesson or Claude shows you a line, read it. If it says `rm` (remove), `del`, `format`, or anything about deleting a whole disk, stop and ask.
+2. **Prefer commands that show information over commands that change things** until you are sure. `pwd`, `ls`, `cat`, and `git status` are look-only.
+
+<Callout type="warning">
+Never paste a command from a random website into your terminal because someone said it was required. This course will give you specific lines and tell you what they do. If a stranger's command includes `curl ... | bash` and it is not from this course or the official Claude Code docs, do not run it.
+</Callout>
+
+## Why Claude Code Uses This Window
+
+Claude Code can also live in an editor later. We start in the terminal because that is the surface the official docs describe, and because you can see every command it wants to run. When it asks "can I run this?", you will be looking at a line like the ones you just typed.
+
+<KeyPoint>The terminal is a text window for giving the computer short orders. If you can open one, `cd` into a folder, and read the output of `ls`, you have enough terminal to start Claude Code.</KeyPoint>
+
+Next: git — the tool that lets you see a change and save a version you can undo.
