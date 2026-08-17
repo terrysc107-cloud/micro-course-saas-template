@@ -1,6 +1,6 @@
 ---
 title: "Build a Feature End-to-End"
-description: "Ship a complete feature from database to UI using Claude Code at every step."
+description: "Ship a complete feature using Claude Code at every step — the same order works on a small local project."
 order: 1
 duration: "14 min"
 coverImage: "https://images.unsplash.com/photo-1537884944318-390069bb8665?w=1200&auto=format&fit=crop&q=80"
@@ -37,13 +37,15 @@ quiz:
 
 ## The Full-Stack Feature Workflow
 
-Building a feature with Claude Code follows a bottom-up pattern: schema → data layer → API → UI → tests. Each layer is reviewable before building the next.
+This lesson uses a web-app example so you can see the loop on a bigger stack. If you are still on the local Daily Checklist, the same order applies: **data first, then the screen, then check it in the browser.** You do not have to build notifications today.
+
+Building a feature with Claude Code follows a bottom-up pattern: data shape → save/load → page → checks. Each layer is reviewable before building the next. On a larger app that becomes: schema → data layer → API → UI → tests.
 
 ## Example: Adding Notifications to a Web App
 
-Let us walk through building a complete notifications feature from scratch.
+The rest of this lesson is an illustration. Walk it if you have a web app. If not, read it as "this is what the same loop looks like later," then go back to the capstone.
 
-<Callout type="tip">Break the feature into sub-tasks before you start prompting — write out the steps yourself (schema, types, server functions, API, hook, UI) and use each one as a separate prompt. This prevents Claude from jumping ahead and building on a shaky foundation.</Callout>
+<Callout type="tip">Break the feature into sub-tasks before you start prompting — write out the steps yourself (data, save, page, check) and use each one as a separate prompt. This prevents Claude from jumping ahead and building on a shaky foundation.</Callout>
 
 ### Step 1: Database Schema
 
@@ -56,7 +58,7 @@ Let us walk through building a complete notifications feature from scratch.
   - link (text, nullable)
   - is_read (boolean, default false)
   - created_at (timestamptz)
-  
+
   Add RLS policy: users can only see their own notifications.
   Output as SQL ready to run in Supabase SQL editor.
 ```
@@ -66,16 +68,16 @@ Review the SQL. Run it in Supabase. Come back.
 ### Step 2: TypeScript Types
 
 ```
-> Create @src/types/notification.ts with a Notification type 
-  that matches the table we just created. Also create a 
-  NotificationWithMeta type that includes a formatted 
+> Create @src/types/notification.ts with a Notification type
+  that matches the table we just created. Also create a
+  NotificationWithMeta type that includes a formatted
   time_ago string.
 ```
 
 ### Step 3: Server Functions
 
 ```
-> Create @src/lib/notifications.ts with these functions 
+> Create @src/lib/notifications.ts with these functions
   using the service client from @/lib/supabase/server:
   - getNotifications(userId): returns Notification[]
   - markAsRead(notificationId, userId): returns { success }
@@ -116,7 +118,7 @@ Review the SQL. Run it in Supabase. Come back.
 ### Step 7: Wire It Up
 
 ```
-> Add NotificationBell to the header in @src/app/layout.tsx 
+> Add NotificationBell to the header in @src/app/layout.tsx
   next to the sign-out button. Import from @/components/NotificationBell
 ```
 
@@ -132,10 +134,10 @@ Now go to the browser and verify end-to-end:
 
 ## The Vertical Slice Principle
 
-Build one complete feature all the way through the stack before starting the next. A half-built feature in three layers is harder to debug than a complete feature in one.
+Build one complete feature all the way through before starting the next. A half-built feature in three layers is harder to debug than a complete feature in one. Your capstone checklist is already a vertical slice: add, list, toggle, persist.
 
 ## Summary
 
-Schema → types → server functions → API routes → hooks → components → wire up → test. Each step is small, reviewable, and safe. This is how you ship reliable features fast.
+Data → save/load → page → check. On a larger stack: schema → types → server functions → API → UI → test. Each step is small, reviewable, and safe.
 
-<KeyPoint>Build features bottom-up, one layer at a time — schema first, then data functions, then API, then UI — and verify each layer works before building the next; this way mistakes are caught when they are cheap to fix, not after you have built six layers on top of them.</KeyPoint>
+<KeyPoint>Build features bottom-up, one layer at a time — data first, then the screen — and verify each layer works before building the next; this way mistakes are caught when they are cheap to fix, not after you have built six layers on top of them.</KeyPoint>
