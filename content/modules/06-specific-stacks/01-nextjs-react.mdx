@@ -1,6 +1,6 @@
 ---
 title: "Next.js & React"
-description: "Use Claude Code effectively with Next.js App Router, Server Components, and React patterns."
+description: "Use Claude Code effectively with Next.js App Router, Server Components, and React patterns. Optional until you have this stack."
 order: 1
 duration: "13 min"
 coverImage: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&auto=format&fit=crop&q=80"
@@ -35,6 +35,10 @@ quiz:
     answer: 2
 ---
 
+## Skip This Module Until You Have A Stack
+
+This module is optional. If you are still on the local Daily Checklist, skip or skim and come back when you are working in Next.js, Python, SQL, or an API. Nothing later in the required path depends on you finishing these stack lessons first.
+
 ## Claude Code + Next.js App Router
 
 Next.js App Router has strong conventions — Server Components, Client Components, Route Handlers, and layouts. Claude Code knows these patterns well when you guide it correctly.
@@ -45,7 +49,7 @@ The most important concept to communicate to Claude:
 
 ```
 > Create a ProductList component in @src/components/ProductList.tsx
-  
+
   This should be a SERVER component (no 'use client' directive).
   It fetches products directly using the Supabase server client.
   It receives a categoryId prop and returns a list of products as JSX.
@@ -56,9 +60,9 @@ vs.
 
 ```
 > Create an AddToCart button in @src/components/AddToCartButton.tsx
-  
+
   This must be a CLIENT component ('use client' at top).
-  It uses useState for the loading state and calls 
+  It uses useState for the loading state and calls
   POST /api/cart when clicked.
 ```
 
@@ -70,13 +74,13 @@ Claude will correctly use async/await at the top level for server components and
 
 ```
 > Create @src/app/api/products/route.ts
-  
+
   GET handler:
   - Authenticate user with createClient() from @/lib/supabase/server
   - Return 401 if not authenticated
   - Query all active products from Supabase
   - Return { products } JSON
-  
+
   POST handler:
   - Authenticate (same pattern)
   - Validate body with zod: { name: string, price: number, categoryId: string }
@@ -88,13 +92,13 @@ Claude will correctly use async/await at the top level for server components and
 
 ```
 > Create @src/app/products/[productId]/page.tsx
-  
+
   Server component that:
   - Receives params.productId
   - Fetches the product from Supabase
   - Returns notFound() if product does not exist
   - Renders the product details
-  
+
   Also export generateMetadata that sets the page title to the product name
 ```
 
@@ -113,10 +117,10 @@ Claude will correctly use async/await at the top level for server components and
 
 ```
 > Create a server action in @src/app/actions/cart.ts:
-  
-  export async function addToCart(productId: string) — 
+
+  export async function addToCart(productId: string) —
     validates auth, inserts to cart table, revalidates the path
-  
+
   'use server' directive at the top of the file
 ```
 
@@ -124,7 +128,7 @@ Claude will correctly use async/await at the top level for server components and
 
 ```
 > Create @src/hooks/useProducts.ts using SWR
-  
+
   Fetches from /api/products
   Returns { products, loading, error, mutate }
   Types based on the Product type from @src/types/index.ts
@@ -136,24 +140,24 @@ Claude will correctly use async/await at the top level for server components and
 
 **Loading states:**
 ```
-> Add loading.tsx to @src/app/dashboard/ that shows 
+> Add loading.tsx to @src/app/dashboard/ that shows
   a skeleton of the dashboard layout while data loads
 ```
 
 **Error handling:**
 ```
-> Add error.tsx to @src/app/learn/ that shows a friendly 
+> Add error.tsx to @src/app/learn/ that shows a friendly
   error message and a "Try Again" button that calls reset()
 ```
 
 **Not found:**
 ```
-> Add not-found.tsx to @src/app/learn/ for when a lesson 
+> Add not-found.tsx to @src/app/learn/ for when a lesson
   slug does not match any content file
 ```
 
 ## Summary
 
-Always tell Claude whether each component is a Server Component or Client Component. Specify the data sources and mutation patterns. Next.js conventions are well-understood by Claude — just communicate the right constraints and it will produce idiomatic, production-ready App Router code.
+Always tell Claude whether each component is a Server Component or Client Component. Specify the data sources and mutation patterns. Next.js conventions are well-understood by Claude — just communicate the right constraints.
 
 <KeyPoint>The single most important thing to specify in every Next.js prompt is whether each component is a Server Component or Client Component — this one constraint determines everything about how Claude handles data fetching, state, and interactivity in the generated code.</KeyPoint>
