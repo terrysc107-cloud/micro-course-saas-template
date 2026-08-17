@@ -2,7 +2,7 @@
 title: "Build the Feature"
 description: "Small reviewable increments, a real review of every diff, and what to do when Claude goes off the rails."
 order: 4
-duration: "15 min"
+duration: "14 min"
 quiz:
   - question: "Claude's third attempt at a fix is worse than the first, and it's now apologizing and changing unrelated files. What is the correct move?"
     options:
@@ -14,113 +14,83 @@ quiz:
   - question: "Why build in increments that each end at a committable, verifiable state?"
     options:
       - "It produces a more impressive-looking commit history"
-      - "Because a 60-line diff gets read and a 600-line diff gets skimmed — and because each commit is a floor you can revert to instead of losing the whole build"
+      - "Because a 60-line diff gets read and a 600-line diff gets skimmed — and because each commit is a floor you can revert to"
       - "Because Claude Code performs worse on large tasks"
-      - "Because small commits are required before deploying"
+      - "Because small commits are required before opening the file"
     answer: 1
-  - question: "You review a diff and it works, but it fetches all leads and filters overdue ones in the component instead of querying for them. It's not what the plan said. What now?"
+  - question: "You review a diff and it works, but it filters Open tasks in the HTML instead of using the function you planned. What now?"
     options:
-      - "Ship it — behavior matches the done-criteria, which is what the brief measures"
+      - "Ship it — behavior matches the done-criteria"
       - "Silently fix it yourself and move on"
-      - "Reject it against the plan; 'the tests pass' is not the standard, since the plan named where that logic lives and this is the drift you review for"
+      - "Reject it against the plan; 'it works' is not the standard if the plan named where that logic lives"
       - "Accept it and add a TODO comment"
     answer: 2
 ---
 
 ## One Increment at a Time
 
-You have a schema and a scaffold. The temptation now is one prompt: "build the lead tracker." The plan's there, the types are there, Claude can do it, and it will hand you 600 lines that mostly work.
+You have a shape and a scaffold. The temptation is one prompt: "build the checklist." Don't. You will not review 600 lines. You will skim them.
 
-Don't. Not because it fails — because you won't review it. You'll skim it. Everybody skims a 600-line diff; it's not a discipline problem, it's a working memory problem. And the bug will be on line 340, in the middle of code that reads perfectly fine.
-
-The rule: **each increment ends at a state you can verify and commit.** Not "a file." Not "a component." A thin vertical slice that does something you can check.
+The rule: **each increment ends at a state you can verify and commit.**
 
 For this build, roughly:
 
-1. Persistence layer — create and read leads, no UI
-2. The lead list — renders real leads from the store
-3. Add-lead form — with validation
-4. Status changes — including the `lastActivityAt` update
-5. Overdue view — using the rule from lesson 3
+1. Save and load — add a task in the console or a tiny helper, refresh, it is still there
+2. The list on the page — renders real tasks
+3. The add form — with empty-title rejection
+4. Mark done / not done
+5. The Open view — using the rule from lesson 3
 
-Five increments. Five reviews. Five commits. Every one of them a floor you can fall back to.
+Five increments. Five reviews. Five commits.
 
-<Callout type="tip">A good increment boundary answers "what can I check when this is done?" with one sentence. "Persistence works — I can create a lead and read it back" is an increment. "Set up the data layer" is a work item with no test.</Callout>
+<Callout type="tip">A good increment boundary answers "what can I check when this is done?" with one sentence. "I can create a task and read it back after refresh" is an increment. "Set up the app" is not.</Callout>
 
-## Increment 1: Persistence
+## Increment 1: Save and Load
 
 ```
-> Increment 1 only: the persistence layer. Nothing else.
-
-  Implement the functions we scaffolded in @lib/leads/store.ts —
-  create, list, getById, updateStatus. Signatures are already fixed;
-  don't change them.
-
-  - updateStatus sets lastActivityAt. That's the invariant from the
-    schema work.
-  - No UI. No routes. No styling.
-  - When you're done, show me a script I can run to prove a lead
-    round-trips: create it, read it back, change status, confirm
-    lastActivityAt moved.
-
+> Increment 1 only: save and load. Nothing else.
+  Implement the functions we planned in @app.js.
+  When you're done, show me how to prove a task round-trips:
+  save one, reload, read it back.
   Stop after this. Do not start increment 2.
 ```
 
-"Stop after this" earns its place. Left alone, an agent that finishes a coherent piece of work reaches for the next coherent piece — that's the helpful behavior, and here it's the wrong one. Say where the edge is.
+"Stop after this" earns its place. Left alone, an agent that finishes a coherent piece reaches for the next one.
 
 ### Review the diff
 
-Read it. Then ask three questions, in this order:
+**1. Does it match the plan?** If the plan said `isOpen` is a function and this diff inlines the check, that's drift. Reject it.
 
-**1. Does it match the plan?** Not "is it good code" — does it do what you approved? If the plan said the overdue rule lives in `lib/leads/overdue.ts` as a pure function and this diff has an overdue check inlined in the store, that's drift. Reject it. The code might be fine. The point is that the thing you reviewed and the thing you got are supposed to be the same thing, and if you let that slip in increment 1 you have no idea what you're running by increment 5.
+**2. What did it touch that I didn't ask for?** `git diff --stat` first. An unexpected file is the highest-signal thing in this lesson.
 
-**2. What did it touch that I didn't ask for?** `git diff --stat` first, always. An unexpected file in the list is the single highest-signal thing in this whole lesson. Reformatted an unrelated file, bumped a dependency, "fixed" a lint error somewhere else — each individually defensible, collectively how a reviewable diff becomes an unreviewable one.
+**3. What happens when it's wrong?** Empty title? Broken storage? Those paths are where agent-written code is thinnest.
 
-**3. What happens when it's wrong?** The happy path is the easy part. Create with a duplicate email — what happens? `getById` on an id that doesn't exist — null, throw, or undefined? Is that consistent with the rest of the codebase, or did Claude pick a convention on the spot? Error paths are where agent-written code is thinnest, because the training data is full of examples that demonstrate the happy path.
+<Callout type="warning">`git diff --stat` before you read a single line. The file list is a claim about scope, and it's the fastest lie to catch.</Callout>
 
-<Callout type="warning">`git diff --stat` before you read a single line. The file list is a claim about scope, and it's the fastest lie to catch. If it names files your increment had no reason to touch, you already know something went wrong and you haven't read any code yet.</Callout>
-
-Then run the proof script yourself. Not "Claude says it works." Run it.
+Then run the proof yourself. Not "Claude says it works."
 
 ```bash
-git add lib/leads/
-git commit -m "feat: lead persistence with lastActivityAt invariant"
+git add app.js
+git commit -m "feat: save and load tasks"
 ```
 
 ## Increments 2 Through 5
 
 Same shape every time. Scope it, build it, `--stat` it, read it, run it, commit it.
 
-Some specifics worth naming as you go:
+**Increment 2, the list.** Zero tasks and one task are done-criteria. Check them now, in the browser.
 
-**Increment 2, the list.** Zero leads and one lead are done-criteria, not edge cases — the brief says so. Check them now, in the browser, not in lesson 6. An empty state that says "No leads yet" is a design decision. An empty state that renders a bare table header with nothing under it is what you get when nobody asked.
+**Increment 3, the form.** "Rejected with a message" and "not saved" are two claims. Check both. Refresh after a rejected submit — is a blank task there anyway?
 
-**Increment 3, the form.** Validation is the interesting part, and the question that matters is *where*. Client-only validation is a UX affordance, not a constraint — anything that can POST can skip it. Done-criterion 6 says a malformed email is rejected with a message, not saved. "Not saved" is a server-side claim. Make sure the diff actually makes it.
+**Increment 4, done toggle.** This is where `done` becomes a string if you are not watching.
 
-**Increment 4, status changes.** This is where `lastActivityAt` gets broken. Not maliciously — a new write path appears and doesn't touch it, because the invariant lives in your head and in one function's body. Read this diff specifically for it.
-
-**Increment 5, overdue.** The rule already exists as a tested pure function from lesson 3. Watch for Claude reimplementing it inline rather than importing it. Two copies of a business rule is one copy of a business rule and one future bug, and it's a completely ordinary thing for an agent to do because writing the check is easier than finding the file.
-
-<Callout type="info">The pattern in increments 4 and 5 is the same: the invariant and the rule both live in exactly one place, and every increment is an opportunity for a second copy to appear. Reviewing for duplication of business rules is more valuable than reviewing for style, because the linter has opinions about style and nothing has opinions about this.</Callout>
+**Increment 5, Open view.** The rule already exists. Watch for Claude rewriting it inline rather than calling the function.
 
 ## When It Goes Off the Rails
 
-It will. Here's what it looks like:
-
-- You ask for a small fix, the diff touches six files
-- Claude apologizes, tries again, produces something worse
-- It's confidently explaining a fix that doesn't address the problem
-- It "fixes" a failing test by weakening the assertion
-- It reintroduces something you rejected two increments ago
-- The explanations are getting longer and the code is getting worse
+It will. You ask for a small fix, the diff touches six files. Claude apologizes, tries again, produces something worse.
 
 **Do not argue with a bad context.**
-
-This is the instinct to kill, and it's a hard one, because the failure feels like a misunderstanding — and misunderstandings get fixed by explaining better. That model is wrong here. Everything in the session so far is in context: the failed attempt, your correction, the second failed attempt, the apology. You're not talking to something that will drop the bad approach when convinced. You're adding a message to a context that is already saturated with the bad approach, and the next output is conditioned on all of it.
-
-Round four is worse than round three for structural reasons. More turns of confusion in context means more confusion in the output.
-
-### The reset
 
 ```bash
 git reset --hard HEAD    # back to your last good commit
@@ -129,36 +99,20 @@ git reset --hard HEAD    # back to your last good commit
 Then `/clear`. Then re-scope, smaller:
 
 ```
-> Fresh start on this piece.
-
-  Read @lib/leads/store.ts and @lib/leads/overdue.ts.
-
-  One thing only: the Overdue view is including leads with status
-  "closed". It should include only "new" and "waiting".
-
+> Fresh start. Read @app.js.
+  One thing only: the Open view is showing done tasks.
   Find the cause. Do not fix it yet — tell me where it is and why.
 ```
 
-Three things happened there. You threw away the confusion. You narrowed the scope to one behavior. And you asked for a diagnosis before a fix, which stops the guess-and-check loop where Claude changes something plausible and asks if it worked.
+This is why increments and commits matter. `git reset --hard` is only cheap if your last good commit is twenty minutes back.
 
-This is why increments and commits matter. `git reset --hard` is only cheap if your last good commit is twenty minutes back. If it's four hours back, you'll argue instead — not because arguing is better, but because the reset costs too much. **The commit discipline is what makes the reset affordable, and the affordable reset is what keeps you out of round six.**
-
-<Callout type="warning">The moment you notice you're explaining the same thing a third time, stop. Not "one more try." The third explanation has never worked. Reset, re-scope, and you'll usually have it fixed in one turn — because a clean context reading two named files is a far better tool than a poisoned one that's already been wrong twice.</Callout>
-
-## Watch Your Context
-
-Five increments is a long session. Somewhere in the middle you'll feel Claude get vaguer — it forgets a decision, re-asks something you settled, starts hedging.
-
-Don't wait for that. Run `/compact` proactively between increments, while the conversation is still clean. A compact run on a coherent session summarizes well; a compact run on a confused one summarizes the confusion faithfully.
-
-Between increments, when you've just committed and nothing is half-done, is exactly the right moment.
+<Callout type="warning">The moment you notice you're explaining the same thing a third time, stop. Reset, re-scope, and you'll usually have it fixed in one turn.</Callout>
 
 ## Before You Move On
 
 - All five increments built, reviewed, and committed separately
 - You ran `git diff --stat` on every one before reading it
-- You reset at least once instead of arguing — if you never had to, you either got lucky or you argued
-- Every done-criterion from the brief has code behind it
-- The overdue rule and the `lastActivityAt` invariant each exist in exactly one place
+- Every done-criterion from the brief has behavior behind it
+- The Open rule and the empty-title reject each exist in exactly one place
 
-<KeyPoint>Small increments aren't neatness — they're what makes reverting cheap, and cheap reverting is what lets you kill a bad context instead of negotiating with it. When Claude goes off the rails, the instinct to explain harder is wrong: the failed attempts are still in context and every additional turn is conditioned on them. Reset, clear, re-scope smaller.</KeyPoint>
+<KeyPoint>Small increments aren't neatness — they're what makes reverting cheap, and cheap reverting is what lets you kill a bad context instead of negotiating with it.</KeyPoint>
