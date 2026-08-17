@@ -1,6 +1,6 @@
 ---
 title: "Daily Workflow Habits"
-description: "Build a sustainable Claude Code practice that makes you consistently faster."
+description: "Build a sustainable Claude Code practice you can repeat on a small project or a larger one."
 order: 1
 duration: "10 min"
 coverImage: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1200&auto=format&fit=crop&q=80"
@@ -37,36 +37,38 @@ quiz:
 
 ## The Compounding Effect
 
-Claude Code rewards habits. Used ad-hoc, it is a useful autocomplete. Used deliberately — with context loaded, scope held, and conventions written down — it becomes part of how you work. The difference is not the tool; it is whether you have built a practice around it. Here are the habits that actually matter.
+These habits work on a small local project. "Session" here just means time you spend in Claude Code. You do not need a professional job for a morning brief.
+
+Claude Code rewards habits. Used ad-hoc, it is a useful autocomplete. Used deliberately — with context loaded, scope held, and conventions written down — it becomes part of how you work. The difference is not the tool; it is whether you have built a practice around it.
 
 ## The Morning Context Load (2 minutes)
 
-Start every coding session by orienting Claude:
+Start every session by orienting Claude:
 
 ```
 > I am picking up where I left off yesterday.
-  I am building the notifications feature. 
-  Relevant files: @src/lib/notifications.ts, @src/components/NotificationBell.tsx
-  Today's goal: wire up the bell component to the header and make the mark-as-read work.
+  I am building the daily checklist / the notifications feature.
+  Relevant files: @app.js or @src/lib/notifications.ts
+  Today's goal: make mark-as-done work.
   What do we need to do first?
 ```
 
 This 2-minute brief saves you 20 minutes of re-orienting yourself mentally.
 
-<Callout type="tip">Start every session with a single sentence of context: "I am continuing work on the checkout flow — yesterday I finished the UI and today I am wiring up the Stripe webhook." This anchors Claude immediately and prevents it from asking clarifying questions that waste your first five minutes.</Callout>
+<Callout type="tip">Start every session with a single sentence of context: "I am continuing work on the checklist — yesterday I finished save/load and today I am building the Open view." This anchors Claude immediately.</Callout>
 
 ## One Task Per Session
 
 The most valuable habit: start a fresh session for each distinct task.
 
 ```bash
-# Task 1: fix the checkout bug
+# Task 1: fix the empty-title reject
 claude
-> [work on checkout bug, accept fixes, /exit]
+> [work, accept fixes, /exit]
 
-# Task 2: add the notification bell  
+# Task 2: add the Open view
 claude
-> [work on notification bell, /exit]
+> [work, /exit]
 ```
 
 Each session is focused. Claude does not carry wrong assumptions from Task 1 into Task 2.
@@ -76,23 +78,21 @@ Each session is focused. Claude does not carry wrong assumptions from Task 1 int
 Before asking Claude to write code, ask it to think first:
 
 ```
-> I need to add pagination to the products list.
-  Before writing any code, explain the two main approaches 
-  (cursor-based vs. offset-based) and recommend which is better 
-  for our use case (Supabase, ~10k rows, sorted by created_at).
+> I need to add an Open view that hides done tasks.
+  Before writing any code, explain two approaches and recommend one
+  for this folder.
 ```
 
-Now you choose the approach with understanding. Claude writes code with a clear direction.
+Now you choose the approach with understanding.
 
 ## Timeboxed Sessions
 
-Set a time limit for each Claude Code session. Without a limit, sessions drift and context accumulates.
+Set a time limit. Without a limit, sessions drift and context accumulates.
 
-- **Bug fix**: 20 minutes
-- **New feature**: 45-60 minutes
-- **Refactor**: 30 minutes
+- **Small fix**: 20 minutes
+- **New piece**: 45-60 minutes
 
-When the time is up, commit what is working and start fresh next session. This prevents the "I'll just add one more thing" spiral.
+When the time is up, commit what is working and start fresh next session.
 
 ## The End-of-Day Commit Message
 
@@ -101,26 +101,25 @@ Before closing for the day:
 ```
 > Here is my git diff --staged:
   [paste diff]
-  
-  Write a commit message for this work. 
-  Also: is there anything in this diff that looks unfinished 
-  or that I should follow up on tomorrow?
+
+  Write a commit message for this work.
+  Also: is there anything in this diff that looks unfinished?
 ```
 
 You get a clean commit and a to-do reminder.
 
-<Callout type="info">Batching similar tasks into one session is more efficient than spreading them across multiple sessions — if you have three similar API routes to add, build them all in one session. The context from the first route is still warm for the second and third, and you spend less time re-loading context and re-establishing patterns.</Callout>
+<Callout type="info">Batching similar tasks into one session is more efficient than spreading them across multiple sessions — if you have three similar changes, do them in one session while the context is warm.</Callout>
 
 ## Keeping CLAUDE.md Fresh
 
 Every time you establish a new pattern:
 
 ```
-> I just decided to use zod for all API input validation going forward.
+> I just decided empty titles are always rejected before save.
   Update @CLAUDE.md to add this to the conventions section.
 ```
 
-Takes 30 seconds. Saves 5 minutes every future session.
+Takes 30 seconds. Saves minutes every future session.
 
 ## The Weekly Review
 
@@ -128,13 +127,12 @@ Once a week, spend 5 minutes asking:
 
 ```
 > Review my recent work in git log and identify:
-  - Any patterns that have been repeated (could be automated)
-  - Any code that looks inconsistent with our conventions
-  - Any technical debt that is worth addressing before it grows
+  - Any patterns that have been repeated
+  - Any files that look inconsistent with our conventions
 ```
 
 ## Summary
 
-Morning context load → one task per session → rubber duck first → timebox → end-of-day commit → update CLAUDE.md. Done consistently, this is what turns Claude Code from something you occasionally reach for into part of how you work.
+Morning context load → one task per session → think first → timebox → end-of-day commit → update CLAUDE.md. Done consistently, this is what turns Claude Code from something you occasionally reach for into part of how you work.
 
-<KeyPoint>The value of Claude Code compounds through consistent daily habits — a 2-minute morning context load, one task per session, rubber duck thinking before coding, and updating CLAUDE.md as you go. None of these is impressive on its own; the benefit comes from doing them every day rather than occasionally.</KeyPoint>
+<KeyPoint>The value of Claude Code compounds through consistent daily habits — a 2-minute morning context load, one task per session, thinking before asking for edits, and updating CLAUDE.md as you go. None of these is impressive on its own; the benefit comes from doing them every day rather than occasionally.</KeyPoint>
