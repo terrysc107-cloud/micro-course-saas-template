@@ -65,7 +65,7 @@ export const WORKSHOP = {
   note: "Not open for registration. No date has been set and there is nothing to buy yet. Course members will hear about it first.",
 } as const;
 
-// ── Curriculum ───────────────────────────────────────────────────────────────
+// ── Curriculum ───────────────────────────────────────────────────────
 
 export interface ModuleMeta {
   slug: string;
@@ -79,6 +79,12 @@ export interface ModuleMeta {
  * counts are derived from the filesystem, not hardcoded.
  */
 export const MODULE_META: ModuleMeta[] = [
+  {
+    slug: "00-foundations",
+    title: "Foundations",
+    description:
+      "What this course is, how files and folders work, how to use a terminal, and how to read a git diff before you let anything change.",
+  },
   {
     slug: "01-getting-started",
     title: "Getting Started",
@@ -95,7 +101,7 @@ export const MODULE_META: ModuleMeta[] = [
     slug: "03-working-with-files",
     title: "Working with Files",
     description:
-      "Open a real project, create files, refactor safely, and get an honest explanation of code nobody on your team wrote.",
+      "Open a folder of files, create new ones, change existing ones safely, and get an honest explanation of code you did not write.",
   },
   {
     slug: "04-real-dev-workflows",
@@ -113,7 +119,7 @@ export const MODULE_META: ModuleMeta[] = [
     slug: "06-specific-stacks",
     title: "Specific Stacks",
     description:
-      "Stack-specific tactics for Next.js, Python, SQL, REST APIs, and CLI tools.",
+      "Stack-specific tactics for Next.js, Python, SQL, REST APIs, and CLI tools. Optional until you have a stack.",
   },
   {
     slug: "07-productivity-best-practices",
@@ -129,15 +135,15 @@ export const MODULE_META: ModuleMeta[] = [
   },
   {
     slug: "09-capstone",
-    title: "Capstone: Lead Follow-Up Command Center",
+    title: "Capstone: Your First Local Project",
     description:
-      "One guided build, start to finish, using the standard loop: brief, inspect, plan, scaffold, data, feature, tests, browser QA, ship, roll back.",
+      "One guided build you can finish on your own computer: inspect, plan, build, review, test, ship. The Next.js lead tracker is optional after you are ready.",
   },
   {
     slug: "10-professional-practice",
     title: "Professional Practice",
     description:
-      "Using this workflow in client and team settings: scoping honestly, internal tools, and turning a repeatable process into a service.",
+      "Using this workflow with other people: scoping honestly, internal tools, and turning a repeatable process into a service. No income promises.",
   },
 ];
 
@@ -145,7 +151,7 @@ export function getModuleMeta(slug: string): ModuleMeta | undefined {
   return MODULE_META.find((m) => m.slug === slug);
 }
 
-// ── Landing page content ─────────────────────────────────────────────────────
+// ── Landing page content ─────────────────────────────────────
 
 /**
  * The one workflow the whole course teaches. Referenced by the landing page,
@@ -153,32 +159,32 @@ export function getModuleMeta(slug: string): ModuleMeta | undefined {
  * everywhere.
  */
 export const CORE_LOOP = [
-  { step: "Inspect", detail: "Read the code before changing it. Make Claude prove it understands." },
+  { step: "Inspect", detail: "Read the files before changing them. Make Claude prove it understands." },
   { step: "Plan", detail: "Agree on the approach in plan mode, before a single file is edited." },
   { step: "Build", detail: "Small, reviewable changes — not a thousand-line drop." },
-  { step: "Review", detail: "Read every diff. You are still the engineer of record." },
-  { step: "Test", detail: "Prove it works with tests and a real browser pass." },
-  { step: "Ship", detail: "Deploy behind a plan you can undo." },
+  { step: "Review", detail: "Read every diff. You are still the person responsible for what ships." },
+  { step: "Test", detail: "Prove it works — with a check you can run, and a real look in the browser." },
+  { step: "Ship", detail: "Save a version you can undo." },
 ] as const;
 
 export const OUTCOMES = [
-  "Install and log in to Claude Code the way the current docs actually recommend",
+  "Install Claude Code and log in the way the current docs actually recommend",
+  "Use a terminal well enough to start a session and run a few commands",
+  "Read a git diff and decide whether to keep the change",
   "Pick the right permission mode for the task instead of approving everything",
-  "Run long sessions without losing context or your place",
-  "Write a CLAUDE.md that measurably improves what Claude produces",
-  "Review an AI-written diff critically enough to sign your name to it",
-  "Debug a real failure instead of regenerating and hoping",
-  "Write tests that would actually catch the bug you just fixed",
-  "Package a repeatable workflow as a Skill your team can share",
-  "Wire Claude Code to your own tools with MCP",
-  "Split work across subagents and agent teams when a task is too big for one context",
-  "Ship a complete feature end to end in the capstone, with a rollback plan",
+  "Ask questions before you let Claude edit files",
+  "Write a short CLAUDE.md that helps the next session",
+  "Know that CLAUDE.md is not a security boundary — permissions are",
+  "Reset a confused session instead of arguing with it",
+  "Finish a small local project using Inspect → Plan → Build → Review → Test → Ship",
+  "See how the same loop scales later — tests, review passes, and optional bigger stacks",
 ] as const;
 
 export const WHO_ITS_FOR = [
-  "Developers who already write code and want a disciplined AI workflow, not a magic button",
-  "Freelancers and consultants who need output they can defend to a client",
-  "Team leads deciding how their team should adopt an agentic coding tool safely",
+  "People who can use a computer and a browser, and have never shipped code",
+  "People who may have never used a terminal or git, and want the minimum to use Claude Code safely",
+  "People willing to learn to read a diff — that step is not optional, and this course teaches it",
+  "Operators, designers, PMs, career-changers, and anyone who will be in the loop with an agent",
 ] as const;
 
 /**
@@ -186,14 +192,14 @@ export const WHO_ITS_FOR = [
  * reducer. Do not soften this into a second "who it's for" list.
  */
 export const WHO_ITS_NOT_FOR = [
-  "Complete beginners who have never written code — learn programming fundamentals first; this course assumes you can read a diff",
+  "Anyone looking for a tool that writes code they never have to look at — you still have to read the change",
   "Anyone looking for passive income or a guaranteed outcome — this teaches a skill, and what you do with it is on you",
-  "Teams needing Anthropic's official enterprise training or support — that comes from Anthropic, not from us",
+  "Anyone looking for official Anthropic training or support — that comes from Anthropic, not from us",
 ] as const;
 
 export const INCLUDED = [
-  "10 modules of written lessons, kept current against the official docs",
-  "A guided capstone build with a standardized workflow",
+  "Written lessons across the full curriculum, kept current against the official docs",
+  "A guided capstone: a small local project you can finish, plus an optional later path",
   "Downloadable templates: CLAUDE.md, build brief, preflight and ship checklists, and a Skill starter",
   "Per-lesson quizzes and progress tracking",
   "Lifetime access, including future updates as Claude Code changes",
@@ -271,7 +277,7 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "What experience do I need?",
-    a: "You should be able to read code, use a terminal, and understand a Git diff. You do not need to be senior. If you have never programmed, start with programming fundamentals first — this course will not land.",
+    a: "A computer, a browser, and a willingness to type commands this course will teach. You do not need to have shipped code. You do not need to already know a terminal or git. This is not a computer science course. It teaches the minimum so you can use Claude Code safely — and that minimum includes learning to read a diff.",
   },
   {
     q: "What about the live Build Lab?",
