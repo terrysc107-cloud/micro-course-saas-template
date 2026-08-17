@@ -1,8 +1,8 @@
 ---
 title: "Install Claude Code"
-description: "Install Claude Code with the native installer, and understand which methods auto-update."
+description: "Install Claude Code with the native installer, in beginner language, and understand which methods auto-update."
 order: 1
-duration: "7 min"
+duration: "9 min"
 coverImage: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "You installed Claude Code with Homebrew and haven't touched it in a month. What is the most likely state of your install?"
@@ -28,41 +28,53 @@ quiz:
     answer: 2
 ---
 
-## Install It
+## You Are Installing A Program
 
-The native installer is the recommended method in the current documentation. Pick the line for your platform and run it.
+Claude Code is a program you run on your computer. "Install" means: download it and put it where your terminal can find it.
 
-**macOS, Linux, WSL:**
+You do not need to have written code before. You do need the terminal skills from Foundations — open a terminal, press Enter after a command, read what comes back.
+
+The **native installer** is the method the current official docs recommend. "Native" here just means "the installer Claude Code publishes for your operating system," as opposed to a third-party package manager.
+
+Pick the line for your computer and paste it into the terminal.
+
+**macOS, Linux, or Windows Subsystem for Linux (WSL):**
 
 ```bash
 curl -fsSL https://claude.ai/install.sh | bash
 ```
 
-**Windows PowerShell:**
+That line asks your computer to download a small install script and run it. `curl` fetches a file from the internet. `| bash` hands that file to the shell to run. Only do this for the official address above, or the official docs.
+
+**Windows PowerShell** (the prompt starts with `PS`):
 
 ```powershell
 irm https://claude.ai/install.ps1 | iex
 ```
 
-**Windows CMD:**
+**Windows CMD** (the prompt is a path with no `PS`):
 
 ```batch
 curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
 ```
 
-Your prompt tells you which Windows shell you are in: PowerShell shows `PS C:\`, CMD shows `C:\` with no `PS`. If you get `The token '&&' is not a valid statement separator`, you ran the CMD line in PowerShell. If you get `'irm' is not recognized`, you ran the PowerShell line in CMD.
+Your prompt tells you which Windows shell you are in. If you get `The token '&&' is not a valid statement separator`, you ran the CMD line in PowerShell. If you get `'irm' is not recognized`, you ran the PowerShell line in CMD.
 
-Verify:
+Check that it worked:
 
 ```bash
 claude --version
 ```
 
+You should see a version number. If you see "command not found," close the terminal, open a new one, and try again — some installs only show up in a new window.
+
 <Callout type="info">If the install command fails with a `403`, a curl error, or `syntax error near unexpected token '<'`, the official [install troubleshooting page](https://code.claude.com/docs/en/troubleshoot-install) maps specific errors to specific fixes. Start there rather than guessing.</Callout>
 
-## Alternatives, And What They Cost You
+## Other Ways To Install — And What They Cost You
 
 You do not have to use the native installer. You just have to know what you are giving up.
+
+A **package manager** is a program that installs other programs (`brew` on Mac, `winget` on Windows, `apt` on some Linux). Convenient, but these paths do not auto-update Claude Code.
 
 | Method | Command | Auto-updates? |
 |---|---|---|
@@ -73,7 +85,7 @@ You do not have to use the native installer. You just have to know what you are 
 
 Linux package installs are available on Debian, Fedora, RHEL, and Alpine.
 
-**This is the difference that matters.** Native installations update themselves in the background, so you stay on the latest version without thinking about it. Homebrew and WinGet installations do not. If you go that route, updating is a chore you now own:
+**This is the difference that matters.** Native installations update themselves in the background. Homebrew and WinGet installations do not. If you go that route, updating is a chore you now own:
 
 ```bash
 brew upgrade claude-code
@@ -83,15 +95,15 @@ brew upgrade claude-code
 winget upgrade Anthropic.ClaudeCode
 ```
 
-Claude Code ships frequently. A month of skipped upgrades is a real gap in features and security fixes — and it is the most common reason a documented flag "doesn't exist" on someone's machine.
+Claude Code ships frequently. A month of skipped upgrades is a real gap — and it is the most common reason a documented flag "doesn't exist" on someone's machine.
 
 <Callout type="warning">Homebrew publishes two casks and they are not the same thing. `claude-code` tracks the stable channel — typically about a week behind, and it skips releases with major regressions. `claude-code@latest` tracks the latest channel and gets new versions as soon as they ship. Whichever you install is the one you must name when you upgrade.</Callout>
 
 ## Windows: One Extra Step
 
-On **native Windows**, [Git for Windows](https://git-scm.com/downloads/win) is recommended so Claude Code can use the Bash tool. Without it, Claude Code uses PowerShell as its shell tool instead — workable, but a different execution surface than most documentation and most of this course assumes.
+On **native Windows**, [Git for Windows](https://git-scm.com/downloads/win) is recommended so Claude Code can use the Bash tool. Without it, Claude Code uses PowerShell as its shell tool instead — workable, but a different surface than most documentation and most of this course assumes.
 
-WSL setups do not need it.
+If you already installed Git in Foundations, you are done. WSL setups do not need a separate Git for Windows install.
 
 ## About That npm Command
 
@@ -105,7 +117,7 @@ Along with a claim that Node.js 18 or higher is required. Neither reflects the c
 
 We are flagging this explicitly because it is still all over the internet, and because a course that quietly teaches the stale thing is worse than no course.
 
-<Callout type="tip">Claude Code is not only a terminal tool. The same engine runs in VS Code, JetBrains IDEs, a desktop app, the web, and Slack — and your CLAUDE.md files, settings, and MCP servers carry across all of them. Install the CLI first; it is the surface everything else is described against.</Callout>
+<Callout type="tip">Claude Code is not only a terminal tool. The same engine runs in VS Code, JetBrains IDEs, a desktop app, the web, and Slack — and your CLAUDE.md files, settings, and MCP servers carry across all of them. Install the CLI first; it is the surface everything else is described against. "CLI" just means "the terminal program."</Callout>
 
 <KeyPoint>Use the native installer unless you have a specific reason not to — it is the recommended method and it is the only one that auto-updates. If you choose Homebrew or WinGet, upgrading is now your job, and a stale install is the single most common source of "that flag doesn't work for me."</KeyPoint>
 
