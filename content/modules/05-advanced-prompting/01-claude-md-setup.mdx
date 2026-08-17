@@ -1,6 +1,6 @@
 ---
 title: "CLAUDE.md Setup"
-description: "Create a CLAUDE.md that gives every session perfect project context automatically."
+description: "Create a CLAUDE.md that gives every session project context automatically — even on a tiny folder."
 order: 1
 duration: "10 min"
 coverImage: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=1200&auto=format&fit=crop&q=80"
@@ -37,11 +37,13 @@ quiz:
 
 ## What Is CLAUDE.md?
 
+You can write a CLAUDE.md for a tiny project. It does not require a team or a production app. A three-line file that says what the folder is for is already useful.
+
 `CLAUDE.md` is a file you create in your project root that Claude Code reads automatically at the start of every session. It is your persistent project brief — once written, you never have to re-explain your stack, conventions, or constraints.
 
 Without CLAUDE.md, every session starts cold. With it, Claude arrives already knowing your project.
 
-It can live at `./CLAUDE.md` or `./.claude/CLAUDE.md` — both are loaded. Keep it in version control so your whole team gets the same context.
+It can live at `./CLAUDE.md` or `./.claude/CLAUDE.md` — both are loaded. Keep it in version control so anyone else who opens the folder gets the same context.
 
 <Callout type="warning">CLAUDE.md is context, not a security boundary. Writing "never touch the payment code" shapes what Claude *tries* to do — it does not constrain what Claude Code is *allowed* to do. Permissions are enforced by Claude Code itself, not by the model. If something must not be modified, enforce it with a `/permissions` deny rule; a line in a markdown file is a request, not a lock. See the [permissions docs](https://code.claude.com/docs/en/permissions).</Callout>
 
@@ -60,112 +62,59 @@ They complement each other. Auto memory captures what you would never think to w
 
 To skip the blank page, start from [our CLAUDE.md template](/downloads/claude-md-template.md) and edit it down to your project. It is a starting point built for this course, not an official Anthropic artifact — delete anything that does not apply to you.
 
-Here is a filled-in example for a Next.js + Supabase project:
+A filled-in example for the local checklist:
 
 ```markdown
-# Project Name — Claude Code Context
+# Daily Checklist — Claude Code Context
 
 ## What This Is
-Brief description: what the app does, who uses it, why it exists.
+A local page for today's tasks. No accounts. No server.
 
-## Tech Stack
-- Next.js 14 App Router, TypeScript, Tailwind CSS
-- Supabase (Postgres + Auth with @supabase/ssr)
-- Deployed on Vercel
-- Testing: Vitest + React Testing Library
-
-## Project Structure
-- app/ — Next.js pages and API routes
-- components/ — React components (ui/ for shared, feature/ for feature-specific)
-- lib/ — utilities (supabase/, stripe.ts, content.ts)
-- content/modules/ — MDX lesson files
-- types/ — TypeScript types
-
-## Key Patterns
-- API routes use createClient() from @/lib/supabase/server
-- Admin operations use createServiceClient() (bypasses RLS)
-- All components use cn() from @/lib/utils for Tailwind merging
-- API responses return { data, error } shape consistently
-- Input validation uses zod in all API routes
+## Files
+- index.html — the page
+- styles.css — layout
+- app.js — add, toggle, save to localStorage
 
 ## Conventions
-- Files: kebab-case for pages and utils, PascalCase for components
-- Functions: camelCase, descriptive names
-- Types: PascalCase interfaces, suffix with 'Props' for component props
-- Error handling: always catch and return proper HTTP status codes
-- No console.log in production code — use structured logging
-
-## Supabase
-- Never use anon client for privileged operations
-- Always add RLS policies when creating new tables
-- Use upsert with onConflict for idempotent writes
-- Check for null on all Supabase query results before accessing properties
+- A task is { id, title, done } with done true or false
+- Empty titles are rejected before save
 
 ## Do Not Touch
-- .env.local — never read or modify this file
-- supabase/migrations — run schema changes through Supabase dashboard
-- The Stripe webhook signature verification logic
-
-## Current Work in Progress
-[Update this section as you work on new features]
-- Building out the notifications system
-- Quiz pass rate tracking in dashboard
+- Anything that looks like a password or .env
 ```
 
-<Callout type="tip">Run `/init` inside a Claude Code session to auto-generate a starter CLAUDE.md — Claude scans your project and creates a draft with your stack, key files, and patterns it detects. Use this as the foundation and add the things only you know: team conventions, off-limits areas, and work in progress.</Callout>
+If you later work in Next.js, the same file grows stack-specific sections. Start short.
+
+<Callout type="tip">Run `/init` inside a Claude Code session to auto-generate a starter CLAUDE.md — Claude scans your project and creates a draft. Use this as the foundation and add the things only you know: conventions, off-limits areas, and work in progress.</Callout>
 
 ## Getting Claude to Write Your CLAUDE.md
 
 Let Claude draft it:
 
 ```
-> Based on scanning this project, write a CLAUDE.md file 
-  that I will put in the root. Include: tech stack, project structure,
-  key patterns you see in the code, naming conventions, and 
-  any patterns I should always follow. 
-  
-  Ask me for anything you cannot infer from the codebase.
+> Based on scanning this folder, write a CLAUDE.md file
+  that I will put in the root. Include: what this is, the files,
+  patterns you see, and anything I should always follow.
+
+  Ask me for anything you cannot infer.
 ```
 
-Claude drafts it, you edit and add the things only you know (business rules, off-limits areas, work in progress).
+Claude drafts it, you edit and add the things only you know.
 
 ## Subdirectory CLAUDE.md Files
 
-For large projects, add CLAUDE.md in subdirectories:
+For large projects, add CLAUDE.md in subdirectories. Subdirectory files are not loaded at launch — they load on demand. Skip this until you have a large project.
 
-```
-src/api/CLAUDE.md
-```
+Claude Code also supports path-scoped rules in `.claude/rules/`. If your CLAUDE.md is growing past a couple of hundred lines, that is the mechanism to reach for.
 
-```markdown
-# API Routes Context
-
-All routes in this directory:
-- Must authenticate the user before doing anything
-- Must use zod for body validation
-- Return 401 for unauthenticated, 400 for invalid input, 500 for server errors
-- Use createServiceClient() for any admin database operations
-```
-
-Subdirectory files are not loaded at launch — they load on demand, when Claude reads a file in that directory. That is a feature: the API conventions cost you nothing during a session that never touches `src/api/`.
-
-Claude Code also supports path-scoped rules in `.claude/rules/`, which use the same glob format as a skill's `paths` field to load instructions only when Claude works with matching files. If your CLAUDE.md is growing past a couple of hundred lines, that is the mechanism to reach for — long files consume context on every session and, past a point, get followed less reliably.
-
-<Callout type="info">CLAUDE.md is not a set-it-and-forget-it file — update it every time you establish a new pattern, add a significant dependency, or agree on a new team convention. A stale CLAUDE.md is worse than none because it actively gives Claude wrong assumptions about your project.</Callout>
+<Callout type="info">CLAUDE.md is not a set-it-and-forget-it file — update it every time you establish a new pattern or agree on a new convention. A stale CLAUDE.md is worse than none because it actively gives Claude wrong assumptions.</Callout>
 
 ## Keeping It Updated
 
-Review and update CLAUDE.md when:
-
-- You add a new dependency or pattern
-- The team agrees on a new convention
-- You complete a major refactor that changes how things work
-- You start a new phase of the project
-
-Think of it as living documentation. It costs two minutes to update and saves ten minutes of re-explaining in every future session.
+Review and update CLAUDE.md when you add a pattern, finish a major change, or start a new phase. It costs two minutes and saves ten minutes of re-explaining in every future session.
 
 ## Summary
 
-CLAUDE.md is the highest-leverage file in your project for long-term Claude Code work. Start from [our template](/downloads/claude-md-template.md), keep it short and specific, maintain it as you go, and let auto memory handle what you would not have thought to write down. Just remember what it is: context that guides, not configuration that enforces.
+CLAUDE.md is the highest-leverage file in your folder for long-term Claude Code work. Start from [our template](/downloads/claude-md-template.md), keep it short and specific, maintain it as you go. Just remember what it is: context that guides, not configuration that enforces.
 
-<KeyPoint>CLAUDE.md turns every new session from a cold start into one where Claude already knows your stack, conventions, and constraints — but it is context, not a security boundary. It shapes intent; permissions enforce limits.</KeyPoint>
+<KeyPoint>CLAUDE.md turns every new session from a cold start into one where Claude already knows your folder, conventions, and constraints — but it is context, not a security boundary. It shapes intent; permissions enforce limits.</KeyPoint>

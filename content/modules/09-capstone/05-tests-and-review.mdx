@@ -1,183 +1,118 @@
 ---
 title: "Tests and Review"
-description: "Tests that would catch the bug you just fixed, and a review pass that isn't marking its own homework."
+description: "Checks that would catch the bug you just fixed, and a review pass that isn't marking its own homework."
 order: 5
-duration: "14 min"
+duration: "12 min"
 quiz:
-  - question: "Why run the review pass in a fresh session or a subagent rather than the session that wrote the code?"
+  - question: "Why run the review pass in a fresh session rather than the session that wrote the code?"
     options:
       - "Fresh sessions run faster"
       - "Because the writing session's context contains every reason the code looks correct, so it reviews its own reasoning rather than the code as written"
       - "Because review requires different permissions"
       - "Because it costs less"
     answer: 1
-  - question: "A test suite is 40 tests, all green, and yet the off-by-one in the overdue boundary shipped. What is the most likely explanation?"
+  - question: "A handful of checks are all green, and yet an empty title still saves. What is the most likely explanation?"
     options:
-      - "The test runner is misconfigured"
-      - "The tests cover the code that exists rather than the behavior the brief specifies — nothing tested the boundary itself"
-      - "40 tests is too few for this feature"
-      - "The tests need to run against production data"
+      - "The browser is misconfigured"
+      - "The checks cover the code that exists rather than the behavior the brief specifies — nothing tested the reject path"
+      - "You need more checks, any checks"
+      - "The checks need to run on a server"
     answer: 1
-  - question: "Claude fixes a failing test by changing the assertion to match the current output. What has actually happened?"
+  - question: "Claude fixes a failing check by changing the assertion to match the current output. What has actually happened?"
     options:
       - "The test was wrong and is now correct"
-      - "The test suite has been converted from a specification into a description of current behavior, including the bug"
+      - "The suite has been converted from a specification into a description of current behavior, including the bug"
       - "Nothing important, as long as the suite is green"
       - "The test is now more maintainable"
     answer: 1
 ---
 
-## The Test That Would Have Caught It
+## The Check That Would Have Caught It
 
-Most AI-written test suites are green, numerous, and worthless. They're worthless in a specific way: they test *the code that exists* rather than *the behavior that was specified*. Ask for tests and you get a suite that asserts `create` creates and `list` lists — which passes, tells you nothing, and would keep passing through a rewrite that broke your product.
+Most AI-written tests are green and worthless. They assert that add adds and list lists — which would keep passing through a rewrite that broke your product.
 
-The standard that separates a real test from decoration:
+The standard:
 
-> **Would this test have failed before the fix?**
+> **Would this check have failed before the fix?**
 
-If no, it's documentation of current behavior with a green checkmark on it. Real tests come from real failures. You have some — lesson 3's overdue boundary, and whatever you actually got wrong in lesson 4.
+If no, it's decoration. Start from real failures — lesson 3's empty title, and whatever you actually got wrong in lesson 4.
 
-Start there:
-
-```
-> Write tests for the overdue rule in @lib/leads/overdue.ts.
-
-  Anchor on the boundary specifically. The brief says "more than 3
-  days," so:
-  - 2 days old, status waiting  -> NOT overdue
-  - exactly 3 days old, waiting -> NOT overdue (this is the one that
-    was wrong)
-  - 4 days old, waiting         -> overdue
-  - 4 days old, closed          -> NOT overdue
-  - 4 days old, contacted       -> NOT overdue
-
-  isOverdue takes `now` as a parameter, so pass fixed timestamps. Do
-  not mock the system clock.
-
-  Then: comment out the status check in overdue.ts and show me which
-  tests fail. If none fail, the tests are wrong, not the code.
-```
-
-That last instruction is the whole lesson in one move. **A test suite that stays green when you break the code is not a test suite.** Deliberately breaking the implementation to watch tests fail is how you find out whether they're load-bearing — and it takes thirty seconds.
-
-<Callout type="tip">This is the cheapest quality check in the course. Break the code, watch the suite. If it goes red, you have tests. If it stays green, you have a green checkmark. The difference is invisible from the terminal output until you check.</Callout>
-
-## Test the Invariant
-
-`lastActivityAt` updates on every status change. That's the rule you committed to in lesson 3, and the thing most likely to break silently in six months when someone adds a write path.
+You do not need a fancy test runner. A small file you run with `node` is enough, or a list of functions Claude can execute:
 
 ```
-> Test the lastActivityAt invariant:
-  1. Creating a lead sets lastActivityAt.
-  2. updateStatus moves lastActivityAt forward.
-  3. A lead created 4 days ago and moved to "contacted" today is NOT
-     overdue — this is the whole point of the field and the reason
-     we didn't measure from createdAt.
+> Write checks for the Open rule and the empty-title reject in @app.js.
 
-  Test 3 matters most. It's the one that fails if someone later
-  "simplifies" the overdue rule to use createdAt.
+  - empty title -> not saved
+  - a task with done=false -> isOpen is true
+  - a task with done=true -> isOpen is false
+
+  Then: break the empty-title reject on purpose and show me which
+  checks fail. If none fail, the checks are wrong, not the code.
 ```
 
-Test 3 is a good test because it fails for a *reason you can explain*. It encodes a decision, not an implementation. Someone who deletes `lastActivityAt` as unnecessary field bloat gets a red test with an obvious meaning. That's what tests are for — not proving today's code works, but making a future person's mistake loud.
+That last instruction is the whole lesson. **A suite that stays green when you break the code is not a suite.**
+
+<Callout type="tip">Break the code, watch the checks. If they go red, you have tests. If they stay green, you have a green checkmark. The difference is invisible until you look.</Callout>
 
 ## Test the Done-Criteria
 
-Walk the brief's list and ask, for each one: what fails if this breaks?
+Walk the brief. For each criterion: what fails if this breaks?
 
-Criterion 6 — a malformed email is rejected with a message, not saved — deserves attention, because it's two claims:
+Criterion 6 — empty title rejected with a message, not saved — is two claims:
 
 ```
-> Test that a malformed email is rejected.
-
-  Two separate tests:
+> Two separate checks:
   1. The user sees a message.
-  2. Nothing was written to the store.
-
-  Test 2 specifically: assert the store is unchanged after the
-  rejected submit. Client-side validation would pass test 1 and fail
-  test 2, and that's exactly the bug I want this suite to catch.
+  2. Nothing was written to storage.
 ```
 
-The distinction is the point. "Rejected with a message" is satisfied by a client-side check. "Not saved" is not. If your validation is client-only, test 2 goes red and you've found a real hole — anything that can POST directly bypasses your form. This is the kind of thing that never shows up in manual QA because you're testing through the UI, which is the one client that behaves.
-
-<Callout type="warning">When a test fails, the failure is information. The default agent instinct is to make it green, and the fastest way to make a test green is to weaken the assertion. Watch for that specifically in the diff — a test that fails and then passes without the implementation changing is a test that was deleted with extra steps.</Callout>
+<Callout type="warning">When a check fails, the failure is information. The default agent instinct is to make it green, and the fastest way is to weaken the assertion. Watch for that in the diff.</Callout>
 
 ## The Review Pass
 
-Your build session has written every line of this feature. It also holds, in context, every reason each line seemed correct at the time — the constraints you gave, the tradeoffs you accepted, the things you told it not to worry about.
+Your build session wrote every line. It also holds every reason each line seemed correct. That makes it the wrong reviewer.
 
-That's exactly what makes it the wrong reviewer. Ask it to review, and it re-derives its own reasoning and finds it sound. It isn't lying. It's checking the code against the same assumptions that produced the code. The blind spot isn't in the model, it's in the context.
-
-So don't ask it. Get a reader who wasn't there.
-
-### Option 1: fresh session
-
-Simplest thing that works. `/clear`, or exit and start a new session, and review with no build context in the window:
+`/clear`, or start a new session:
 
 ```
-> You're reviewing a feature you didn't write. I want an adversarial
-  read, not a summary.
+> You're reviewing a feature you didn't write. Adversarial read, not a summary.
 
-  Spec: @docs/brief.md
-  Diff: run `git diff main...HEAD`
+  Spec: @brief.md
+  Diff: run `git diff` against the first commit, or `git log -p`.
 
-  Find, specifically:
+  Find:
   1. Behavior that contradicts the brief's done-criteria.
   2. Anything built that the brief lists as a non-goal.
-  3. Business rules implemented in more than one place.
+  3. Rules implemented in more than one place.
   4. Error paths with no handling.
-  5. Rules enforced only in TypeScript that a non-app writer could
-     violate.
-  6. Tests that would still pass if the behavior they name broke.
+  5. Checks that would still pass if the behavior they name broke.
 
   Cite file and line. Do not fix anything. Do not tell me what's good.
 ```
 
-"Do not tell me what's good" is not stylistic. Given room, a review comes back 70% praise, and the praise is where your attention goes. Ask for findings only.
+"Do not tell me what's good" is not stylistic. Given room, a review comes back 70% praise, and the praise is where your attention goes.
 
-### Option 2: a review subagent
-
-Subagents are specialized assistants for specific task types. Each runs in **its own context window**, with a custom system prompt, specific tool access, and independent permissions — and Claude delegates to them based on their `description`. They live in `.claude/agents/`.
-
-The own-context-window part is what makes this work for review. The subagent gets the diff and the brief and nothing else — not the conversation where you talked yourself into the approach.
-
-A reviewer subagent is also reusable across every feature you build after this, which is the argument for setting one up once. See the [subagents docs](https://code.claude.com/docs/en/sub-agents) — this area changes, so check current syntax before writing the file.
-
-<Callout type="info">Both options are the same trick: separate the context that wrote the code from the context that judges it. The fresh session is zero setup and works today. The subagent is reusable and delegable. Neither is a substitute for you reading the diff — they're a way to get a second reader who isn't invested in the answer.</Callout>
+<Callout type="info">A fresh session is zero setup. Neither it nor a later review subagent is a substitute for you reading the diff — they're a second reader who isn't invested in the answer.</Callout>
 
 ## Triage the Findings
 
-A good adversarial review returns more findings than you'll act on. That's correct behavior, and the review is not the decision — you are.
+**Fix now.** Contradicts a done-criterion. Rule duplicated. Empty title still saves.
 
-Sort into three:
+**Write down, don't fix.** Real, but out of scope — "no due dates" is a true observation about a brief that says no due dates.
 
-**Fix now.** Contradicts a done-criterion. Business rule duplicated. Constraint that isn't actually enforced. Error path that crashes the page. These block the ship.
-
-**Write down, don't fix.** Real, but out of scope — usually the reviewer noticing a non-goal isn't handled. "No pagination on the lead list" is a true observation about a brief that says no pagination. Note it, move on. This is where the brief earns its keep for the second time: it lets you dismiss a legitimate finding without wondering whether you're being lazy.
-
-**Disagree.** Reviewers pattern-match, and some findings are the generic best practice applied to a context where it doesn't hold. You have the context. Say no.
+**Disagree.** Some findings are a generic best practice applied where it doesn't hold. You have the context. Say no.
 
 ```
-> Findings 1, 4, and 6: fix. One commit each, smallest change that
-  addresses the finding.
-
+> Findings 1 and 4: fix. One commit each.
   Finding 2: out of scope, the brief lists it as a non-goal. Skip.
-
-  Finding 5: disagree. Explain your reasoning in one paragraph and
-  I'll decide.
-
   Do not fix anything I didn't list.
 ```
 
-That last line matters. A reviewer handed a findings list and no boundary will fix the whole list, and you'll be reviewing a diff of changes you rejected.
-
 ## Before You Move On
 
-- Every test came from a real failure or a real done-criterion
-- You broke the implementation on purpose and watched tests go red
+- Every check came from a real failure or a real done-criterion
+- You broke the implementation on purpose and watched checks go red
 - The review ran in a context that didn't write the code
 - Findings are triaged: fixed, deferred, or explicitly declined
-- Each fix is its own commit
-- Suite is green, and you know why each test would fail
 
-<KeyPoint>A test that would still pass if the behavior broke is decoration — break the code on purpose and watch the suite go red, because that check takes thirty seconds and is the only way to tell the difference. And review in a context that didn't write the code: the session that built it holds every reason it looked right, so asking it to review gets you a re-derivation, not a review.</KeyPoint>
+<KeyPoint>A check that would still pass if the behavior broke is decoration — break the code on purpose and watch it go red. And review in a context that didn't write the code.</KeyPoint>

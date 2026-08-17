@@ -1,0 +1,103 @@
+---
+title: "Files and Folders"
+description: "What a file is, what a folder is, and how a project on your computer is just a pile of both."
+order: 2
+duration: "8 min"
+quiz:
+  - question: "What is a folder?"
+    options:
+      - "A program that runs your code"
+      - "A container that holds files and other folders"
+      - "A backup stored on the internet"
+      - "The same thing as a git commit"
+    answer: 1
+  - question: "What does a file extension like .md or .js usually tell you?"
+    options:
+      - "Who owns the file"
+      - "How large the file is"
+      - "What kind of file it is, so programs know how to open it"
+      - "Whether Claude Code is allowed to edit it"
+    answer: 2
+  - question: "Why does Claude Code care which folder you start it in?"
+    options:
+      - "It can only see files inside the folder you start from (and what you later point it at)"
+      - "It uploads your whole hard drive either way"
+      - "The folder name becomes your password"
+      - "It refuses to start unless the folder is named src"
+    answer: 0
+---
+
+## Your Computer Is A Filing Cabinet
+
+A **file** is one named thing: a document, a picture, a page, a script. A **folder** (also called a directory) is a container that holds files and other folders.
+
+A "project" is not a special object. It is a folder you decided is the workspace, with files inside it.
+
+```text
+my-first-project/
+  index.html
+  styles.css
+  app.js
+  notes/
+    ideas.md
+```
+
+That is a project. Four files, one nested folder. You can make this today, with no programming class behind you.
+
+## Paths
+
+A **path** is the address of a file.
+
+- On macOS or Linux it looks like `/Users/you/Documents/my-first-project/index.html`
+- On Windows it looks like `C:\Users\you\Documents\my-first-project\index.html`
+
+The last piece is the file name. Everything before it is the trail of folders.
+
+Two words you will see:
+
+- **Root of the project** — the top folder you consider "this project" (`my-first-project` above)
+- **Relative path** — the address from that top folder (`notes/ideas.md`)
+
+When a lesson says "start Claude Code in the project root," it means: open a terminal *in that top folder*, not in your home folder, and not inside a random subfolder.
+
+<Callout type="tip">
+If you get lost, look at the path shown in your file explorer or at the top of your editor. The last folder in that path is "where you are."
+</Callout>
+
+## Names And Extensions
+
+`ideas.md` has two parts: the name (`ideas`) and the extension (`.md`). The extension is a hint:
+
+| Extension | Usually means |
+|---|---|
+| `.md` | Markdown — notes written in plain text |
+| `.html` | A page a browser can open |
+| `.css` | Style rules for a page |
+| `.js` | JavaScript — behavior for a page |
+| `.json` | Structured data |
+| `.txt` | Plain text |
+
+You can open any of these in a text editor. "Code" is text in a file. That is the whole secret.
+
+<Callout type="warning">
+Some files are not for sharing. Anything named `.env`, or that looks like a password, key, or `credentials`, stays on your machine. Do not paste those into chat, email, or a public folder.
+</Callout>
+
+## Hidden Files
+
+Names that start with a dot — `.gitignore`, `.claude` — are often hidden in the file explorer. They are still real files. Git and Claude Code use several of them. If a lesson says "create `.gitignore`" and you cannot see it, turn on "show hidden files" in your file explorer.
+
+## Make A Practice Folder
+
+Do this before the next lesson.
+
+1. In your Documents folder, create a folder named `claude-code-practice`
+2. Inside it, create a file named `hello.md`
+3. Open `hello.md` in any text editor and type: `This is my practice folder.`
+4. Save the file
+
+You now have a project. Later lessons will start Claude Code *inside* this folder so it can only see these files unless you point it elsewhere.
+
+<KeyPoint>A project is just a folder of files. Claude Code works on the folder you start it in — so knowing where you are matters more than knowing a programming language.</KeyPoint>
+
+Next: the terminal, which is how you talk to that folder with words instead of clicks.

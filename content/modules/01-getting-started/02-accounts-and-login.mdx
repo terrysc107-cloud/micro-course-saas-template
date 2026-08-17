@@ -2,7 +2,7 @@
 title: "Accounts and Login"
 description: "Log in to Claude Code, understand the account types, and fix the auth problems that actually happen."
 order: 2
-duration: "8 min"
+duration: "9 min"
 coverImage: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "You have an active Claude Max subscription. What do you need to do before running `claude` for the first time?"
@@ -32,17 +32,23 @@ quiz:
 
 Let's kill the most common piece of Claude Code misinformation first.
 
-**Claude Code requires an account. It does not require an `ANTHROPIC_API_KEY`.** Older tutorials — including, honestly, the first version of this course — taught `export ANTHROPIC_API_KEY=sk-ant-...` as a mandatory setup step for every learner. That is wrong, and it actively causes bugs (more on that below).
+**Claude Code requires an account. It does not require an `ANTHROPIC_API_KEY`.**
 
-What you actually do is this:
+An **API key** is a secret password that some programs use to talk to a service. You do not need one to start. Older tutorials — including, honestly, the first version of this course — taught `export ANTHROPIC_API_KEY=sk-ant-...` as a mandatory setup step for every learner. That is wrong, and it actively causes bugs (more on that below).
+
+What you actually do is this. In your terminal:
 
 ```bash
 claude
 ```
 
-On first use, Claude Code prompts you to log in and completes authentication in your browser. Once logged in, your credentials are stored and you won't need to log in again.
+On first use, Claude Code prompts you to log in and completes authentication in your browser. A browser window opens; you sign in to your Claude account the same way you would on the website. Once logged in, your credentials are stored and you won't need to log in again.
 
 That's the whole setup.
+
+<Callout type="info">
+You still need a Claude account. Most people here will use a Claude subscription (Pro, Max, Team, or Enterprise). The subscription is billed by Anthropic, not by this course. If you do not have an account yet, create one on Claude's site before you run `claude`.
+</Callout>
 
 ## Which Account Works
 
@@ -53,9 +59,11 @@ You can log in with any of these:
 - **A supported cloud provider** — Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry
 - **A self-hosted Claude apps gateway**, if your organization runs one. Your admin pre-configures the gateway URL, and `/login` opens directly on the Cloud gateway screen so you sign in with corporate SSO
 
-If you are an individual developer paying for your own tooling, the subscription path is the one to take. If you are inside a company that has already made this decision, it has probably been made for you — ask which of the four applies before you spend an afternoon fighting it.
+If you are paying for your own tooling, the subscription path is the one to take. If you are inside a company that has already made this decision, it has probably been made for you — ask which of the four applies before you spend an afternoon fighting it.
 
 ## The Three Commands
+
+Inside a Claude Code session, lines that start with `/` are commands to the tool, not questions for Claude.
 
 | Command | What it does |
 |---|---|
@@ -75,13 +83,13 @@ After login, credentials are stored on your system:
 | Linux | `~/.claude/.credentials.json` (mode `0600`) |
 | Windows | `%USERPROFILE%\.claude\.credentials.json` |
 
-Worth knowing for two reasons: you can confirm a login actually persisted, and you know exactly what not to sync into a dotfiles repo.
+Worth knowing for two reasons: you can confirm a login actually persisted, and you know exactly what not to sync into a shared folder or a git repo.
 
 <Callout type="warning">On Linux, `.credentials.json` is a real credential in a plain file. Mode `0600` means only your user can read it — keep it that way, and keep `~/.claude/` out of any repository you push.</Callout>
 
 ## Authentication Precedence
 
-When multiple credentials are present, Claude Code resolves them in a fixed order. First match wins:
+When multiple credentials are present, Claude Code resolves them in a fixed order. First match wins. You can skip this section until something breaks — then come back.
 
 1. Cloud provider credentials (`CLAUDE_CODE_USE_BEDROCK` / `_VERTEX` / `_FOUNDRY`)
 2. `ANTHROPIC_AUTH_TOKEN` (sent as `Authorization: Bearer`)
@@ -100,7 +108,7 @@ This is the auth failure you are most likely to hit, and it is genuinely confusi
 
 You have an active subscription. Claude Code works fine on your laptop. On your other machine it throws auth errors, or bills somewhere unexpected, or behaves like an account you don't recognize. Nothing you changed today explains it.
 
-The cause: an `ANTHROPIC_API_KEY` is still exported somewhere — a `.zshrc` line from a tutorial six months ago, a `.env` your shell sources, a CI variable that leaked into your local profile. It sits at position 3 in the precedence list. Your subscription sits at position 6. Once approved, the stale key wins.
+The cause: an `ANTHROPIC_API_KEY` is still exported somewhere — a line in a shell startup file from a tutorial six months ago, a `.env` your shell reads, a leftover from a previous experiment. It sits at position 3 in the precedence list. Your subscription sits at position 6. Once approved, the stale key wins.
 
 The fix:
 
@@ -108,19 +116,19 @@ The fix:
 unset ANTHROPIC_API_KEY
 ```
 
-Then check `/status` to confirm which account and auth method you are actually on. If it comes back after a restart, grep your shell profiles — the export is written down somewhere.
+Then check `/status` to confirm which account and auth method you are actually on. If it comes back after a restart, the export is written down in a startup file — look for `ANTHROPIC_API_KEY` in `.zshrc`, `.bashrc`, or a PowerShell profile. Do not post the key itself anywhere.
 
 <Callout type="tip">Make `/status` the first thing you run whenever authentication is behaving strangely. "Which credential won?" is the answer to a surprising share of Claude Code auth mysteries, and `/status` tells you directly instead of making you reason about a precedence list from memory.</Callout>
 
 ## Tokens for CI
 
-For non-interactive environments, there is a dedicated path:
+For non-interactive environments (automated machines, not your laptop), there is a dedicated path:
 
 ```bash
 claude setup-token
 ```
 
-This prints a one-year OAuth token for use as `CLAUDE_CODE_OAUTH_TOKEN`. Constraints worth knowing before you build a pipeline on it:
+This prints a one-year OAuth token for use as `CLAUDE_CODE_OAUTH_TOKEN`. You can skip this until you are automating something. Constraints worth knowing before you build a pipeline on it:
 
 - It requires a Pro, Max, Team, or Enterprise plan
 - It is inference-scoped — it cannot establish Remote Control sessions

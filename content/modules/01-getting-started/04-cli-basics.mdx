@@ -1,8 +1,8 @@
 ---
 title: "CLI Navigation & Basics"
-description: "The shell commands, session commands, and shortcuts worth committing to memory."
+description: "The shell commands, session commands, and shortcuts worth committing to memory — explained for a first-time terminal user."
 order: 4
-duration: "9 min"
+duration: "10 min"
 coverImage: "https://images.unsplash.com/photo-1601882589907-ce1b7efe2a40?w=1200&auto=format&fit=crop&q=80"
 quiz:
   - question: "You finished a session yesterday and want to pick the same conversation back up in the same directory. What's the fastest route?"
@@ -28,17 +28,19 @@ quiz:
     answer: 1
 ---
 
-## Two Ways In
+## You Do Not Need The Whole Manual
 
-Claude Code runs from your shell as either a conversation or a single shot. Knowing which you want before you type saves a surprising amount of time.
+A **flag** is an extra word after a command that changes how it runs. In `claude -c`, the `-c` is a flag. You do not need to memorize every flag. You need four moves: start a session, ask one question and quit, pick up yesterday's session, and free up a long conversation.
+
+Claude Code runs from your terminal as either a conversation or a single shot. Knowing which you want before you type saves a surprising amount of time.
 
 **Shell commands** — these start or resume Claude Code from your terminal:
 
 | Command | What it does | Example |
 |---|---|---|
 | `claude` | Start interactive mode | `claude` |
-| `claude "task"` | Run a one-time task | `claude "fix the build error"` |
-| `claude -p "query"` | Run one-off query, then exit | `claude -p "explain this function"` |
+| `claude "task"` | Run a one-time task | `claude "fix the typo in hello.md"` |
+| `claude -p "query"` | Run one-off query, then exit | `claude -p "explain this file"` |
 | `claude -c` | Continue most recent conversation in current directory | `claude -c` |
 | `claude -r` | Resume a previous conversation | `claude -r` |
 
@@ -53,13 +55,13 @@ claude -c          # continue the most recent conversation in this directory
 claude -r          # resume a previous conversation
 ```
 
-`-c` is the one you'll use daily. You close your laptop, come back after lunch, `claude -c`, and you're back in the same conversation with the same context. Inside a session, `/resume` does the same job.
+`-c` is the one you'll use daily. You close your laptop, come back after lunch, `claude -c`, and you're back in the same conversation. Inside a session, `/resume` does the same job.
 
-<Callout type="tip">`claude -c` is directory-scoped — it continues the most recent conversation *in the current directory*. If you jump between repos, `-c` gives you the right thread per repo automatically. It's the closest thing Claude Code has to "just put me back where I was."</Callout>
+<Callout type="tip">`claude -c` is directory-scoped — it continues the most recent conversation *in the current folder*. If you jump between folders, `-c` gives you the right thread per folder automatically.</Callout>
 
 ## Session Commands
 
-Once you're inside a session:
+Once you're inside a session, lines that start with `/` talk to the tool:
 
 | Command | What it does |
 |---|---|
@@ -73,13 +75,13 @@ Once you're inside a session:
 | `/compact` | Summarize the conversation to free up context |
 | `/permissions` | Manage permission rules |
 
-Type `/` on its own to see everything you can invoke — built-in commands plus any skills available in this project.
+Type `/` on its own to see everything you can invoke.
 
 ## /compact vs /clear
 
 These are not interchangeable, and picking wrong costs you real work.
 
-- **`/compact`** summarizes the conversation and keeps going. Use it when you're deep in one task and running long — you need the earlier findings, just not every token of them.
+- **`/compact`** summarizes the conversation and keeps going. Use it when you're deep in one task and running long — you need the earlier findings, just not every word of them.
 - **`/clear`** wipes conversation history and starts fresh. Use it when you're *switching tasks*. Stale context from an unrelated problem doesn't just waste space; it actively pulls Claude toward irrelevant patterns.
 
 The rule of thumb: **same task, `/compact`. Different task, `/clear`.**
@@ -100,25 +102,17 @@ The rule of thumb: **same task, `/compact`. Different task, `/clear`.**
 
 `Shift+Tab` is the one that changes how you work rather than how fast you type — it's the whole subject of the next lesson.
 
-`Esc` is the underrated one. When Claude is three tool calls into an approach you can already tell is wrong, interrupt it. The work done so far is kept, and you redirect from there instead of waiting politely for a bad answer to finish arriving.
+`Esc` is the underrated one. When Claude is heading somewhere wrong, interrupt it. The work done so far is kept, and you redirect from there.
 
 ## Piping and Scripting
 
-`-p` is where Claude Code stops being a chat tool and starts being a Unix citizen:
+Skip this section until you are comfortable. `-p` is where Claude Code can read the output of another command and then exit:
 
 ```bash
-tail -200 app.log | claude -p "Slack me if you see any anomalies"
+git diff | claude -p "explain this change in plain language"
 ```
 
-```bash
-git diff main --name-only | claude -p "review these changed files for security issues"
-```
-
-```bash
-claude -p "translate new strings into French and raise a PR for review"
-```
-
-It reads stdin and writes stdout, so it composes with everything else in your shell. This is the door to CI jobs, git hooks, and the kind of small automation that's too specific to ever be a product.
+It reads stdin and writes stdout. This is the door to later automation. You do not need it for the capstone.
 
 <Callout type="warning">Think carefully before wiring `-p` into anything automated. A non-interactive run has no one to answer permission prompts — which means you need to have made deliberate decisions about what it's allowed to do, in advance. That's the next lesson, and it's not optional reading before you put this in a pipeline.</Callout>
 
@@ -127,17 +121,6 @@ It reads stdin and writes stdout, so it composes with everything else in your sh
 `/model` shows and changes the model for the current session. That's the mechanism you want — not a model name memorized from a course.
 
 We're not naming a default model anywhere in this material. Defaults change without notice, and a lesson that confidently names one is wrong within weeks. `/model` is always right; a name in a tutorial has a shelf life.
-
-## Aliases
-
-Small thing, adds up:
-
-```bash
-# ~/.zshrc
-alias cc="claude"
-alias ccp="claude -p"
-alias ccc="claude -c"
-```
 
 <KeyPoint>Learn four things and you have the CLI: `claude` for a session, `-p` for one-shot and scripting, `-c` to pick up where you left off, and `/compact` vs `/clear` to manage context deliberately. Everything else you can find with `/help`.</KeyPoint>
 

@@ -1,11 +1,11 @@
 ---
 title: "Your First Claude Code Session"
-description: "Start a session, ask your first questions, and handle your first approval prompt."
+description: "Start a session in your practice folder, ask your first questions, and handle your first approval prompt."
 order: 3
-duration: "9 min"
+duration: "10 min"
 coverImage: "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=1200&auto=format&fit=crop&q=80"
 quiz:
-  - question: "You start `claude` in an unfamiliar repo and ask 'what does this project do?' — why is this a better opening move than immediately asking for a code change?"
+  - question: "You start `claude` in an unfamiliar folder and ask 'what does this project do?' — why is this a better opening move than immediately asking for a code change?"
     options:
       - "It is required; Claude Code refuses edits until you ask a question first"
       - "It costs nothing, unlike edit requests"
@@ -28,40 +28,40 @@ quiz:
     answer: 1
 ---
 
-## Start a Session
+## Start A Session In Your Practice Folder
 
-Open a terminal in a project directory — any project — and run:
+You do not need a real app yet. Use the `claude-code-practice` folder from Foundations.
+
+Open a terminal in that folder and run:
 
 ```bash
-cd /path/to/your/project
+cd /path/to/claude-code-practice
 claude
 ```
 
+On a Mac that path might look like `~/Documents/claude-code-practice`. On Windows, something like `C:\Users\you\Documents\claude-code-practice`. If you are not sure, `pwd` and `ls` from Foundations will tell you.
+
 You'll see the Claude Code prompt, with the version, current model, and working directory shown above it. Type `/help` for available commands, or `/resume` to pick up a previous conversation.
 
-That's it. No project configuration, no indexing step, no setup wizard. Claude Code reads your project files as needed; you don't have to manually add context.
+That's it. No project configuration, no indexing step, no setup wizard. Claude Code reads files as needed; you don't have to manually add context.
 
 ## Ask Before You Edit
 
-Resist the urge to make it write code immediately. Spend your first few prompts reading.
+Resist the urge to make it write code immediately. Spend your first few prompts reading — even if the folder only has `hello.md`.
 
 ```text
 what does this project do?
 ```
 
 ```text
-what technologies does this project use?
-```
-
-```text
-where is the main entry point?
+what files are here?
 ```
 
 ```text
 explain the folder structure
 ```
 
-This isn't ceremony. You are checking a hypothesis: **does this tool actually understand my codebase, or is it about to confidently pattern-match its way into a mess?** You already know what your project does. Ask anyway, and read the answer critically. If the summary is subtly wrong — wrong framework, wrong architecture, confidently describing a directory that does something else — you have learned something important before any file was touched.
+This isn't ceremony. You are checking a hypothesis: **does this tool actually understand these files, or is it about to confidently invent a story?** If the summary is subtly wrong — describing a file that is not there, or a purpose you never wrote — you have learned something important before any file was touched.
 
 You can also ask it about itself:
 
@@ -69,37 +69,29 @@ You can also ask it about itself:
 what can Claude Code do?
 ```
 
-```text
-how do I create custom skills in Claude Code?
-```
-
-<Callout type="info">Claude Code doesn't load your whole repo into memory up front — it reads files as it needs them, using search and file reads like you would. That's why "what does this project do?" in a large monorepo takes a moment and produces a sketch rather than an exhaustive map. It's exploring, not indexing.</Callout>
+<Callout type="info">Claude Code doesn't load your whole folder into memory up front — it reads files as it needs them, using search and file reads like you would. That's why "what does this project do?" in a large folder takes a moment and produces a sketch rather than an exhaustive map. It's exploring, not indexing.</Callout>
 
 ## Pointing at Specific Files
 
 Type `@` in the prompt to trigger file path autocomplete. This is how you aim.
 
 ```text
-explain what @src/middleware.ts does
+explain what @hello.md does
 ```
 
-```text
-compare @components/Button.tsx and @components/IconButton.tsx
-```
+Letting Claude find files itself works fine, and for exploratory questions it's often better. But when you already know which file you mean, `@` skips the search and gets straight to the point.
 
-Letting Claude find files itself works fine, and for exploratory questions it's often better. But when you already know where the relevant code lives, `@` skips the search and gets straight to the point — cheaper, faster, and less likely to drag in files you didn't want.
-
-## Your First Code Change
+## Your First Change
 
 Now ask for something small and real:
 
 ```text
-add a hello world function to the main file
+add a second sentence to hello.md that says I started Claude Code today
 ```
 
 Claude Code will:
 
-1. Find the appropriate file
+1. Find the file
 2. Show you the proposed changes
 3. Ask for your approval
 4. Make the edit
@@ -110,19 +102,19 @@ That third step is the entire product. Claude Code always asks for permission be
 
 When Claude wants to edit a file, run a shell command, or make a network request, it pauses and asks you to approve. You'll get a choice: approve this action, decline it, or — for many actions — approve and stop being asked again.
 
-The last option is the one to think about. "Yes, don't ask again" is a real time-saver once you know what you're doing and you've decided a particular action is safe in this repo. It is a bad idea on your first pass through unfamiliar work, because you're pre-approving a category of action based on a single example of it.
+The last option is the one to think about. "Yes, don't ask again" is a real time-saver once you know what you're doing and you've decided a particular action is safe in this folder. It is a bad idea on your first pass, because you're pre-approving a category of action based on a single example of it.
 
-The honest framing: **each prompt is a place where you can still cheaply say no.** Once you start waving actions through, the cost of catching a bad change moves from "read three lines" to "read a diff and a git history." That's not an argument for maximum friction forever — it's an argument for spending the friction where it buys you something.
+The honest framing: **each prompt is a place where you can still cheaply say no.** Once you start waving actions through, the cost of catching a bad change moves from "read three lines" to "read a diff and a git history."
 
-<Callout type="tip">If a proposed change looks off but you're not sure why, you don't have to decide immediately. Decline it and ask "why did you take that approach?" Claude will explain its reasoning, and you'll either learn something about the codebase or catch a bad assumption. Both are worth more than the thirty seconds.</Callout>
+<Callout type="tip">If a proposed change looks off but you're not sure why, you don't have to decide immediately. Decline it and ask "why did you take that approach?" Claude will explain its reasoning, and you'll either learn something or catch a bad assumption. Both are worth more than the thirty seconds.</Callout>
 
 ## Reviewing the Diff
 
-Read the changed lines. Not the summary — the lines.
+Read the changed lines. Not the summary — the lines. Foundations taught you `+` and `-`. Use that now.
 
-The failure mode with agentic coding tools is not that they write nonsense; it's that they write plausible code that's subtly wrong for your codebase. Uses a pattern you migrated away from. Duplicates a helper that already exists two directories over. Handles the happy path and quietly drops an error case. None of that reads as wrong in a prose summary. All of it is obvious in a diff.
+The failure mode with these tools is not that they write nonsense; it's that they write plausible text that's subtly wrong. None of that reads as wrong in a prose summary. All of it is obvious in a diff.
 
-<Callout type="warning">Slow down on any change touching authentication, payment logic, permissions, or database queries. These are the areas where a subtly wrong edit is both most likely and most expensive — and they're exactly the areas where a confident summary is least informative.</Callout>
+<Callout type="warning">Slow down on any change touching passwords, payment, accounts, or anything that deletes files. These are the areas where a subtly wrong edit is both most likely and most expensive — and they're exactly the areas where a confident summary is least informative.</Callout>
 
 ## Ending a Session
 
@@ -130,27 +122,19 @@ The failure mode with agentic coding tools is not that they write nonsense; it's
 - `Ctrl+C` interrupts a running operation. If nothing is running, the first press clears your input and a second press exits
 - `Esc` interrupts Claude mid-turn so you can redirect — the work done so far is kept
 
-That last one is more useful than it sounds. When you see Claude heading somewhere wrong three tool calls in, you don't have to sit through it. Hit `Esc` and steer.
+That last one is more useful than it sounds. When you see Claude heading somewhere wrong, you don't have to sit through it. Hit `Esc` and steer.
 
 ## Prompts That Work
 
-Be specific. The docs' own example is a good one:
+Be specific.
 
-> Instead of: "fix the bug"
+> Instead of: "fix the file"
 >
-> Try: "fix the login bug where users see a blank screen after entering wrong credentials"
+> Try: "add one sentence to hello.md that says I read the diff before I accepted it"
 
-Break big work into steps rather than one enormous request:
+Break bigger work into steps rather than one enormous request. And let Claude explore before it changes anything — `what files are here?` before `rewrite everything` produces meaningfully better results than the reverse.
 
-```text
-1. create a new database table for user profiles
-2. create an API endpoint to get and update user profiles
-3. build a webpage that allows users to see and edit their information
-```
-
-And let Claude explore before it changes anything — `analyze the database schema` before `add a migration` produces meaningfully better results than the reverse.
-
-<KeyPoint>Read before you write: ask questions until you're satisfied Claude actually understands the project, then make one small change and read the diff line by line. The approval prompt is the cheapest place in the whole workflow to catch a bad idea — spend your attention there.</KeyPoint>
+<KeyPoint>Read before you write: ask questions until you're satisfied Claude actually understands the folder, then make one small change and read the diff line by line. The approval prompt is the cheapest place in the whole workflow to catch a bad idea — spend your attention there.</KeyPoint>
 
 The session behavior and shortcuts described here come from the official [quickstart](https://code.claude.com/docs/en/quickstart) and [interactive mode](https://code.claude.com/docs/en/interactive-mode) docs as verified for this course. Claude Code ships weekly; when something looks different on your machine, check the docs.
 

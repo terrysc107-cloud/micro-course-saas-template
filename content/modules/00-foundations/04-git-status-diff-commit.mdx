@@ -1,0 +1,156 @@
+---
+title: "Git: Status, Diff, Commit"
+description: "Three git commands that keep you safe: what changed, what the change is, and save a snapshot."
+order: 4
+duration: "12 min"
+quiz:
+  - question: "What does `git status` tell you?"
+    options:
+      - "Whether your internet is working"
+      - "Which files git sees as new, changed, or staged, compared with the last snapshot"
+      - "The password for your Claude account"
+      - "How to install Claude Code"
+    answer: 1
+  - question: "What is a commit?"
+    options:
+      - "A promise to a client"
+      - "A snapshot of your files at a moment in time, with a short message"
+      - "A way to delete the project"
+      - "A Claude Code permission mode"
+    answer: 1
+  - question: "You changed a file and want to see the exact lines that changed. Which command?"
+    options:
+      - "`git status`"
+      - "`git diff`"
+      - "`pwd`"
+      - "`claude --version`"
+    answer: 1
+---
+
+## Why Git Exists In This Course
+
+Git is a history tool. It takes snapshots of your files so you can see what changed and go back.
+
+You do not need to "learn git." You need three commands:
+
+| Command | Question it answers |
+|---|---|
+| `git status` | What files are new or changed? |
+| `git diff` | What are the actual line-by-line changes? |
+| `git commit` | Save a snapshot I can return to |
+
+That is the safety layer under Claude Code. If a change is bad, a commit from ten minutes ago is your undo.
+
+## Install Git If You Need To
+
+Check first:
+
+```bash
+git --version
+```
+
+If you get a version number, you are done. If the computer says the command is not found:
+
+- **macOS:** install [Xcode Command Line Tools](https://developer.apple.com/xcode/resources/) when the system prompts you, or install git from [git-scm.com](https://git-scm.com)
+- **Windows:** install [Git for Windows](https://git-scm.com/downloads/win) — the Claude Code docs also recommend this so the tool can use a Bash-style shell
+- **Linux:** use your package manager (`sudo apt install git` on Debian/Ubuntu)
+
+Then run `git --version` again.
+
+## Turn Your Practice Folder Into A Repository
+
+A **repository** (repo) is a folder git is watching. In the terminal, go to `claude-code-practice` and run:
+
+```bash
+git init
+```
+
+Git creates a hidden folder named `.git`. You do not edit that folder. It is the history.
+
+Tell git who you are, once per machine (use your name and email):
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+This is not a Claude account. It is the label git puts on snapshots.
+
+## Status
+
+```bash
+git status
+```
+
+You should see `hello.md` as untracked — git sees it, but has not snapshotted it yet.
+
+Untracked means "new to git." Modified means "git has a snapshot, and the file is different now." Staged means "I have marked these changes to include in the next snapshot."
+
+<Callout type="tip">
+When you are confused, run `git status`. It is the "where am I?" command. Make it a habit before and after Claude Code edits anything.
+</Callout>
+
+## Diff
+
+Open `hello.md`, add a second line, save the file. Then:
+
+```bash
+git add hello.md
+git diff --staged
+```
+
+Or, if you have not staged yet:
+
+```bash
+git diff
+```
+
+You will see lines starting with `+` (added) and `-` (removed). That listing is a **diff**. The next lesson is entirely about reading one. For now, confirm you can see the line you added.
+
+## Commit
+
+A **commit** is a snapshot plus a short message.
+
+```bash
+git add hello.md
+git commit -m "Add my practice hello file"
+```
+
+`git add` marks files for the snapshot. `git commit -m "..."` saves it.
+
+Run `git status` again. It should say the working tree is clean — nothing pending.
+
+<Callout type="warning">
+Commit only files you mean to keep. Do not `git add` a file that contains a password or a key. If you are unsure, run `git status` and add files by name, not `git add .`, until you are comfortable.
+</Callout>
+
+## The Habit
+
+Before you let Claude Code edit:
+
+```bash
+git status
+```
+
+After it edits, before you say "looks good":
+
+```bash
+git diff
+```
+
+When a small piece of work is actually good:
+
+```bash
+git add <the files you reviewed>
+git commit -m "a short description of what changed"
+```
+
+You now have a floor. If the next change is a mess, you can return to this commit. Later lessons will show `git reset` for that. The important part is: **there is a snapshot to return to.**
+
+<Callout type="info">
+Git can also talk to GitHub, which is a website that stores copies of repositories. You do not need GitHub to finish this course. Local commits on your computer are enough.
+</Callout>
+
+<KeyPoint>`status` shows what changed, `diff` shows the lines, `commit` saves a snapshot. Those three commands are the undo system that makes it safe to let an agent touch your files.</KeyPoint>
+
+Next: how to actually read a diff — the skill this course will not let you skip.

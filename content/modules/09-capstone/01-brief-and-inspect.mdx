@@ -1,6 +1,6 @@
 ---
 title: "Brief and Inspect"
-description: "Write the one-page build brief before you touch code, then make Claude prove it understands the repo."
+description: "Write a one-page brief for a small local project, then make Claude prove it understands the folder."
 order: 1
 duration: "12 min"
 quiz:
@@ -11,176 +11,132 @@ quiz:
       - "Because Claude Code refuses to start work without them"
       - "Because non-goals are required by plan mode"
     answer: 1
-  - question: "Claude's inspection summary of your repo is fluent, confident, and names a state management library you have never installed. What is the right read?"
+  - question: "Claude's inspection summary of your folder is fluent, confident, and names a file you have never created. What is the right read?"
     options:
-      - "Install that library — Claude clearly knows the ecosystem better than you"
+      - "Create that file — Claude clearly knows what you need"
       - "Ignore it; summaries are always a bit loose"
-      - "Treat it as a context failure — Claude is filling gaps with priors, so stop and re-ground it in real files before planning"
+      - "Treat it as a context failure — Claude is filling gaps, so stop and re-ground it in real files before planning"
       - "Ask it to try the summary again with more detail"
     answer: 2
   - question: "What makes a done-criterion actually useful in the brief?"
     options:
       - "It describes the intended feeling of the finished product"
       - "It lists the files that will be created"
-      - "Someone else could run it against the app and get an unambiguous pass or fail"
+      - "Someone else could run it against the project and get an unambiguous pass or fail"
       - "It is written after the feature is built, so it matches reality"
     answer: 2
 ---
 
 ## The Build
 
-You are building the **Lead Follow-Up Command Center**. A solo consultant pastes in inbound leads, sees them in a list, marks each one's follow-up status, and gets a view of who is overdue for a reply.
+You are building a **local Daily Checklist**. A page you open in your browser. You add a task, see it in a list, mark it done, and still see it after you refresh the page.
 
-That is deliberately unglamorous. It is small enough to finish in a few sessions, and real enough that you will hit genuine data modeling, real state, and real edge cases — the "overdue" rule alone will make you think harder than you expect.
+That is deliberately small. A beginner can finish it. It is still real enough that you will hit data shape, empty states, and bad input — the same problems a bigger app has, without Next.js, a database, or a deploy.
 
-The stack we'll reference is Next.js with a simple persistence layer. **The workflow is stack-agnostic.** If you would rather build this in Rails, Django, Go, or SvelteKit, do that. Nothing in these six lessons depends on the framework. What you're practicing is the loop:
+**The workflow is the product.** The checklist is the excuse to run it once end to end:
 
 **Inspect → Plan → Build → Review → Test → Ship**
 
-That loop is the product of this course. The lead tracker is just the excuse to run it once end to end.
-
-<Callout type="info">Substituting your own stack is encouraged, but substitute it now — not in lesson 4. Changing the target mid-build is exactly the kind of scope drift this module teaches you to catch.</Callout>
+<Callout type="info">
+After you are ready — meaning you have finished this local build once — you may run the same six lessons on the older **Lead Follow-Up Command Center** (Next.js, a real data store, a preview deploy). That path is optional. Do not start it as your first capstone.
+</Callout>
 
 ## Write the Brief First
 
-Before you open Claude Code. Before you create the repo.
+Before you open Claude Code. Before you create files.
 
-The reason is not process theater. It is that plan mode, review passes, and QA all measure your work against *something*, and if that something only exists in your head, then it changes shape every time you're tired or impressed by a nice-looking diff. A brief you wrote an hour ago is a witness you can't quietly bribe.
+Plan mode, review, and QA all measure your work against *something*. If that something only exists in your head, it changes every time you are tired or impressed. A brief you wrote an hour ago is a witness you cannot quietly rewrite.
 
-A build brief is one page. Longer than one page means you are designing, not scoping.
+A build brief is one page. Start from [our build brief template](/downloads/build-brief-template.md). Fill in every section.
 
 Six sections:
 
 1. **Problem** — what is broken today, in one or two sentences
-2. **User** — who specifically, and what they are doing when they touch this
+2. **User** — who, and what they are doing when they touch this
 3. **Done-criteria** — the checkable list that defines finished
 4. **Non-goals** — what you are explicitly not building
-5. **Constraints** — stack, deadline, data rules, anything non-negotiable
-6. **Rollback plan** — how you undo this if it goes wrong in production
-
-Start from [our build brief template](/downloads/build-brief-template.md) rather than a blank file. Fill in every section, including the ones that feel obvious.
+5. **Constraints** — stack, data rules, anything non-negotiable
+6. **Rollback plan** — how you undo this if it goes wrong
 
 ### The brief for this capstone
 
-Here's a filled-in version. Yours can differ — but it should be this concrete.
-
 ```
 PROBLEM
-Inbound leads arrive by email and DM. They get triaged in a notes app
-and then forgotten. Leads go cold not because they were bad, but
-because nobody remembered to reply.
+I keep daily tasks in my head or in scattered notes. I forget
+what is still open, and I cannot see yesterday's leftovers.
 
 USER
-A solo consultant. Checks this once in the morning, for about two
-minutes, before deciding who to email today.
+Me. I open this once in the morning, for about two minutes,
+before I start work.
 
 DONE-CRITERIA
-1. I can paste in a lead (name, email, source, note) and it persists
-   across a page reload.
-2. The lead list shows every lead with its current follow-up status.
-3. I can change a lead's status to: New, Contacted, Waiting, Closed.
-4. An "Overdue" view shows every lead that is New or Waiting and whose
-   last activity was more than 3 days ago.
-5. Zero leads and one lead both render without breaking the layout.
-6. A lead with a malformed email is rejected with a message, not saved.
+1. I can add a task with a title and it is still there after I
+   refresh the browser.
+2. The list shows every task and whether it is done.
+3. I can mark a task done and mark it not-done again.
+4. An "Open" view shows only tasks that are not done.
+5. Zero tasks and one task both render without looking broken.
+6. An empty title is rejected with a message, not saved.
 
 NON-GOALS
-- No auth. Single local user.
-- No email sending. This tracks follow-ups; it does not perform them.
-- No import from Gmail/CRM. Manual paste only.
-- No multi-user, no teams, no sharing.
-- No mobile-specific layout. Desktop is the target.
+- No accounts. No login. Single person on this computer.
+- No internet required after the files exist.
+- No database server. No Next.js. No hosting company required.
+- No sharing, no mobile app, no reminders.
 
 CONSTRAINTS
-- Next.js. Persistence simple enough to reason about in one sitting.
-- Must run locally with one command.
+- Three files is enough: index.html, styles.css, app.js.
+- Data lives in the browser (localStorage) or a local JSON file.
+- Must open by double-clicking index.html or using a simple local server.
 
 ROLLBACK PLAN
-Ships to a preview URL first. Production deploy is a promotion of a
-known-good build; roll back by promoting the previous one. Data lives
-in a store I can snapshot before deploy.
+Git is the undo. Every good increment is a commit. If a change
+is bad, return to the last good commit. Nothing is deployed.
 ```
 
-Read done-criterion 4 again. "More than 3 days ago" — since *what*? Since the lead arrived, or since you last did something? That ambiguity is a data modeling decision, and you just surfaced it in a text file for free instead of discovering it in lesson 3 with a schema already written. That is the entire return on writing a brief.
+Read done-criterion 4 again. "Open" means not done — write that down. If you leave it vague, Claude will invent a meaning in the code and you will find out in the review.
 
-<Callout type="tip">If a done-criterion can't be checked by someone who didn't build the feature, it isn't a criterion — it's a wish. "Overdue leads are easy to spot" is a wish. "The Overdue view lists leads that are New or Waiting with last activity older than 3 days" is a criterion.</Callout>
+<Callout type="tip">If a done-criterion can't be checked by someone who didn't build the feature, it isn't a criterion — it's a wish. "Tasks are easy to see" is a wish. "The Open view lists only tasks that are not done" is a criterion.</Callout>
 
 ## Now Inspect
 
 You have a brief. You still don't get to build.
 
-The single most common way an agent session goes wrong is that Claude starts writing code against a repo it has assumed rather than read. Assumed conventions. Assumed folder structure. Assumed that you use the library that's most common in its training data. The output looks plausible, passes a skim, and is subtly foreign to your codebase — and you find out three files later.
-
-So make it prove otherwise, first.
-
-Start in **plan mode** — press `Shift+Tab` to cycle permission modes until you're in plan. Plan mode reads files and runs read-only shell commands to explore, and does not edit source files. It is the correct mode for inspection because it makes "Claude accidentally started building" structurally impossible rather than merely unlikely.
+Start in **plan mode** — press `Shift+Tab` until you're in plan. Plan mode reads files and does not edit source. It makes "Claude accidentally started building" structurally impossible.
 
 <Callout type="warning">Permission modes are enforced by Claude Code, not by the model. Typing "don't edit anything yet" into your prompt is a request. Plan mode is a rule. Use the rule. See the <a href="https://code.claude.com/docs/en/permission-modes">permission modes docs</a> — details change.</Callout>
 
-### If you're starting from an empty repo
+### If you're starting from an empty folder
 
-There is nothing to inspect yet, and that's fine — but inspect the *ground* instead of skipping the step:
-
-```
-> We're building a lead follow-up tracker. Before any code:
-  read package.json, the tsconfig, and any config files in the repo
-  root, then tell me exactly what stack and version this is, and what
-  is already configured. If something is not present in the files you
-  read, say "not present" rather than assuming a default.
-```
-
-That last sentence matters. It gives Claude explicit permission to say "I don't know," which is a thing models are otherwise poorly incentivized to do.
-
-### If you're adding this to an existing repo
-
-This is the realistic case, and the one worth practicing.
+Create a folder named `daily-checklist`, run `git init` inside it, save your brief as `brief.md`, and inspect the ground:
 
 ```
-> Read this repo before proposing anything. I want to add a lead
-  follow-up tracker to it. Report back with:
-  1. The stack and versions, from the actual manifest files.
-  2. Where data access lives, with file paths.
-  3. The naming and folder conventions you can infer, with one
-     example file for each.
-  4. How tests are run, quoted from the file where that's defined.
-  5. Anything you looked for and could NOT find.
-
-  Cite the file path for every claim. Do not propose an approach yet.
+> We're building a local daily checklist. Before any code:
+  list the files in this folder, read brief.md, and tell me
+  exactly what is already here. If something is not present,
+  say "not present" rather than assuming a default.
 ```
+
+That last sentence matters. It gives Claude permission to say "I don't know."
 
 ## Grading the Inspection
 
 You are reading the response for one thing: **is it grounded in files, or is it grounded in vibes?**
 
-Signals it's real:
+Signals it's real: claims carry file paths that exist; it quotes actual text; it says "not present" about at least one thing.
 
-- Claims carry file paths, and the paths exist
-- It quotes actual code and config, not paraphrase
-- It says "not present" or "couldn't find" about at least one thing — real repos always have a gap
-- It notices something specific and slightly odd that only reading would reveal
+Signals it's confabulating: fluent, confident, generic; names a file or library you don't have; zero uncertainty.
 
-Signals it's confabulating:
-
-- Fluent, confident, generic — it would describe half of GitHub equally well
-- Names a library, script, or convention you don't actually have
-- Zero uncertainty anywhere
-- Describes what a well-organized project of this type *usually* looks like
-
-If you get the second kind, **do not correct it inline and continue**. A context that has already absorbed a wrong picture of the repo will keep drifting back to it, and every subsequent turn is built on the bad foundation. Run `/clear` and re-ask with narrower scope — name the specific files you want read, using `@` to pull them in explicitly.
-
-Resetting a bad inspection costs you two minutes. Building on one costs you the afternoon in lesson 4.
-
-<Callout type="tip">The gap list is the most valuable part of the response. "I could not find a test command" or "there's no error handling convention I can infer" is a fact about your repo you now have to make a decision about — before Claude makes it for you silently.</Callout>
+If you get the second kind, run `/clear` and re-ask with `@brief.md` named explicitly. Resetting a bad inspection costs two minutes. Building on one costs the afternoon.
 
 ## Before You Move On
 
-Run [the preflight checklist](/downloads/preflight-checklist.md) once. It takes ninety seconds and covers what should be true before an agent touches a repo: clean git state, a branch that isn't `main`, a permission mode you chose deliberately, no secrets sitting in context, a known test command, and a known rollback path.
+Run [the preflight checklist](/downloads/preflight-checklist.md) once.
 
 You are done with this lesson when:
 
 - The brief exists as a file, with all six sections filled in
-- Claude has described your repo in terms you recognize as accurate, with paths
-- You know at least one thing about your own repo that you didn't before
-- Not one source file has been edited
+- Claude has described the folder in terms you recognize, with paths
+- Not one source file has been edited (the brief itself is not source)
 
-<KeyPoint>The brief is the fixed point that everything downstream — the plan, the review, the QA pass — gets measured against. Write it before you have a diff you're emotionally invested in, and make Claude prove it has read your repo before it proposes anything, because a confident summary of a codebase it never opened is the most expensive output an agent can hand you.</KeyPoint>
+<KeyPoint>The brief is the fixed point that everything downstream gets measured against. Write it before you have a diff you're attached to, and make Claude prove it has read your folder before it proposes anything.</KeyPoint>
