@@ -37,14 +37,14 @@ export default function Hero({ moduleCount, lessonCount, templateCount }: HeroPr
           </a>
 
           <h1 className="text-4xl sm:text-6xl font-bold text-white leading-[1.05] tracking-tight mb-6 text-balance">
-            Ship real features with Claude Code —{" "}
+            Learn to use Claude Code safely —{" "}
             <span className="text-brand-400">and stand behind every diff.</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-slate-400 leading-relaxed mb-8 text-pretty">
-            Most people use Claude Code like a slot machine: prompt, hope, paste. This course
-            teaches the workflow professionals actually use — inspect, plan, build, review, test,
-            ship — so the code you produce is code you can defend in review.
+            You do not need to have shipped code. This course teaches the minimum so you can use
+            Claude Code without skipping the part that keeps you safe: reading the change. Inspect,
+            plan, build, review, test, ship — on a small project you can finish.
           </p>
 
           {/* The core loop, stated up front — it's the spine of the whole course */}

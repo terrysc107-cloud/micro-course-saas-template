@@ -29,9 +29,11 @@ quiz:
 
 ## The Problem Skills Solve
 
-You have a checklist. Before you ship a database migration you check that it is reversible, that it does not lock a hot table, that there is a rollback path, and that someone has looked at the query plan. You have pasted that checklist into Claude Code eleven times this month.
+This module is later-course. If you do not yet have a checklist you keep pasting, skip it. Come back when a procedure has shown up three times.
 
-Or: a section of your `CLAUDE.md` started as three bullet points about how to release, and has quietly grown into a nineteen-step procedure that is now loaded into every single session — including the ones where you are fixing a typo in a README.
+You have a checklist. Before you ship a change you check that it is reversible, that you read the diff, and that there is an undo. You have pasted that checklist into Claude Code eleven times this month.
+
+Or: a section of your `CLAUDE.md` started as three bullet points and has quietly grown into a nineteen-step procedure that is now loaded into every single session — including the ones where you are fixing a typo.
 
 Both of those are skills waiting to happen.
 
@@ -46,11 +48,9 @@ A skill is a `SKILL.md` file containing instructions. Claude uses a skill when i
 ~/.claude/skills/<name>/SKILL.md   # user — yours, across every project
 ```
 
-Custom commands have been merged into skills. A file at `.claude/commands/deploy.md` and a skill at `.claude/skills/deploy/SKILL.md` both create `/deploy` and work the same way. If you already have a `.claude/commands/` directory, nothing breaks — those files keep working. Skills add optional extras: a directory for supporting files, frontmatter to control who invokes them, and automatic loading when relevant.
+Custom commands have been merged into skills. A file at `.claude/commands/deploy.md` and a skill at `.claude/skills/deploy/SKILL.md` both create `/deploy` and work the same way. If you already have a `.claude/commands/` directory, nothing breaks — those files keep working.
 
 ## The Naming Gotcha
-
-This trips up almost everyone, so read it twice.
 
 **The command name comes from where the file lives, not from the frontmatter `name` field.**
 
@@ -59,141 +59,66 @@ This trips up almost everyone, so read it twice.
 | `.claude/skills/deploy-staging/SKILL.md` | Directory name | `/deploy-staging` |
 | `.claude/commands/deploy.md` | File name without extension | `/deploy` |
 
-The frontmatter `name` field is the **display label** in skill listings. Setting `name: Staging Deployer` does not give you `/Staging Deployer`. It gives you a nicer label next to `/deploy-staging` in the `/` menu.
+The frontmatter `name` field is the **display label** in skill listings. Setting `name: Staging Deployer` does not give you `/Staging Deployer`.
 
 <Callout type="warning">If your skill is not showing up under the command you expected, check the directory name before you touch the frontmatter. Renaming `name:` will not move the command.</Callout>
 
 ## The Insight That Makes Skills Worth It
 
-Here is the part that actually changes how you work.
-
-`CLAUDE.md` is loaded at the start of every session. Every line in it is a permanent tax on your context window, paid in every conversation, whether the content is relevant or not.
+`CLAUDE.md` is loaded at the start of every session. Every line in it is a permanent tax on your context window.
 
 A skill's body loads only when the skill is used.
 
-That inverts the economics of reference material. A 400-line document on your team's migration conventions is unaffordable in `CLAUDE.md` — it would burn context in every session for the two sessions a month where it matters. As a skill, it costs essentially nothing until the moment Claude needs it, then loads in full.
-
 So the rule of thumb:
 
-- **`CLAUDE.md`** — short, always-true facts. "We use pnpm." "Tests live next to source."
+- **`CLAUDE.md`** — short, always-true facts. "We use three files." "Empty titles are rejected."
 - **Skill** — procedures, checklists, and long reference material that matter sometimes.
 
-<Callout type="tip">Once a skill loads, its content stays in context for the rest of the conversation, so it is a recurring cost from that point on. Keep the body focused: state what to do rather than narrating why. "Free until needed" is not "free forever."</Callout>
+<Callout type="tip">Once a skill loads, its content stays in context for the rest of the conversation. Keep the body focused. "Free until needed" is not "free forever."</Callout>
 
 ## A Real Worked Example
 
-Here is the migration-review checklist as an actual skill. File: `.claude/skills/review-migration/SKILL.md`
+Here is a review checklist as a skill. File: `.claude/skills/review-diff/SKILL.md`
 
 ```markdown
 ---
-description: Reviews a database migration for safety before it ships. Use when reviewing, writing, or approving any file under db/migrations.
-when_to_use: migration review, schema change, alter table, new index, drop column
+description: Reviews a diff before it is committed. Use when reviewing or accepting file changes.
+when_to_use: review diff, git diff, before commit
 allowed-tools: Read Grep Glob
-paths: db/migrations/**
 ---
 
-Review the migration against every item below. Report each as PASS, FAIL, or N/A
+Review the diff against every item below. Report each as PASS, FAIL, or N/A
 with a one-line reason. Do not modify any files.
 
-1. **Reversible** — is there a working `down` path? If the migration drops a
-   column or table, the down path must recreate it with the same type and
-   constraints.
-2. **Lock risk** — does it `ALTER TABLE` on a table over ~1M rows? If so, it must
-   use a concurrent/online strategy. Flag any plain `ADD COLUMN ... NOT NULL`
-   without a default on a large table.
-3. **Index creation** — new indexes on large tables must be created concurrently.
-4. **Backfill separation** — data backfills must be a separate migration from
-   schema changes, never combined.
-5. **Rollback path** — if this ships and breaks, can it be reverted without data
-   loss? State exactly what would be lost.
+1. **Files** — does the file list match what was asked?
+2. **Brief** — does any change contradict a written done-criterion?
+3. **Scope** — is anything from the non-goals list present?
+4. **Undo** — is there a commit to return to if this is wrong?
 
-Finish with a single verdict line: `SAFE TO SHIP` or `NEEDS WORK: <reason>`.
+Finish with a single verdict line: `SAFE TO COMMIT` or `NEEDS WORK: <reason>`.
 ```
-
-Note what each frontmatter field is buying:
-
-- `description` tells Claude when to reach for this on its own.
-- `when_to_use` adds trigger phrases. It is appended to `description`, and the two together are capped at 1,536 characters in the skill listing.
-- `allowed-tools` lets it read without a permission prompt for every file.
-- `paths` means it only auto-activates when you are working in `db/migrations/**`, so it stays out of the way the rest of the time.
-
-Now you type `/review-migration`, or you just say "check this migration before I push" and Claude loads it.
-
-<Callout type="tip">Start with `description` and a body. Add frontmatter fields only when you hit the specific problem each one solves. A skill with nothing but a description and good instructions is a completely legitimate skill.</Callout>
 
 ## The Frontmatter Fields Worth Knowing
 
-**All fields are optional.** Only `description` is recommended, so Claude knows when to apply the skill. If you omit it, the first paragraph of the body is used instead.
+**All fields are optional.** Only `description` is recommended.
 
 | Field | What it does |
 |---|---|
-| `description` | What the skill does and when to use it. This is how Claude decides to apply it. Put the key use case first. |
-| `when_to_use` | Extra trigger phrases and example requests. Appended to `description`; combined cap of 1,536 characters. |
-| `allowed-tools` | Tools Claude can use without a permission prompt while the skill is active. |
-| `disable-model-invocation` | `true` means Claude will never load it on its own — only you, with `/name`. |
-| `context: fork` | Runs the skill in a forked subagent context instead of your main conversation. |
-| `paths` | Globs that limit when the skill auto-activates. |
-| `model` | Model override for the current turn. Not saved to settings; your session model resumes on your next prompt. |
-| `effort` | Effort level while the skill is active: `low`, `medium`, `high`, `xhigh`, `max`. Available levels depend on the model. |
+| `description` | What the skill does and when to use it |
+| `when_to_use` | Extra trigger phrases |
+| `allowed-tools` | Tools Claude can use without a permission prompt while the skill is active |
+| `disable-model-invocation` | `true` means Claude will never load it on its own — only you, with `/name` |
+| `context: fork` | Runs the skill in a forked subagent context |
+| `paths` | Globs that limit when the skill auto-activates |
 
-Two of these deserve a closer look.
-
-**`disable-model-invocation: true`** is for anything with consequences. A deploy skill should not fire because Claude decided the conversation sounded deploy-adjacent. Gate it behind your explicit `/deploy`.
-
-**`context: fork`** runs the skill in its own context. Use it when the skill does a lot of reading and you do not want that exploration flooding your main conversation. You get the conclusion, not the file dumps.
-
-```markdown
----
-name: deploy
-description: Deploy the application to production
-context: fork
-disable-model-invocation: true
----
-
-Deploy the application:
-1. Run the test suite
-2. Build the application
-3. Push to the deployment target
-```
-
-## Arguments
-
-Skills take arguments through the `$ARGUMENTS` placeholder.
-
-```markdown
----
-name: fix-issue
-description: Fix a GitHub issue
-disable-model-invocation: true
----
-
-Fix GitHub issue $ARGUMENTS following our coding standards.
-
-1. Read the issue description
-2. Understand the requirements
-3. Implement the fix
-4. Write tests
-5. Create a commit
-```
-
-Run `/fix-issue 123` and Claude receives "Fix GitHub issue 123 following our coding standards..."
-
-If you pass arguments to a skill that has no `$ARGUMENTS` placeholder, Claude Code appends `ARGUMENTS: <your input>` to the end of the skill content, so Claude still sees what you typed.
-
-## The Open Standard
-
-Claude Code skills follow the [Agent Skills](https://agentskills.io) open standard, which works across multiple AI tools. Claude Code extends the standard with additional features — invocation control, subagent execution, dynamic context injection — but the core `SKILL.md` format is not proprietary. A skill you write is not locked to one vendor.
-
-That is worth weighing when you decide how much to invest in writing them.
+**`disable-model-invocation: true`** is for anything with consequences. A deploy skill should not fire because Claude decided the conversation sounded deploy-adjacent.
 
 ## When NOT to Write a Skill
 
-Honest counterweight, because the skills-for-everything instinct is real:
-
-- **You have done the task once.** Write a skill on the third repetition, not the first. You do not know the shape of the procedure yet.
-- **It is a fact, not a procedure.** "We use Postgres 16" belongs in `CLAUDE.md`. It is one line and it is always relevant.
+- **You have done the task once.** Write a skill on the third repetition, not the first.
+- **It is a fact, not a procedure.** "We use localStorage" belongs in `CLAUDE.md`.
 - **The instruction is genuinely one-off.** Just type it.
-- **You need a guarantee.** A skill is instructions to a model. If the formatter *must* run after every edit, no exceptions, that is a hook — the next lesson. Skills persuade; hooks enforce.
+- **You need a guarantee.** A skill is instructions to a model. If something *must* run after every edit, that is a hook — the next lesson. Skills persuade; hooks enforce.
 
 ## Get Started
 
