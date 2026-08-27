@@ -262,9 +262,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-26 22:58:36 EDT
-- Branch: main
-- Last commit: e26b462 docs+content: freshness pass — re-verify curriculum against current docs
-- Working tree: clean
+- Updated: 2026-08-26 23:32:12 EDT
+- Branch: feat/aixdesign-ladder
+- Last commit: a85d3c7 feat(ladder): full aixdesign ladder, Stripe for every rung, public dashboard
+- Working tree: 2 uncommitted file(s)
 
 <!-- END AUTO-STATE -->

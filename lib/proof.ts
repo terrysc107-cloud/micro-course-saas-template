@@ -51,12 +51,59 @@ async function countRows(table: string): Promise<number | null> {
   }
 }
 
+/**
+ * Course purchases split by whether Stripe actually charged them.
+ *
+ * ⚠️ THE FIX THAT MATTERS ON THIS PAGE. The first version counted every row in
+ * course_purchases and labelled the result "students enrolled". Both rows in
+ * production are manual grants ('manual_admin_grant', 'manual_qa_20260716')
+ * with no payment intent: the owner's own account and a QA login. The page
+ * whose entire premise is "these are the real numbers" was reporting 2 students
+ * while having none.
+ *
+ * A paying student is a row with a real payment intent. Comped and internal
+ * grants are counted separately rather than dropped, so nothing looks hidden
+ * and the two can never be silently conflated again.
+ */
+async function countPurchases(): Promise<{ paid: number | null; comped: number | null }> {
+  try {
+    const supabase = createServiceClient();
+    const { data, error } = await supabase
+      .from("course_purchases")
+      .select("stripe_payment_intent_id");
+    if (error) {
+      console.error("[proof] purchase split failed:", error.message);
+      return { paid: null, comped: null };
+    }
+    const rows = data ?? [];
+    return {
+      paid: rows.filter((r) => r.stripe_payment_intent_id !== null).length,
+      comped: rows.filter((r) => r.stripe_payment_intent_id === null).length,
+    };
+  } catch (err) {
+    console.error("[proof] purchase split threw:", err);
+    return { paid: null, comped: null };
+  }
+}
+
 export async function getProofSnapshot(): Promise<ProofSnapshot> {
   const modules = getAllModules();
   const lessons = getAllLessons();
 
+  // ⚠️ THE FIX THAT MATTERS ON THIS PAGE.
+  //
+  // The first version counted every row in course_purchases and called the
+  // result "students enrolled". Both rows in production are manual grants
+  // ('manual_admin_grant' and 'manual_qa_20260716') with no payment intent:
+  // the owner's own account and a QA login. The page whose entire premise is
+  // "these are the real numbers" was reporting 2 students and had none.
+  //
+  // A paying student is a row Stripe actually charged, which means a non-null
+  // payment intent. Comped and internal accounts are counted separately rather
+  // than dropped, so nothing looks hidden and the two can never be conflated
+  // again.
   const [purchases, lessonsCompleted, labWaitlist] = await Promise.all([
-    countRows("course_purchases"),
+    countPurchases(),
     countRows("lesson_progress"),
     countRows("ccc_lab_waitlist"),
   ]);
@@ -76,9 +123,14 @@ export async function getProofSnapshot(): Promise<ProofSnapshot> {
         basis: "Module folders with a MODULE_META entry",
       },
       {
-        label: "Students enrolled",
-        value: purchases,
-        basis: "Rows in course_purchases. One per person, ever.",
+        label: "Paying students",
+        value: purchases.paid,
+        basis: "course_purchases rows with a real Stripe payment. Not comped, not the owner.",
+      },
+      {
+        label: "Comped and internal",
+        value: purchases.comped,
+        basis: "Manual grants: the owner's account and QA logins. Counted here so they are never counted above.",
       },
       {
         label: "Lessons completed",
