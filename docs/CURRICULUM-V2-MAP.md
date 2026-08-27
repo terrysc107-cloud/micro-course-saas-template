@@ -2,7 +2,7 @@
 
 What changed from V1 to V2, why, and what still needs doing.
 
-**Fact base:** `docs/CLAUDE-CODE-FACTS-2026-07-16.md` — every technical claim in the
+**Fact base:** `docs/CLAUDE-CODE-FACTS.md` — every technical claim in the
 curriculum traces there. **Module titles/descriptions:** `MODULE_META` in
 `lib/course-config.ts` (read by `lib/content.ts`, so the sidebar, dashboard, and landing
 page cannot drift apart).
@@ -144,7 +144,7 @@ it is an Anthropic-provided asset.**
 
 ## Standing rules for future updates
 
-1. **Fact base first.** Fix `docs/CLAUDE-CODE-FACTS-2026-07-16.md`, then the lessons citing
+1. **Fact base first.** Fix `docs/CLAUDE-CODE-FACTS.md`, then the lessons citing
    it, then bump `LAST_VERIFIED` in `lib/course-config.ts`.
 2. **Never name a model version.** Teach `/model` and `/status`. This single rule prevents
    most of the rot V1 suffered.

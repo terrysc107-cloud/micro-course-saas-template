@@ -1,7 +1,13 @@
-# Claude Code fact base — verified 2026-07-16
+# Claude Code fact base
+
+**Last verified: 2026-08-26.** (Previous: 2026-07-16.)
 
 Every factual claim in the curriculum traces back to this file. Sourced from
-<https://code.claude.com/docs> on 2026-07-16.
+<https://code.claude.com/docs>.
+
+> Filename is deliberately undated. The verification date lives in this header and in
+> `LAST_VERIFIED` in `lib/course-config.ts`, so re-verifying does not mean renaming the file
+> and chasing every reference to it.
 
 **Re-verify before each course update.** Claude Code ships weekly. When a fact here
 goes stale, fix it here first, then fix the lessons that cite it, then bump
@@ -37,7 +43,12 @@ Docs: [quickstart](https://code.claude.com/docs/en/quickstart) · [setup](https:
 
 ## Authentication
 
-**Claude Code requires an account. An `ANTHROPIC_API_KEY` is NOT required for typical learners.**
+**Claude Code requires a PAID account. An `ANTHROPIC_API_KEY` is NOT required for typical learners.**
+
+⚠️ **Added 2026-08-26:** the setup docs now state plainly that **the free Claude.ai plan does
+not include Claude Code access** — Pro, Max, Team, Enterprise, or Console with credits is
+required. This is the first wall a beginner hits and it was missing from the curriculum.
+Added to `content/modules/01-getting-started/02-accounts-and-login.mdx`.
 
 Run `claude`; on first launch it opens a browser to log in. `/login` switches accounts or
 re-authenticates; `/logout` logs out and resets first-launch setup.
@@ -92,6 +103,26 @@ accurate version:
 
 Teach the three-mode cycle as the default reality. Do not tell learners they can Shift+Tab
 to `bypassPermissions` — they cannot, by design, and that design is worth explaining.
+
+**⚠️ Which mode a session STARTS in — changed, verified 2026-08-26.** On Pro, Max, and Team
+plans, the built-in starting permission mode is now **auto mode**, not Manual. It requires a
+recent Claude Code version (docs cite v2.1.228+ on macOS/Linux/WSL, v2.1.233+ on native
+Windows); on earlier versions the built-in default is still Manual. From `auto`, the first
+`Shift+Tab` press switches to `default`, and the cycle then runs
+`default` → `acceptEdits` → `plan` → back to `default`.
+
+This matters more than it looks: it is the first thing a learner sees, and the 2026-07-16
+curriculum told them they start in Manual. Fixed in
+`content/modules/01-getting-started/05-permission-modes.mdx`. Teach learners to *read the
+status bar* (`⏸ manual mode on` vs `⏵⏵ auto mode on`) rather than to assume either one.
+
+Startup precedence (first match wins): `--permission-mode` flag or
+`--dangerously-skip-permissions` → `permissions.defaultMode` in settings → built-in default.
+An `"auto"` value in `.claude/settings.json` / `.claude/settings.local.json` still does not
+take effect, so a cloned repo cannot grant itself auto mode.
+
+Also updated 2026-08-26: `plan` mode is documented as "reads, plus classifier-approved
+commands when auto mode is available" — no longer strictly read-only.
 
 | Mode | Behavior |
 |---|---|
@@ -149,20 +180,80 @@ Docs: [permissions](https://code.claude.com/docs/en/permissions) · [permission 
 
 ## Commands
 
-**Shell:** `claude` · `claude "task"` · `claude -p "query"` (one-off, then exit) ·
-`claude -c` (continue most recent in cwd) · `claude -r` (resume a previous conversation) ·
-`claude setup-token` · `claude --teleport`
+**Shell (expanded 2026-08-26):** `claude` · `claude "task"` · `claude -p "query"` (one-off,
+then exit) · `claude -c` (continue most recent in cwd) · `claude -r` (resume) ·
+`claude setup-token` · `claude --teleport` · `claude --version` · `claude update` ·
+`claude install [version]` · `claude doctor` · `claude auth login|logout|status` ·
+`claude mcp` · `claude plugin` · `claude gateway` · `claude import [codex|gemini]` ·
+`claude remote-control` · `claude ultrareview [target]` ·
+background-agent management: `claude agents` · `claude attach <id>` · `claude logs <id>` ·
+`claude stop <id>` (alias `claude kill`) · `claude respawn <id>` · `claude rm <id>` ·
+`claude daemon status`
 
-**Session:** `/help` · `/clear` · `/exit` (or Ctrl+D) · `/login` · `/logout` · `/status` ·
-`/config` · `/model` · `/permissions` · `/resume` · `/rename` · `/compact` · `/context` ·
-`/usage` · `/usage-credits` · `/memory` · `/init` · `/effort` · `/rewind` · `/doctor` ·
-`/mcp` · `/plugin` · `/plan` · `/schedule` · `/desktop` · `/loop` · `/feedback`
+**New `claude auth` subcommands matter for teaching:** `claude auth login` / `logout` /
+`status` do from the shell what `/login` / `/logout` / `/status` do in-session — which is
+what makes login scriptable in setup docs and CI.
 
-> ⚠️ **Corrected 2026-07-16: `/cost` no longer exists.** V1 taught it in prose *and* in a
-> quiz answer. The current command is **`/usage`**, which shows session token usage and, on
-> Pro/Max/Team/Enterprise, a breakdown against plan limits attributed to skills, subagents,
-> plugins, and MCP servers (`d`/`w` toggles 24h/7d). `/context` shows what is consuming
-> context space. `/usage-credits` manages spend limits on Pro and Max.
+**Version/update facts (verified 2026-08-26):** `autoUpdatesChannel` is `"latest"` (default)
+or `"stable"` (~a week behind, skips major regressions). `minimumVersion` sets an
+update floor. `DISABLE_AUTOUPDATER` stops background checks only; `DISABLE_UPDATES` blocks
+all update paths. `claude --version` prints e.g. `2.1.211 (Claude Code)`.
+
+**npm install — changed:** npm is still not the recommended path, but as of v2.1.198 the npm
+package **requires Node.js 22 or later** (older Node prints `EBADENGINE` and still works,
+since the package ships a native binary that does not use your Node at runtime). The
+2026-07-16 note that the docs "state no Node version requirement" remains true *for the
+native install* and is now false for npm specifically.
+
+**Session (re-verified 2026-08-26):** `/help` · `/clear` · `/exit` · `/login` · `/logout` ·
+`/config` · `/model` · `/permissions` · `/resume` · `/compact` · `/autocompact` · `/context` ·
+`/usage` (alias `/cost`) · `/memory` · `/plan` · `/rewind` · `/mcp` · `/plugin` · `/agents` ·
+`/hooks` · `/desktop` · `/remote-control` · `/teleport` · `/mobile` · `/feedback` · `/bug` ·
+`/diff` · `/export` · `/copy` · `/theme` · `/color` · `/focus` · `/cd` · `/add-dir` ·
+`/ide` · `/chrome` · `/keybindings` · `/privacy-settings`
+
+**Newly documented since 2026-07-16 — candidates for a curriculum addition:**
+
+| Command | What it does | Why it matters to this course |
+|---|---|---|
+| `/fast` | Toggle fast mode | Speed lever learners will ask about |
+| `/rewind` | Roll back code *and* conversation | The undo story; strong beginner safety net |
+| `/branch` | Branch the conversation | Explore an alternative without losing the thread |
+| `/fork` | Copy conversation to a background session | Parallel work |
+| `/background` | Detach session to run as a background agent | Long tasks |
+| `/list-agents` | List subagents and sessions | Pairs with `claude agents` |
+| `/artifacts` | List and manage artifacts | New output surface |
+| `/goal` | Set a goal condition | — |
+| `/btw` | Side question without adding to history | Context economy — fits module 07 |
+| `/powerup` | Interactive feature lessons | Notable: the tool now teaches itself |
+| `/autofix-pr` | Watch a PR and push fixes | Fits module 10 |
+
+**Bundled skills (documented, distinct from built-in commands):** `/code-review` ·
+`/security-review` · `/simplify` · `/debug` · `/doctor` · `/loop` (alias `/proactive`) ·
+`/deep-research` · `/batch` · `/dataviz` · `/claude-api` · `/fewer-permission-prompts` ·
+`/verify` · `/design-sync`
+
+⚠️ **`/schedule` and `/rename` are no longer in the documented commands list**, and
+`/status` / `/init` / `/effort` now appear under other pages rather than the commands
+reference (`/effort` is in model-config). `/schedule` is still referenced by the Routines
+docs. Only `06-surfaces-and-cicd.mdx` mentions `/schedule`, in the Routines row, which the
+Routines page still supports — left as is, flagged here.
+
+**Custom commands have merged into skills.** `.claude/commands/deploy.md` and
+`.claude/skills/deploy/SKILL.md` both produce `/deploy`. Existing `commands/` files keep
+working; skills add a directory for supporting files, frontmatter controlling who invokes
+them, and automatic loading when relevant. Verify module 08 reflects this framing.
+
+> ⚠️ **Re-corrected 2026-08-26: `/cost` exists again — as an alias for `/usage`.** The
+> 2026-07-16 pass recorded "`/cost` no longer exists." The current commands reference lists
+> `/cost` as an alias of `/usage`, so that correction is now itself wrong. **Teach `/usage`
+> as the command**, and do not tell learners `/cost` is gone — they will type it, it will
+> work, and the course will look dated. `/usage` shows session token usage and, on paid
+> plans, a breakdown against plan limits. `/context` shows what is consuming context space.
+>
+> ⚠️ **`/usage-credits` is no longer in the documented command list.** Removed from teaching
+> under this file's own rule: if it is not verifiable in the official docs right now, do not
+> teach it. (No lesson cited it, so no lesson changed.)
 
 Shortcuts: `/` lists commands and skills · Tab completes · ↑ history · `Shift+Tab` cycles permission modes.
 

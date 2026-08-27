@@ -179,7 +179,7 @@ filesystem**, so the module list and lesson count cannot lie. All copy lives in
 - **Capstone never built end to end by a human.** Internally consistent and written against the verified fact base, but nobody has sat down and done it. **This is the highest-value validation available before launch.**
 - **Modules 02, 03, 04, 06 were fact-checked, not rewritten.** They predate the core-loop framing and don't reference it explicitly.
 - **No broad browser automation suite** beyond `check:content`. The RLS bypass suite was run against a Supabase preview branch and then verified again in production.
-- **`docs/CLAUDE-CODE-FACTS-2026-07-16.md` needs re-verification each update cycle.** It was already corrected four times during this sprint (Shift+Tab cycle, protected paths, `$ARGUMENTS`, `/usage`) — which is the rate of change you're maintaining against.
+- **`docs/CLAUDE-CODE-FACTS.md` needs re-verification each update cycle.** It was already corrected four times during this sprint (Shift+Tab cycle, protected paths, `$ARGUMENTS`, `/usage`) — which is the rate of change you're maintaining against.
 
 ---
 

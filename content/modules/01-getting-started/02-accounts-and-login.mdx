@@ -46,6 +46,8 @@ That's the whole setup.
 
 ## Which Account Works
 
+<Callout type="warning">**The free Claude.ai plan does not include Claude Code access.** This is the single most common reason a first install appears to work and then refuses to start a session. You need a paid plan — Pro, Max, Team, or Enterprise — or a Console account with credits. Check this before you spend an evening debugging your terminal.</Callout>
+
 You can log in with any of these:
 
 - **Claude Pro, Max, Team, or Enterprise** subscription — the recommended path, and what most readers of this course will use
@@ -64,6 +66,8 @@ If you are an individual developer paying for your own tooling, the subscription
 | `/status` | Show the active account and auth method |
 
 `/status` is the one you'll reach for when something is wrong. It answers "who am I actually logged in as, and how?" — which is nearly always the real question.
+
+These also exist as shell subcommands you can run without starting a session — `claude auth login`, `claude auth logout`, and `claude auth status`. Useful in scripts and setup docs, where "open Claude Code, then type a slash command" isn't a step you can automate.
 
 ## Where Your Credentials Live
 

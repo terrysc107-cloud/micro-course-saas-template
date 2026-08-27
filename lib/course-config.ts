@@ -42,7 +42,7 @@ export const DOCS_NOTE = {
 } as const;
 
 /** Bump whenever curriculum facts are re-verified against the official docs. */
-export const LAST_VERIFIED = "2026-07-16";
+export const LAST_VERIFIED = "2026-08-26";
 
 export const PRODUCT = {
   priceDisplay: "$97",

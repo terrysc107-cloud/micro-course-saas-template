@@ -51,16 +51,33 @@ Each mode is a different tradeoff between how often you're interrupted and how m
 |---|---|---|
 | `default` | Reads only | Getting started, sensitive work |
 | `acceptEdits` | Reads, file edits, and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`) | Iterating on code you're reviewing |
-| `plan` | Reads only | Exploring a codebase before changing it |
+| `plan` | Reads, plus classifier-approved commands when auto mode is available | Exploring a codebase before changing it |
 | `auto` | Everything, with background safety checks | Long tasks, reducing prompt fatigue |
 | `dontAsk` | Only pre-approved tools | Locked-down CI and scripts |
 | `bypassPermissions` | Everything | Isolated containers and VMs only |
 
 One naming quirk to get straight: **the mode that reviews every action is labeled Manual** in the CLI, in `claude --help`, in the VS Code and JetBrains extensions, and in the desktop app. Its config value is `default`, which is what hooks and SDK integrations use. `manual` is accepted as an alias wherever you type the value. So `default` and Manual are the same mode — you'll see both.
 
+### Which mode you start in
+
+This one is worth checking rather than assuming, because it changed. On Pro, Max, and Team
+plans, recent versions of Claude Code start a new terminal session in **auto mode** — not
+Manual. On older versions, and where auto mode isn't available to your account, sessions
+start in Manual.
+
+So the first thing to do on launch is read the status bar. `⏸ manual mode on` means every
+action comes to you. `⏵⏵ auto mode on` means the classifier is reviewing actions instead of
+you. Those are very different sessions, and which one you get depends on your plan and your
+installed version.
+
+If you want Manual, press `Shift+Tab` once, or start with `claude --permission-mode default`.
+A session you resume keeps the mode it was in.
+
+<Callout type="note">Startup precedence, highest first: the `--permission-mode` flag (or `--dangerously-skip-permissions`), then `permissions.defaultMode` in settings, then the built-in default. One exception worth knowing: an `"auto"` value in `.claude/settings.json` or `.claude/settings.local.json` is ignored, so a repository you clone cannot grant itself auto mode.</Callout>
+
 ## What Each Is Actually For
 
-**`default` / Manual.** Every action, your call. This is where you start and where you return for anything you'd be unhappy to explain later.
+**`default` / Manual.** Every action, your call. This is where you return for anything you'd be unhappy to explain later — and, on plans and versions that don't start you in auto mode, where you begin.
 
 **`acceptEdits`.** Claude creates and edits files in your working directory without prompting, plus common filesystem Bash commands. The scope matters: auto-approval applies only to paths inside your working directory or `additionalDirectories`. Anything outside that scope, and other Bash commands, still prompt. Use it when you intend to review the result in your editor or `git diff` rather than approving each edit inline. That's the trade — you're not skipping review, you're batching it. If you're not actually going to read the diff, you've just turned review off.
 
@@ -96,7 +113,7 @@ If what you want is "far fewer prompts," `auto` is the mode you actually want. `
 
 ## Switching Modes
 
-Press **`Shift+Tab`** during a session to cycle: `default` → `acceptEdits` → `plan`. The current mode appears in the status bar.
+Press **`Shift+Tab`** during a session to cycle. If you're starting in auto mode, the first press drops you to `default`; from there the cycle runs `default` → `acceptEdits` → `plan` → back to `default`. The current mode appears in the status bar as `⏸ manual mode on`, `⏵⏵ accept edits on`, `⏸ plan mode on`, or `⏵⏵ auto mode on`.
 
 Not every mode is in that cycle by default. `dontAsk` never appears — set it with `--permission-mode dontAsk`. `bypassPermissions` only appears after you start with an enabling flag. `auto` appears when your account meets its requirements.
 
