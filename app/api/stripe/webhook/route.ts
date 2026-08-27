@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
     return await grantLabSeat(session, userId);
   }
 
-  if (product === "kit" || product === "board-room") {
+  if (product === "kit" || product === "board-room" || product === "dev-pack") {
     return await grantEntitlement(session, userId, product);
   }
 

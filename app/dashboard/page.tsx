@@ -6,7 +6,7 @@ import { getAllModules } from "@/lib/content";
 import { getCompletedLessons } from "@/lib/progress";
 import SignOutButton from "@/components/ui/SignOutButton";
 import LadderNext from "@/components/course/LadderNext";
-import { getMyEntitlements } from "@/lib/entitlements";
+import { getMyEntitlements, entitlementStatus } from "@/lib/entitlements";
 import { Zap, BookOpen, ChevronRight, CheckCircle2, PlayCircle } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -15,11 +15,16 @@ export default async function DashboardPage() {
 
   if (!user) redirect("/sign-in");
 
-  const [modules, completed, entitlements] = await Promise.all([
-    Promise.resolve(getAllModules()),
+  const [completed, entitlements, devPack] = await Promise.all([
     getCompletedLessons(user.id),
     getMyEntitlements(),
+    entitlementStatus("dev-pack"),
   ]);
+
+  // The board path is the product. Developer lessons appear only for someone
+  // who owns the Dev Pack, or while the gate is not yet in service.
+  const track = devPack === "owned" || devPack === "ungated" ? "developer" : "board";
+  const modules = getAllModules(track);
 
   // Show the rung above the HIGHEST one they already hold, so the card is never
   // selling something they own. Reaching the dashboard at all means they bought

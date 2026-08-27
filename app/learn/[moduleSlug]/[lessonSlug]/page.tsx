@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getLesson, getAllModules, getAdjacentLessons } from "@/lib/content";
+import type { TrackId } from "@/lib/course-config";
 import { getCompletedLessons } from "@/lib/progress";
 import LessonLayout from "@/components/course/LessonLayout";
 import CourseSidebar from "@/components/course/CourseSidebar";
@@ -9,6 +10,8 @@ import LessonVideo from "@/components/course/LessonVideo";
 import LessonQuiz from "@/components/course/LessonQuiz";
 import LessonNav from "@/components/course/LessonNav";
 import LadderNext from "@/components/course/LadderNext";
+import DevPackGate from "@/components/course/DevPackGate";
+import { entitlementStatus } from "@/lib/entitlements";
 
 interface PageProps {
   params: Promise<{ moduleSlug: string; lessonSlug: string }>;
@@ -23,12 +26,36 @@ export default async function LessonPage({ params }: PageProps) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  // Which half of the course is this reader entitled to? The base purchase buys
+  // the board path; the Dev Pack unlocks the developer lessons.
+  // "ungated" means the entitlements table does not exist yet, so the Dev Pack
+  // gate is not in service and nobody is locked out by our migration backlog.
+  const devPack = user ? await entitlementStatus("dev-pack") : "locked";
+  const seesDeveloperContent = devPack === "owned" || devPack === "ungated";
+  const track: TrackId = seesDeveloperContent ? "developer" : "board";
+
+  const locked = lesson.frontmatter.track === "developer" && !seesDeveloperContent;
+
   const completed = user ? await getCompletedLessons(user.id) : [];
-  const modules = getAllModules();
-  const { prev, next } = getAdjacentLessons(moduleSlug, lessonSlug);
+  // Sidebar and prev/next follow the reader's own path, so a board learner is
+  // never walked into a wall by clicking Next.
+  const modules = getAllModules(track);
+  const { prev, next } = getAdjacentLessons(moduleSlug, lessonSlug, track);
 
   const lessonKey = `${moduleSlug}/${lessonSlug}`;
   const alreadyPassed = completed.includes(lessonKey);
+
+  // A REAL gate. Returning before the body is built means the lesson text is
+  // never serialised to the client. A blurred overlay would leak it.
+  if (locked) {
+    return (
+      <LessonLayout sidebar={<CourseSidebar modules={modules} completed={completed} />}>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+          <DevPackGate lessonTitle={lesson.frontmatter.title} />
+        </div>
+      </LessonLayout>
+    );
+  }
 
   return (
     <LessonLayout sidebar={<CourseSidebar modules={modules} completed={completed} />}>

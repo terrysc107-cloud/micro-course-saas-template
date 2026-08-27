@@ -417,6 +417,46 @@ export const FAQ: FaqItem[] = [
   },
 ];
 
+// ── The Dev Pack (off-ladder add-on) ─────────────────────────────────────────
+
+/**
+ * The developer curriculum, sold separately from the board course.
+ *
+ * DELIBERATELY NOT A LADDER RUNG. The ladder is what a solopreneur climbs, and
+ * their next step after building a board is the Kit, not learning Next.js and
+ * SQL. Putting this on the ladder would imply beginners graduate into writing
+ * software, which is precisely the mistake that made the original course
+ * unsellable to the people who were actually asking for it.
+ *
+ * $97 is the price the market has already seen for this material, which is what
+ * makes it a clean story: the course got cheaper and narrower, and the
+ * developer content kept its price as an add-on.
+ *
+ * `available: false` until NEXT_PUBLIC_STRIPE_DEV_PACK_PRICE_ID exists. The
+ * checkout route reads this flag, so the config is the release gate and hiding
+ * the button is only presentation.
+ */
+export const DEV_PACK = {
+  id: "dev-pack",
+  name: "The Dev Pack",
+  promise:
+    "The developer curriculum: the disciplined agentic coding workflow, on real code in real stacks.",
+  forWho: "You write software too, and you want an AI workflow you can defend in review.",
+  priceDisplay: "$97",
+  priceCents: 9700,
+  priceIdEnvVar: "NEXT_PUBLIC_STRIPE_DEV_PACK_PRICE_ID",
+  available: false,
+  href: "/ladder#dev-pack",
+  ctaLabel: "Add the Dev Pack — $97",
+  kind: "onetime" as const,
+  includes: [
+    "Working with files, real dev workflows, and stack-specific tactics",
+    "The full guided capstone build, start to finish",
+    "Code review, testing, and git discipline with an agent",
+    "Everything unlocks inside the course you already have",
+  ],
+} as const;
+
 // ── The ladder ───────────────────────────────────────────────────────────────
 
 /**

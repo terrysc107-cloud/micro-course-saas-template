@@ -32,11 +32,15 @@ CREATE TABLE IF NOT EXISTS ccc_entitlements (
   id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id                 UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
 
-  -- Matches LadderRung['id'] in lib/course-config.ts for the purchasable,
-  -- non-session rungs. 'course' and 'build-lab' are intentionally excluded:
-  -- they have their own tables, and allowing them here would create a second
-  -- place to ask "did they pay for the course", which is how gates get bypassed.
-  product                 TEXT NOT NULL CHECK (product IN ('kit', 'board-room')),
+  -- Purchasable things that are neither the base course nor a dated Lab seat.
+  -- 'course' and 'build-lab' are intentionally excluded: they have their own
+  -- tables, and allowing them here would create a second place to ask "did they
+  -- pay", which is how gates get bypassed.
+  --
+  -- 'dev-pack' is the developer curriculum, sold as an off-ladder add-on. The
+  -- base course buys the board path; this unlocks the ~30 lessons that assume
+  -- you can read code.
+  product                 TEXT NOT NULL CHECK (product IN ('kit', 'board-room', 'dev-pack')),
 
   -- 'active' is the only value that grants access. Subscriptions move to
   -- 'canceled' or 'past_due' from webhook events; one-time grants stay 'active'

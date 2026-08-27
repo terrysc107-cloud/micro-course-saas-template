@@ -12,7 +12,15 @@ import type { LadderRung } from "@/lib/course-config";
  * get bypassed. `hasLadderAccess` refuses those ids at the type level.
  */
 
-export type EntitlementProduct = Extract<LadderRung["id"], "kit" | "board-room">;
+/**
+ * Products stored in ccc_entitlements. "dev-pack" is not a LadderRung: it is an
+ * off-ladder add-on, because a solopreneur's next step is the Kit, not learning
+ * Next.js. Keeping it out of LADDER is what stops the ladder implying beginners
+ * graduate into writing software.
+ */
+export type EntitlementProduct =
+  | Extract<LadderRung["id"], "kit" | "board-room">
+  | "dev-pack";
 
 export interface Entitlement {
   product: EntitlementProduct;
@@ -39,6 +47,54 @@ export async function getMyEntitlements(): Promise<Entitlement[]> {
     return [];
   }
   return (data ?? []) as Entitlement[];
+}
+
+/**
+ * PostgREST's code for "that table is not in the schema cache", i.e. the
+ * migration has not been applied yet.
+ */
+const TABLE_MISSING = "PGRST205";
+
+/**
+ * Three-state answer for gating paid content, because "no row" and "no table"
+ * mean opposite things and must not collapse into the same boolean.
+ *
+ *   "owned"       - they have it
+ *   "locked"      - the gate is live and they do not have it
+ *   "ungated"     - the entitlements table does not exist yet, so the gate is
+ *                   not in service and must not lock anyone out
+ *
+ * WHY THIS EXISTS: ccc_entitlements is written but unapplied in production. A
+ * plain boolean would read `false` for everyone, and the Dev Pack gate would
+ * lock all ~50 developer lessons for every existing purchaser the moment this
+ * deploys, including people who bought the course when it was the whole thing.
+ * Failing closed on a missing table punishes customers for our migration
+ * backlog. Failing closed on any OTHER error is still correct, because that is
+ * a real gate that failed.
+ */
+export async function entitlementStatus(
+  product: EntitlementProduct
+): Promise<"owned" | "locked" | "ungated"> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("ccc_entitlements")
+    .select("product, status")
+    .eq("product", product)
+    .eq("status", "active");
+
+  if (error) {
+    if (error.code === TABLE_MISSING) {
+      console.warn(
+        `[entitlements] ccc_entitlements is missing; ${product} gate is not in service.`
+      );
+      return "ungated";
+    }
+    // A real failure against a real table. Fail closed.
+    console.error(`[entitlements] ${product} check failed:`, error.message);
+    return "locked";
+  }
+
+  return (data?.length ?? 0) > 0 ? "owned" : "locked";
 }
 
 export async function hasEntitlement(product: EntitlementProduct): Promise<boolean> {

@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getStripe, StripeConfigError } from "@/lib/stripe";
-import { getRung, type LadderRung } from "@/lib/course-config";
+import { getRung, DEV_PACK, type LadderRung } from "@/lib/course-config";
 import { hasEntitlement, type EntitlementProduct } from "@/lib/entitlements";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -28,7 +28,7 @@ export const runtime = "nodejs";
  *      them. This is the same assertion the Lab checkout makes.
  */
 
-const SELLABLE_HERE: readonly EntitlementProduct[] = ["kit", "board-room"] as const;
+const SELLABLE_HERE: readonly EntitlementProduct[] = ["kit", "board-room", "dev-pack"] as const;
 
 function isSellableHere(id: string): id is EntitlementProduct {
   return (SELLABLE_HERE as readonly string[]).includes(id);
@@ -56,9 +56,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unknown rung" }, { status: 400 });
   }
 
-  const rung = getRung(rungId) as LadderRung | undefined;
+  // DEV_PACK is deliberately not in LADDER (it is an add-on, not a step), so it
+  // is resolved separately. Everything downstream treats them identically.
+  const rung: LadderRung | typeof DEV_PACK | undefined =
+    rungId === "dev-pack" ? DEV_PACK : getRung(rungId);
   if (!rung) {
-    return NextResponse.json({ error: "Unknown rung" }, { status: 400 });
+    return NextResponse.json({ error: "Unknown product" }, { status: 400 });
   }
 
   // The config flag is the release gate. Flipping `available` is what opens
