@@ -179,10 +179,11 @@ for (const file of lessons) {
   // "cd into your project" instruction that is the single hardest stop a
   // non-coder hits in this course.
   //
-  // SHIPPED AS WARNINGS DELIBERATELY. `npm run check:content` runs inside
-  // `npm run build`, so promoting these to failures before the example swaps
-  // land would block every deploy. Promote in the same commit that fixes the
-  // last one, and the exit code becomes the proof the swaps are real.
+  // PROMOTED TO FAILURES once the last of the original 25 warnings was cleared.
+  // The exit code is now the guarantee: a board-path lesson cannot acquire a
+  // code fence, a git command, or a "cd into your project" instruction without
+  // failing the build. That is the whole enforcement mechanism behind claiming
+  // this path needs no coding.
   const trackValue = trackMatch ? trackMatch[1] : "both";
   if (trackValue === "board" || trackValue === "both") {
     const SHIBBOLETHS = [
@@ -197,7 +198,7 @@ for (const file of lessons) {
         const lineText = raw.split("\n")[line - 1] ?? "";
         if (CORRECTION_MARKERS.test(lineText)) continue;
         if (isQuizOption(lineText)) continue;
-        warn(`${rel(file)}:${line}`, `"${m[0].trim()}" — ${why}`);
+        fail(`${rel(file)}:${line}`, `"${m[0].trim()}" — ${why}`);
       }
     }
   }

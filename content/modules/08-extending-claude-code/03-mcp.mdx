@@ -19,7 +19,7 @@ quiz:
       - "MCP servers store your conversation history publicly"
       - "MCP servers require an ANTHROPIC_API_KEY"
     answer: 1
-  - question: "You want Claude to work with a config file that lives in your repo. Is MCP the right tool?"
+  - question: "You want Claude to work with a file that already lives in your own folder. Is MCP the right tool?"
     options:
       - "Yes — MCP is the standard way to give Claude access to any file"
       - "Yes, but only if the file is larger than 500 lines"
@@ -40,7 +40,7 @@ That framing gets you most of the way to knowing when to use it.
 
 The most common MCP mistake is reaching for it to solve a problem that does not exist.
 
-Claude Code already reads your filesystem. It runs shell commands. It can `curl` an API. If the information is in your repo, or reachable by a command you could type yourself, you do not need a protocol — you need to point at it.
+Claude Code already reads your files and can run commands. If the information is already in your folder, or reachable by a command you could run yourself, you do not need a protocol. You need to point at it.
 
 **Skip MCP when:**
 
