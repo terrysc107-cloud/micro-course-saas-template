@@ -27,7 +27,7 @@ export default function CurriculumSection({ modules }: CurriculumSectionProps) {
               {String(mod.order).padStart(2, "0")}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-white font-semibold">{mod.title}</h3>
+              <h3 className="text-slate-50 font-semibold">{mod.title}</h3>
               <p className="text-slate-400 text-sm mt-1 leading-relaxed text-pretty">
                 {mod.description}
               </p>

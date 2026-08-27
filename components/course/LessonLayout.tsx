@@ -56,7 +56,7 @@ export default function LessonLayout({ sidebar, children }: LessonLayoutProps) {
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Course Menu</span>
           <button
             onClick={() => setMobileOpen(false)}
-            className="text-slate-400 hover:text-white transition-colors"
+            className="text-slate-400 hover:text-slate-50 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -72,7 +72,7 @@ export default function LessonLayout({ sidebar, children }: LessonLayoutProps) {
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileOpen(true)}
-              className="md:hidden text-slate-400 hover:text-white transition-colors shrink-0"
+              className="md:hidden text-slate-400 hover:text-slate-50 transition-colors shrink-0"
               aria-label="Open menu"
             >
               <Menu className="w-5 h-5" />
@@ -80,7 +80,7 @@ export default function LessonLayout({ sidebar, children }: LessonLayoutProps) {
             {/* Desktop sidebar toggle */}
             <button
               onClick={() => setDesktopOpen((v) => !v)}
-              className="hidden md:flex text-slate-400 hover:text-white transition-colors shrink-0"
+              className="hidden md:flex text-slate-400 hover:text-slate-50 transition-colors shrink-0"
               aria-label={desktopOpen ? "Collapse sidebar" : "Expand sidebar"}
             >
               {desktopOpen
@@ -88,7 +88,7 @@ export default function LessonLayout({ sidebar, children }: LessonLayoutProps) {
                 : <PanelLeftOpen className="w-5 h-5" />
               }
             </button>
-            <Link href="/dashboard" className="flex items-center gap-2 text-white font-semibold text-sm truncate">
+            <Link href="/dashboard" className="flex items-center gap-2 text-slate-50 font-semibold text-sm truncate">
               <Zap className="w-4 h-4 text-brand-400 shrink-0" />
               <span className="hidden sm:inline">{BRAND.name}</span>
             </Link>

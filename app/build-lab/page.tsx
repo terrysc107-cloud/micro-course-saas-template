@@ -68,7 +68,7 @@ export default async function BuildLabPage() {
         <p className="text-brand-400 text-xs font-semibold uppercase tracking-[0.2em] mb-3">
           A live AI by Design session
         </p>
-        <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight text-balance">
+        <h1 className="text-4xl sm:text-5xl font-bold text-slate-50 tracking-tight text-balance">
           {BUILD_LAB.name}
         </h1>
         <p className="text-slate-400 mt-4 text-lg leading-relaxed text-pretty">
@@ -76,7 +76,7 @@ export default async function BuildLabPage() {
         </p>
 
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-6 text-sm">
-          <span className="text-white font-semibold text-2xl">{BUILD_LAB.priceDisplay}</span>
+          <span className="text-slate-50 font-semibold text-2xl">{BUILD_LAB.priceDisplay}</span>
           {/* Renders only from real data: dateDisplay is null until a run is
               scheduled, and seatsLeft is null until a capacity exists. */}
           {showDate ? (
@@ -98,7 +98,7 @@ export default async function BuildLabPage() {
               left. That is what lets the checkout ship cold: live, testable,
               and unable to take a cent until Terry flips the switch. */}
           {open ? (
-            <LabBuyButton className="bg-gold text-background px-6 py-3 rounded-md hover:bg-gold/90" />
+            <LabBuyButton className="bg-gold text-slate-50 px-6 py-3 rounded-md hover:bg-gold/90" />
           ) : (
             <>
               <WaitlistForm source="build-lab-page" />
@@ -111,7 +111,7 @@ export default async function BuildLabPage() {
       </Section>
 
       <Section width="narrow" className="border-t border-slate-800/60 pt-12">
-        <h2 className="text-2xl font-bold text-white tracking-tight mb-8">What happens in the room</h2>
+        <h2 className="text-2xl font-bold text-slate-50 tracking-tight mb-8">What happens in the room</h2>
         <div className="space-y-6">
           {WHAT_HAPPENS.map(({ icon: Icon, title, body }) => (
             <div key={title} className="flex items-start gap-4">
@@ -119,7 +119,7 @@ export default async function BuildLabPage() {
                 <Icon className="w-4 h-4 text-brand-400" />
               </div>
               <div>
-                <h3 className="text-white font-semibold text-sm mb-1">{title}</h3>
+                <h3 className="text-slate-50 font-semibold text-sm mb-1">{title}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">{body}</p>
               </div>
             </div>
@@ -128,7 +128,7 @@ export default async function BuildLabPage() {
 
         <div className="mt-10 rounded-xl border-l-2 border-gold bg-gold/[0.06] border-y border-r border-slate-800 px-6 py-5">
           <p className="text-slate-300 text-sm leading-relaxed">
-            <span className="text-white font-medium">You don&rsquo;t need this to finish the course.</span>{" "}
+            <span className="text-slate-50 font-medium">You don&rsquo;t need this to finish the course.</span>{" "}
             The {BRAND.name} course is self-paced, complete on its own, and costs a
             fraction of this. The Lab is for people who want to watch the decisions
             get made in real time and ask about their own situation while it happens.

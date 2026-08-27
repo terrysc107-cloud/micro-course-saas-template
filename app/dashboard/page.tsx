@@ -54,7 +54,7 @@ export default async function DashboardPage() {
       {/* Header */}
       <header className="border-b border-slate-800 bg-slate-900/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2 text-white font-bold">
+          <Link href="/dashboard" className="flex items-center gap-2 text-slate-50 font-bold">
             <Zap className="w-5 h-5 text-brand-400" />
             {BRAND.name}
           </Link>
@@ -65,7 +65,7 @@ export default async function DashboardPage() {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         {/* Welcome */}
         <div className="mb-8 sm:mb-10">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Your Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-50 mb-2">Your Dashboard</h1>
           <p className="text-slate-400">
             {completedCount === 0
               ? "Welcome! Start with Lesson 1 to begin your Claude Code journey."
@@ -77,7 +77,7 @@ export default async function DashboardPage() {
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-white font-semibold text-lg">Overall Progress</p>
+              <p className="text-slate-50 font-semibold text-lg">Overall Progress</p>
               <p className="text-slate-400 text-sm mt-0.5">
                 {completedCount}/{totalLessons} lessons complete
               </p>
@@ -94,7 +94,7 @@ export default async function DashboardPage() {
             <div className="mt-4">
               <Link
                 href={`/learn/${resumeLesson.split("/")[0]}/${resumeLesson.split("/")[1]}`}
-                className="inline-flex items-center gap-2 bg-gold hover:bg-brand-400 text-background px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors"
+                className="inline-flex items-center gap-2 bg-gold hover:brightness-95 text-slate-50 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors"
               >
                 <PlayCircle className="w-4 h-4" />
                 {completedCount === 0 ? "Start Course" : "Continue Learning"}
@@ -105,7 +105,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Module grid — all unlocked */}
-        <h2 className="text-xl font-bold text-white mb-4">All Modules</h2>
+        <h2 className="text-xl font-bold text-slate-50 mb-4">All Modules</h2>
         <div className="grid gap-3 sm:gap-4">
           {modules.map((mod) => {
             const modCompleted = mod.lessons.filter((l) =>
@@ -127,7 +127,7 @@ export default async function DashboardPage() {
                     <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-brand-400" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-white font-semibold text-sm sm:text-base truncate">{mod.title}</h3>
+                    <h3 className="text-slate-50 font-semibold text-sm sm:text-base truncate">{mod.title}</h3>
                     <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
                       {mod.lessons.length} lessons · {modCompleted}/{mod.lessons.length} complete
                     </p>

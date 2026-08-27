@@ -44,9 +44,9 @@ export default function SignUpPage() {
           <div className="w-16 h-16 bg-green-900/40 rounded-full flex items-center justify-center mx-auto mb-6">
             <span className="text-3xl">✉️</span>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-3">Check your email</h1>
+          <h1 className="text-2xl font-bold text-slate-50 mb-3">Check your email</h1>
           <p className="text-slate-400 text-sm">
-            We sent a confirmation link to <span className="text-white font-medium">{email}</span>.
+            We sent a confirmation link to <span className="text-slate-50 font-medium">{email}</span>.
             Click it to activate your account.
           </p>
           <p className="text-slate-500 text-xs mt-4">
@@ -64,11 +64,11 @@ export default function SignUpPage() {
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-white font-bold text-lg mb-6">
+          <Link href="/" className="inline-flex items-center gap-2 text-slate-50 font-bold text-lg mb-6">
             <Zap className="w-5 h-5 text-brand-400" />
             {BRAND.name}
           </Link>
-          <h1 className="text-2xl font-bold text-white">Create your account</h1>
+          <h1 className="text-2xl font-bold text-slate-50">Create your account</h1>
           <p className="text-slate-400 mt-1 text-sm">Start your Claude Code journey today</p>
         </div>
 
@@ -85,7 +85,7 @@ export default function SignUpPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
+              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-slate-50 text-sm placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
               placeholder="you@example.com"
             />
           </div>
@@ -97,14 +97,14 @@ export default function SignUpPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
+              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-slate-50 text-sm placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
               placeholder="Min. 6 characters"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gold hover:bg-brand-400 text-background font-semibold py-2.5 rounded-lg text-sm transition-colors disabled:opacity-50"
+            className="w-full bg-gold hover:brightness-95 text-slate-50 font-semibold py-2.5 rounded-lg text-sm transition-colors disabled:opacity-50"
           >
             {loading ? "Creating account..." : "Create account"}
           </button>

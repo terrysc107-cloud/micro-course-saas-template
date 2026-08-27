@@ -24,52 +24,71 @@
      gold-dim / gold-border exist only for copy-paste parity with Repo B;
      they are just gold at 15% / 40%. Never write `bg-gold-dim/50` — that
      stacks alpha on baked-in alpha. */
+  /* ── LIGHT / WARM THEME ───────────────────────────────────────────────
+     Terry's call: the buyer is a non-technical solopreneur, and the dark
+     gold-on-near-black palette read as a developer tool. This inverts to a
+     warm paper ground while keeping gold as the single accent.
+
+     ⚠️ This deliberately breaks visual continuity with aixdesign.dev, which
+     is still gold-on-dark. Accepted tradeoff; revisit once this is live.
+
+     HOW IT WORKS: every colour in app/ and components/ is a token, and the
+     slate ramp below OVERRIDES Tailwind's built-in slate. Inverting the ramp
+     (50 <-> 950) flips ~290 utilities to light with no component edits. The
+     one thing that could not be inverted was `text-white`, which is a
+     built-in and would have gone invisible, so all 67 uses were converted to
+     `text-slate-50` first. */
+
   --color-gold: #c9a84c;
-  --color-gold-dim: rgba(201, 168, 76, 0.15);
-  --color-gold-border: rgba(201, 168, 76, 0.4);
-  --color-background: #1e1b17;
+  --color-gold-dim: rgba(201, 168, 76, 0.16);
+  --color-gold-border: rgba(176, 143, 58, 0.45);
 
-  /* ── Warm neutral chrome ──────────────────────────────────────────────
-     These OVERRIDE Tailwind's built-in slate ramp. That is the trick: 202
-     existing slate-* utilities go warm with zero component edits.
+  /* CONTRAST, not decoration. Gold #c9a84c on warm paper is about 1.9:1 and
+     fails WCAG for text at any size. So gold splits in two:
+       --color-gold        fills only. Dark text on it is ~6.5:1.
+       --color-gold-ink    text and icons. ~5.4:1 on the paper ground.
+     Never put the fill gold on text over a light surface. */
+  --color-gold-ink: #8a6a1e;
 
-     slate-950 must stay identical to --color-background — it is the page
-     surface, and the hairline-grid card pattern relies on them matching.
-     slate-400 is BRAND-KIT.md §3's "text secondary" (#A8A29E) exactly. */
-  --color-slate-50: #fafaf9;
-  --color-slate-100: #f5f5f4;
-  --color-slate-200: #e7e5e4;
-  --color-slate-300: #d6d3d1;
-  --color-slate-400: #a8a29e; /* BRAND-KIT §3 text secondary */
-  --color-slate-500: #78716c;
-  --color-slate-600: #57534e;
-  --color-slate-700: #3d382f;
-  --color-slate-800: #2e2a24;
-  --color-slate-900: #23201b; /* card surface */
-  --color-slate-950: #1e1b17; /* == --color-background */
+  --color-background: #fdfbf7;
 
-  /* ── Gold ramp — a MIGRATION SHIM, not the design system ──────────────
-     ~90 brand-* utilities predate the gold tokens and still render through
-     this. Real usage is concentrated in three steps: brand-400 (accents,
-     24 uses), brand-600 (button fills, 10), brand-500 (borders, 9). The
-     other eight steps exist so two gradients and a shadow don't error.
+  /* ── Warm neutral ramp, INVERTED ──────────────────────────────────────
+     50 is now the darkest (primary text) and 950 the page ground, because
+     that is what lets the existing markup keep its class names. slate-950
+     must stay identical to --color-background: the hairline-grid card
+     pattern relies on them matching. */
+  --color-slate-50: #23201b;  /* primary text  */
+  --color-slate-100: #2e2a24;
+  --color-slate-200: #3d382f;
+  --color-slate-300: #57534e;
+  --color-slate-400: #6b6055; /* secondary text, 5.9:1 on the ground */
+  --color-slate-500: #6f6355; /* small secondary text, 5.4:1 on the ground */
+  --color-slate-600: #a8a29e;
+  --color-slate-700: #d8d0c2; /* hairlines and borders */
+  --color-slate-800: #e7e0d2; /* dividers */
+  --color-slate-900: #f6f2ea; /* card surface */
+  --color-slate-950: #fdfbf7; /* == --color-background */
 
-     ⚠️ DO NOT DELETE THIS BLOCK until `grep -rE "brand-[0-9]" app components`
-     returns nothing. Tailwind v4 emits NOTHING for an undefined token — no
-     error, no warning — so `bg-brand-600` would silently become no
-     background and the buy button would turn into white text floating on a
-     dark card. The failure is invisible until someone looks at the page. */
-  --color-brand-50: #fbf7ec;
-  --color-brand-100: #f5ebcf;
-  --color-brand-200: #ebd9a6;
-  --color-brand-300: #dfc57a;
-  --color-brand-400: #d4b75f;
-  --color-brand-500: #c9a84c; /* the canonical gold */
-  --color-brand-600: #b08f3a;
-  --color-brand-700: #8c7029;
-  --color-brand-800: #5e4b1c;
-  --color-brand-900: #3a2f13;
-  --color-brand-950: #241d0c;
+  /* ── Gold ramp — MIGRATION SHIM, retuned for light ────────────────────
+     ~90 brand-* utilities predate the gold tokens. Real usage is three
+     steps: brand-400 (accent text, 28 uses), brand-600 (button fills, 4),
+     brand-500 (borders, 9). On a light ground the accent steps have to be
+     dark enough to read, so this ramp is no longer a simple tint scale.
+
+     ⚠️ DO NOT DELETE until `grep -rE "brand-[0-9]" app components` is empty.
+     Tailwind v4 emits NOTHING for an undefined token, so a missing step
+     fails invisibly rather than erroring. */
+  --color-brand-50: #3a2f13;
+  --color-brand-100: #5e4b1c;
+  --color-brand-200: #8c7029;
+  --color-brand-300: #8a6a1e;
+  --color-brand-400: #8a6a1e; /* accent TEXT — must stay AA on paper */
+  --color-brand-500: #b08f3a; /* borders */
+  --color-brand-600: #8c7029; /* button fills, white text = 5.9:1 */
+  --color-brand-700: #6f591f;
+  --color-brand-800: #c9a84c;
+  --color-brand-900: #ebd9a6;
+  --color-brand-950: #fbf7ec;
 
   /* ── Corners ──────────────────────────────────────────────────────────
      AI by Design is sharp-cornered: Repo B uses only rounded-sm and
@@ -157,7 +176,7 @@
 }
 
 /* The AI by Design outline CTA. Used for nav and secondary actions here.
-   The two money buttons (hero + pricing) use solid `bg-gold text-background`
+   The two money buttons (hero + pricing) use solid `bg-gold text-slate-50`
    instead — see the note in components/marketing/PricingSection.tsx. */
 .cta-btn {
   display: inline-flex;

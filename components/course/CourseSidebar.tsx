@@ -91,7 +91,7 @@ export default function CourseSidebar({ modules, completed }: CourseSidebarProps
                             "flex items-center gap-3 pl-8 pr-4 py-2 text-sm transition-colors",
                             isActive
                               ? "bg-brand-600/20 text-brand-300 border-r-2 border-brand-500"
-                              : "text-slate-400 hover:text-white hover:bg-slate-800/50"
+                              : "text-slate-400 hover:text-slate-50 hover:bg-slate-800/50"
                           )}
                         >
                           {isComplete ? (

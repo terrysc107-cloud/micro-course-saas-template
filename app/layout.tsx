@@ -12,9 +12,9 @@ import "./globals.css";
  */
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 
-const TITLE = `${BRAND.name} — The professional Claude Code workflow`;
+const TITLE = `${BRAND.name}: build an AI board for your business`;
 const DESCRIPTION =
-  "Learn the workflow professionals use with Claude Code: inspect, plan, build, review, test, ship. Written lessons, a guided capstone, and templates you can reuse. " +
+  "Build a few narrow AI assistants that read your real numbers on a schedule and hand you a meeting you can act on. Written for people who have never coded. " +
   DISCLAIMER;
 
 export const metadata: Metadata = {
@@ -42,7 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`h-full ${geist.variable}`}>
-      <body className="font-sans min-h-full bg-background text-white antialiased">
+      <body className="font-sans min-h-full bg-background text-slate-50 antialiased">
         <div className="noise-overlay" aria-hidden="true" />
         {children}
       </body>

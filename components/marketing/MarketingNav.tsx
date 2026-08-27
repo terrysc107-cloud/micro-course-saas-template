@@ -12,7 +12,7 @@ export default function MarketingNav() {
               Claude Code Class; AI by Design is the parent that endorses it
               (BRAND.tagline, below). Using the lockup as the primary logo would
               make this site read as aixdesign.dev itself.
-              The SVG embeds Geist outlines (~62KB) — render as <img>, never inline. */}
+              The SVG embeds Geist outlines (~62KB), render as <img>, never inline. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/aix-mark.svg"
@@ -21,7 +21,7 @@ export default function MarketingNav() {
             className="w-8 h-8 shrink-0"
           />
           <div className="min-w-0">
-            <p className="font-semibold text-white text-sm leading-tight truncate">{BRAND.name}</p>
+            <p className="font-semibold text-slate-50 text-sm leading-tight truncate">{BRAND.name}</p>
             <p className="text-slate-500 text-[11px] leading-tight truncate">{BRAND.tagline}</p>
           </div>
         </Link>
@@ -31,31 +31,31 @@ export default function MarketingNav() {
               /proof and /build-lab too, where a bare hash scrolls nowhere. */}
           <Link
             href="/ladder"
-            className="hidden sm:block text-slate-400 hover:text-white text-sm transition-colors"
+            className="hidden sm:block text-slate-400 hover:text-slate-50 text-sm transition-colors"
           >
             Ladder
           </Link>
           <Link
             href="/proof"
-            className="hidden md:block text-slate-400 hover:text-white text-sm transition-colors"
+            className="hidden md:block text-slate-400 hover:text-slate-50 text-sm transition-colors"
           >
             Numbers
           </Link>
           <Link
             href="/#pricing"
-            className="hidden sm:block text-slate-400 hover:text-white text-sm transition-colors"
+            className="hidden sm:block text-slate-400 hover:text-slate-50 text-sm transition-colors"
           >
             Pricing
           </Link>
           <Link
             href="/sign-in"
-            className="text-slate-400 hover:text-white text-sm transition-colors"
+            className="text-slate-400 hover:text-slate-50 text-sm transition-colors"
           >
             Sign in
           </Link>
           <BuyButton
             label={PRODUCT.priceDisplay}
-            className="bg-gold hover:bg-brand-400 text-background px-3.5 sm:px-4 py-2 rounded-lg text-sm"
+            className="bg-gold hover:brightness-95 text-slate-50 px-3.5 sm:px-4 py-2 rounded-lg text-sm"
           />
         </div>
       </div>

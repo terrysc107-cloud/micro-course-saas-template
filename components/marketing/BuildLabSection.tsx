@@ -29,13 +29,13 @@ export default function BuildLabSection() {
             <CalendarClock className="w-5 h-5 text-brand-400" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-white">{BUILD_LAB.name}</h2>
+            <h2 className="text-xl font-semibold text-slate-50">{BUILD_LAB.name}</h2>
             <p className="text-slate-500 text-sm">
               {scheduled && BUILD_LAB.dateDisplay ? BUILD_LAB.dateDisplay : "Live · no date set yet"}
             </p>
           </div>
           <div className="sm:ml-auto">
-            <span className="text-2xl font-bold text-white">{BUILD_LAB.priceDisplay}</span>
+            <span className="text-2xl font-bold text-slate-50">{BUILD_LAB.priceDisplay}</span>
           </div>
         </div>
 
@@ -44,7 +44,7 @@ export default function BuildLabSection() {
 
         <Link
           href="/build-lab"
-          className="inline-flex items-center gap-2 text-brand-400 hover:text-gold text-sm font-medium transition-colors"
+          className="inline-flex items-center gap-2 text-brand-400 hover:text-gold-ink text-sm font-medium transition-colors"
         >
           {scheduled ? "See the details" : "Join the waitlist"}
           <ArrowRight className="w-4 h-4" />

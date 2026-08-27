@@ -19,12 +19,12 @@ export default function PricingSection() {
       width="narrow"
       eyebrow="Pricing"
       title="One price. The whole course."
-      subtitle="No tiers, no subscription, nothing held back for a higher tier. There is one other thing we sell — the live Build Lab — and the course is complete without it."
+      subtitle="No tiers, no subscription, nothing held back for a higher tier. There is one other thing we sell, the live Build Lab, and the course is complete without it."
       className="border-b border-slate-800/60"
     >
       <div className="bg-slate-900/70 border border-brand-600/40 rounded-2xl p-7 sm:p-9">
         <div className="flex items-baseline gap-2 mb-1">
-          <span className="text-5xl sm:text-6xl font-bold text-white tracking-tight">
+          <span className="text-5xl sm:text-6xl font-bold text-slate-50 tracking-tight">
             {PRODUCT.priceDisplay}
           </span>
           <span className="text-slate-400">one-time</span>
@@ -42,7 +42,7 @@ export default function PricingSection() {
 
         <BuyButton
           label={PRODUCT.ctaLabel}
-          className="w-full bg-gold hover:bg-brand-400 text-background py-4 rounded-xl text-lg shadow-[0_0_28px_rgba(201,168,76,0.28)] hover:shadow-[0_0_36px_rgba(201,168,76,0.42)] transition-shadow"
+          className="w-full bg-gold hover:brightness-95 text-slate-50 py-4 rounded-xl text-lg shadow-[0_0_28px_rgba(201,168,76,0.28)] hover:shadow-[0_0_36px_rgba(201,168,76,0.42)] transition-shadow"
         >
           <Lock className="w-4 h-4" />
         </BuyButton>

@@ -6,7 +6,7 @@ export default function CoreLoopSection() {
     <Section
       eyebrow="The method"
       title="One loop, taught until it's a habit"
-      subtitle="Every module, lab, and the capstone run this same sequence. By the end it should feel automatic — including the parts most people skip."
+      subtitle="Every module, lab, and the capstone run this same sequence. By the end it should feel automatic, including the parts most people skip."
       className="border-b border-slate-800/60"
     >
       <ol className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -19,7 +19,7 @@ export default function CoreLoopSection() {
               <span className="text-brand-500/50 text-sm font-bold tabular-nums">
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <h3 className="text-white font-semibold">{step}</h3>
+              <h3 className="text-slate-50 font-semibold">{step}</h3>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed">{detail}</p>
           </li>

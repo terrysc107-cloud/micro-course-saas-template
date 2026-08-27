@@ -38,11 +38,11 @@ export default function SignInPage() {
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-white font-bold text-lg mb-6">
+          <Link href="/" className="inline-flex items-center gap-2 text-slate-50 font-bold text-lg mb-6">
             <Zap className="w-5 h-5 text-brand-400" />
             {BRAND.name}
           </Link>
-          <h1 className="text-2xl font-bold text-white">Welcome back</h1>
+          <h1 className="text-2xl font-bold text-slate-50">Welcome back</h1>
           <p className="text-slate-400 mt-1 text-sm">Sign in to continue your course</p>
         </div>
 
@@ -59,7 +59,7 @@ export default function SignInPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
+              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-slate-50 text-sm placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
               placeholder="you@example.com"
             />
           </div>
@@ -70,14 +70,14 @@ export default function SignInPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
+              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-slate-50 text-sm placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
               placeholder="••••••••"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gold hover:bg-brand-400 text-background font-semibold py-2.5 rounded-lg text-sm transition-colors disabled:opacity-50"
+            className="w-full bg-gold hover:brightness-95 text-slate-50 font-semibold py-2.5 rounded-lg text-sm transition-colors disabled:opacity-50"
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>

@@ -67,7 +67,7 @@ export default async function LessonPage({ params }: PageProps) {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-50 mb-3">
             {lesson.frontmatter.title}
           </h1>
           <p className="text-slate-400">{lesson.frontmatter.description}</p>

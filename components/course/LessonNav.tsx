@@ -13,7 +13,7 @@ export default function LessonNav({ prev, next, nextUnlocked }: LessonNavProps) 
       {prev ? (
         <Link
           href={`/learn/${prev.moduleSlug}/${prev.lessonSlug}`}
-          className="flex items-center gap-2 text-slate-400 hover:text-white text-sm transition-colors group"
+          className="flex items-center gap-2 text-slate-400 hover:text-slate-50 text-sm transition-colors group"
         >
           <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
           <div>
@@ -28,7 +28,7 @@ export default function LessonNav({ prev, next, nextUnlocked }: LessonNavProps) 
       {next && nextUnlocked && (
         <Link
           href={`/learn/${next.moduleSlug}/${next.lessonSlug}`}
-          className="flex items-center gap-2 text-slate-400 hover:text-white text-sm transition-colors group text-right"
+          className="flex items-center gap-2 text-slate-400 hover:text-slate-50 text-sm transition-colors group text-right"
         >
           <div>
             <div className="text-xs text-slate-600 mb-0.5">Next</div>

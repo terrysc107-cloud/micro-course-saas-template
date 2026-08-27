@@ -15,26 +15,26 @@ export default function MarketingFooter() {
               className="w-8 h-8 shrink-0"
             />
             <div>
-              <p className="text-white font-semibold text-sm">{BRAND.name}</p>
+              <p className="text-slate-50 font-semibold text-sm">{BRAND.name}</p>
               <p className="text-slate-500 text-xs">{BRAND.tagline}</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-            <Link href="#curriculum" className="text-slate-400 hover:text-white transition-colors">
+            <Link href="#curriculum" className="text-slate-400 hover:text-slate-50 transition-colors">
               Curriculum
             </Link>
-            <Link href="#faq" className="text-slate-400 hover:text-white transition-colors">
+            <Link href="#faq" className="text-slate-400 hover:text-slate-50 transition-colors">
               FAQ
             </Link>
             <a
               href={PARENT_BRAND.url}
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-slate-400 hover:text-slate-50 transition-colors"
             >
               {PARENT_BRAND.name}
             </a>
             <a
               href={`mailto:${BRAND.supportEmail}`}
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-slate-400 hover:text-slate-50 transition-colors"
             >
               Support
             </a>
@@ -46,12 +46,12 @@ export default function MarketingFooter() {
           <p className="text-slate-500 text-xs leading-relaxed max-w-3xl">
             &ldquo;Claude&rdquo; and &ldquo;Claude Code&rdquo; are products of Anthropic. This
             course teaches you how to use them and is not a substitute for the{" "}
-            <a href={DOCS_NOTE.url} className="text-slate-400 hover:text-white underline">
+            <a href={DOCS_NOTE.url} className="text-slate-400 hover:text-slate-50 underline">
               official documentation
             </a>
             . Lesson facts last verified {LAST_VERIFIED}.
           </p>
-          <p className="text-slate-600 text-xs pt-2">
+          <p className="text-slate-500 text-xs pt-2">
             © {new Date().getFullYear()} {PARENT_BRAND.name}
           </p>
         </div>

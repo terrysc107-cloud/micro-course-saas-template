@@ -42,7 +42,7 @@ export default function DevPackGate({ lessonTitle }: { lessonTitle: string }) {
       <ul className="mt-6 grid gap-2 sm:grid-cols-2">
         {DEV_PACK.includes.map((item) => (
           <li key={item} className="flex gap-2.5 text-sm text-slate-300">
-            <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold" aria-hidden />
+            <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold-ink" aria-hidden />
             <span>{item}</span>
           </li>
         ))}
@@ -52,7 +52,7 @@ export default function DevPackGate({ lessonTitle }: { lessonTitle: string }) {
         {DEV_PACK.available ? (
           <Link
             href={DEV_PACK.href}
-            className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-semibold text-slate-950 transition-transform hover:brightness-110 active:scale-[0.98]"
+            className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-semibold text-slate-50 transition-transform hover:brightness-110 active:scale-[0.98]"
           >
             {DEV_PACK.ctaLabel}
           </Link>

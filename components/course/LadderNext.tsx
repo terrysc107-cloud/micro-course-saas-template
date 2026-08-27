@@ -40,7 +40,7 @@ export default function LadderNext({
         isBanner ? "mt-12 p-6 sm:p-8" : "p-6",
       ].join(" ")}
     >
-      <p className="text-[11px] uppercase tracking-[0.22em] text-gold">
+      <p className="text-[11px] uppercase tracking-[0.22em] text-gold-ink">
         Next on the ladder
       </p>
 
@@ -58,7 +58,7 @@ export default function LadderNext({
       <ul className="mt-6 grid gap-2 sm:grid-cols-2">
         {next.includes.map((item) => (
           <li key={item} className="flex gap-2.5 text-sm text-slate-300">
-            <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold" aria-hidden />
+            <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold-ink" aria-hidden />
             <span>{item}</span>
           </li>
         ))}
@@ -68,7 +68,7 @@ export default function LadderNext({
         {next.available ? (
           <Link
             href={next.href}
-            className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-semibold text-slate-950 transition-transform active:scale-[0.98] hover:brightness-110"
+            className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-semibold text-slate-50 transition-transform active:scale-[0.98] hover:brightness-110"
           >
             {next.ctaLabel}
             <ArrowRight className="h-4 w-4" aria-hidden />

@@ -111,7 +111,7 @@ export default async function ProofPage() {
 
             <Link
               href="/ladder"
-              className="mt-7 inline-flex items-center gap-2 rounded-full border border-gold-border px-6 py-3 text-sm font-semibold text-slate-100 transition-colors hover:bg-gold hover:text-slate-950"
+              className="mt-7 inline-flex items-center gap-2 rounded-full border border-gold-border px-6 py-3 text-sm font-semibold text-slate-100 transition-colors hover:bg-gold hover:text-slate-50"
             >
               See the ladder
               <ArrowRight className="h-4 w-4" aria-hidden />

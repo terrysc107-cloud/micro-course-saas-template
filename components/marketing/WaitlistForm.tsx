@@ -52,10 +52,10 @@ export default function WaitlistForm({ source }: WaitlistFormProps) {
       <div className="flex items-start gap-3 rounded-xl border border-gold/25 bg-gold/[0.06] px-5 py-4">
         <Check className="w-5 h-5 text-brand-400 shrink-0 mt-0.5" />
         <div>
-          <p className="text-white text-sm font-medium">You&rsquo;re on the list.</p>
+          <p className="text-slate-50 text-sm font-medium">You&rsquo;re on the list.</p>
           <p className="text-slate-400 text-sm leading-relaxed mt-1">
             When a date is set, you&rsquo;ll hear before it goes anywhere else. Nothing
-            has been charged and nothing is reserved — it&rsquo;s a list, not a ticket.
+            has been charged and nothing is reserved, it&rsquo;s a list, not a ticket.
           </p>
         </div>
       </div>
@@ -76,7 +76,7 @@ export default function WaitlistForm({ source }: WaitlistFormProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@company.com"
-          className="flex-1 bg-slate-900 border border-slate-700 focus:border-gold/60 focus:outline-none text-white placeholder-slate-500 px-4 py-3 rounded-lg text-sm transition-colors"
+          className="flex-1 bg-slate-900 border border-slate-700 focus:border-gold/60 focus:outline-none text-slate-50 placeholder-slate-500 px-4 py-3 rounded-lg text-sm transition-colors"
         />
         <button
           type="submit"

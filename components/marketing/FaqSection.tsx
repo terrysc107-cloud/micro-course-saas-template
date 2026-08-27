@@ -17,7 +17,7 @@ export default function FaqSection() {
             key={q}
             className="group rounded-xl border border-slate-800 bg-slate-900/60 open:bg-slate-900"
           >
-            <summary className="flex items-center justify-between gap-4 cursor-pointer list-none px-5 py-4 text-white font-medium text-sm">
+            <summary className="flex items-center justify-between gap-4 cursor-pointer list-none px-5 py-4 text-slate-50 font-medium text-sm">
               {q}
               <ChevronDown className="w-4 h-4 text-slate-500 shrink-0 transition-transform group-open:rotate-180" />
             </summary>

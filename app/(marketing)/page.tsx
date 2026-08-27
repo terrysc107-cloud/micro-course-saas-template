@@ -5,6 +5,7 @@ import UpgradeScroller from "@/components/marketing/UpgradeScroller";
 import MarketingNav from "@/components/marketing/MarketingNav";
 import MarketingFooter from "@/components/marketing/MarketingFooter";
 import Hero from "@/components/marketing/Hero";
+import TracksSection from "@/components/marketing/TracksSection";
 import CoreLoopSection from "@/components/marketing/CoreLoopSection";
 import OutcomesSection from "@/components/marketing/OutcomesSection";
 import CurriculumSection from "@/components/marketing/CurriculumSection";
@@ -18,7 +19,7 @@ export default function LandingPage() {
   const lessonCount = modules.reduce((sum, m) => sum + m.lessons.length, 0);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-50">
       <Suspense fallback={null}>
         <UpgradeScroller />
       </Suspense>
@@ -32,6 +33,8 @@ export default function LandingPage() {
           templateCount={TEMPLATES.length}
         />
         <CoreLoopSection />
+        <TracksSection />
+
         <OutcomesSection />
         <CurriculumSection modules={modules} />
         <AudienceSection />

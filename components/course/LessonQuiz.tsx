@@ -46,7 +46,7 @@ export default function LessonQuiz({
         {nextLesson && (
           <button
             onClick={() => router.push(`/learn/${nextLesson.moduleSlug}/${nextLesson.lessonSlug}`)}
-            className="inline-flex items-center gap-2 bg-gold hover:bg-brand-400 text-background px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 bg-gold hover:brightness-95 text-slate-50 px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
           >
             Next Lesson <ChevronRight className="w-4 h-4" />
           </button>
@@ -85,7 +85,7 @@ export default function LessonQuiz({
   return (
     <div className="mt-10">
       <div className="border-t border-slate-800 pt-8">
-        <h3 className="text-xl font-bold text-white mb-2">Knowledge Check</h3>
+        <h3 className="text-xl font-bold text-slate-50 mb-2">Knowledge Check</h3>
         <p className="text-slate-400 text-sm mb-6">
           Answer all questions correctly (70%+) to unlock the next lesson.
         </p>
@@ -93,7 +93,7 @@ export default function LessonQuiz({
         <div className="space-y-6">
           {questions.map((q, qi) => (
             <div key={qi} className="bg-slate-900 rounded-xl p-5 border border-slate-800">
-              <p className="text-white font-medium mb-4">
+              <p className="text-slate-50 font-medium mb-4">
                 <span className="text-slate-500 text-sm mr-2">{qi + 1}.</span>
                 {q.question}
               </p>
@@ -122,8 +122,8 @@ export default function LessonQuiz({
                             ? "border-red-500 bg-red-900/20 text-red-300"
                             : "border-slate-700 text-slate-500"
                           : isSelected
-                          ? "border-brand-500 bg-brand-600/20 text-white"
-                          : "border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white"
+                          ? "border-brand-500 bg-brand-600/20 text-slate-50"
+                          : "border-slate-700 text-slate-300 hover:border-slate-500 hover:text-slate-50"
                       )}
                     >
                       <div className="flex items-center gap-3">
@@ -187,14 +187,14 @@ export default function LessonQuiz({
                   onClick={() =>
                     router.push(`/learn/${nextLesson.moduleSlug}/${nextLesson.lessonSlug}`)
                   }
-                  className="inline-flex items-center gap-2 bg-gold hover:bg-brand-400 text-background px-4 py-2 rounded-lg text-sm font-semibold transition-colors ml-4 shrink-0"
+                  className="inline-flex items-center gap-2 bg-gold hover:brightness-95 text-slate-50 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ml-4 shrink-0"
                 >
                   Next Lesson <ChevronRight className="w-4 h-4" />
                 </button>
               ) : !result.passed ? (
                 <button
                   onClick={handleRetry}
-                  className="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors ml-4 shrink-0"
+                  className="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-50 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ml-4 shrink-0"
                 >
                   <RotateCcw className="w-4 h-4" /> Try Again
                 </button>
@@ -205,7 +205,7 @@ export default function LessonQuiz({
           <button
             onClick={handleSubmit}
             disabled={!allAnswered || submitting}
-            className="mt-6 bg-gold hover:bg-brand-400 text-background px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 bg-gold hover:brightness-95 text-slate-50 px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? "Checking..." : "Submit Answers"}
           </button>

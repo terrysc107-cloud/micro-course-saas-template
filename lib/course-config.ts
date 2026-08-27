@@ -46,7 +46,7 @@ export const DISCLAIMER =
  * tool carries this note plus a link to the official docs.
  */
 export const DOCS_NOTE = {
-  text: "Claude Code changes fast. Official documentation is the final word — if a lesson and the docs disagree, trust the docs and tell us.",
+  text: "Claude Code changes fast. Official documentation is the final word, if a lesson and the docs disagree, trust the docs and tell us.",
   url: "https://code.claude.com/docs/en/overview",
 } as const;
 
@@ -71,7 +71,7 @@ export const PRODUCT = {
   priceDisplay: "$57",
   priceCents: 5700,
   priceNote: "One-time payment. Lifetime access, including future updates.",
-  ctaLabel: "Get the course — $57",
+  ctaLabel: "Get the course, $57",
   /** Stripe price is read from env at runtime; never hardcode a price id. */
   priceIdEnvVar: "NEXT_PUBLIC_STRIPE_PRICE_ID",
 } as const;
@@ -132,7 +132,7 @@ export const BUILD_LAB = {
     "A live, small-group session where we build one real feature end to end and you watch every decision, including the ones that go wrong.",
 
   waitlistNote:
-    "No date is set yet. Join the list and you'll hear when there is one, before it goes anywhere else. The waitlist costs nothing and holds nothing — no deposit.",
+    "No date is set yet. Join the list and you'll hear when there is one, before it goes anywhere else. The waitlist costs nothing and holds nothing, no deposit.",
 } as const;
 
 // ── Curriculum ───────────────────────────────────────────────────────────────
@@ -201,7 +201,7 @@ export const MODULE_META: ModuleMeta[] = [
     slug: "08-extending-claude-code",
     title: "Extending Claude Code",
     description:
-      "Skills, hooks, MCP, subagents and agent teams, plugins, and running Claude Code beyond the terminal — IDE, desktop, web, and CI/CD.",
+      "Skills, hooks, MCP, subagents and agent teams, plugins, and running Claude Code beyond the terminal, IDE, desktop, web, and CI/CD.",
   },
   {
     slug: "09-capstone",
@@ -317,7 +317,7 @@ export const BOARD_LOOP = [
 export const CORE_LOOP = [
   { step: "Inspect", detail: "Read the code before changing it. Make Claude prove it understands." },
   { step: "Plan", detail: "Agree on the approach in plan mode, before a single file is edited." },
-  { step: "Build", detail: "Small, reviewable changes — not a thousand-line drop." },
+  { step: "Build", detail: "Small, reviewable changes, not a thousand-line drop." },
   { step: "Review", detail: "Read every diff. You are still the engineer of record." },
   { step: "Test", detail: "Prove it works with tests and a real browser pass." },
   { step: "Ship", detail: "Deploy behind a plan you can undo." },
@@ -426,11 +426,11 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "Are there videos?",
-    a: "Not yet. The written lessons are complete and are the course. We are recording original walkthroughs now, and they will be added to the relevant lessons as they ship — included at no extra cost, because your purchase covers future updates. We would rather ship no video than someone else's video.",
+    a: "Not yet. The written lessons are complete and are the course. We are recording original walkthroughs now, and they will be added to the relevant lessons as they ship, included at no extra cost, because your purchase covers future updates. We would rather ship no video than someone else's video.",
   },
   {
     q: "Will this go out of date?",
-    a: "Parts of it, constantly — Claude Code ships changes weekly. That is why every factual lesson links to the official docs and carries a last-verified date, and why updates are included for life. Lessons were last verified against the official documentation on " + LAST_VERIFIED + ".",
+    a: "Parts of it, constantly, Claude Code ships changes weekly. That is why every factual lesson links to the official docs and carries a last-verified date, and why updates are included for life. Lessons were last verified against the official documentation on " + LAST_VERIFIED + ".",
   },
   {
     q: "What experience do I need?",
@@ -449,7 +449,7 @@ export const FAQ: FaqItem[] = [
     // Said "that is the only thing on sale" — true until the Lab got a price.
     // Kept the useful half: the course does not depend on the Lab.
     a:
-      "It is a separate, live, one-off session — we build one real feature end to end and you watch every decision, including the ones that go wrong. It is not scheduled yet, so there is a waitlist rather than a date, and the waitlist costs nothing. The $97 course is self-paced, complete on its own, and does not depend on the Lab.",
+      "It is a separate, live, one-off session, we build one real feature end to end and you watch every decision, including the ones that go wrong. It is not scheduled yet, so there is a waitlist rather than a date, and the waitlist costs nothing. The $97 course is self-paced, complete on its own, and does not depend on the Lab.",
   },
   {
     q: "Can I get a refund?",
@@ -487,7 +487,7 @@ export const DEV_PACK = {
   priceIdEnvVar: "NEXT_PUBLIC_STRIPE_DEV_PACK_PRICE_ID",
   available: false,
   href: "/ladder#dev-pack",
-  ctaLabel: "Add the Dev Pack — $97",
+  ctaLabel: "Add the Dev Pack, $97",
   kind: "onetime" as const,
   includes: [
     "Working with files, real dev workflows, and stack-specific tactics",
@@ -570,7 +570,7 @@ export const LADDER: readonly LadderRung[] = [
     priceIdEnvVar: PRODUCT.priceIdEnvVar,
     available: true,
     href: "/#pricing",
-    ctaLabel: "Get the course — $97",
+    ctaLabel: "Get the course, $97",
     includes: [
       "The board path, from an empty folder to a scheduled run",
       "The four files your board reads, with worked examples",
@@ -592,7 +592,7 @@ export const LADDER: readonly LadderRung[] = [
     priceIdEnvVar: "NEXT_PUBLIC_STRIPE_KIT_PRICE_ID",
     available: false,
     href: "/ladder#kit",
-    ctaLabel: "Get the Kit — $297",
+    ctaLabel: "Get the Kit, $297",
     includes: [
       "Agent definitions for a CEO, CMO, and CFO seat",
       "The scheduled daily pulse and weekly board meeting",
@@ -640,7 +640,7 @@ export const LADDER: readonly LadderRung[] = [
     ctaLabel: "Join the Board Room",
     includes: [
       "A monthly board meeting run against your submitted metrics",
-      "The freshness report — what changed in the tools, and what it breaks",
+      "The freshness report, what changed in the tools, and what it breaks",
       "Kit updates as they ship",
       "A members' channel",
     ],

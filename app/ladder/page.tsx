@@ -39,7 +39,7 @@ export default function LadderPage() {
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
               href="/#pricing"
-              className="inline-flex items-center gap-2 rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-slate-950 transition-transform hover:brightness-110 active:scale-[0.98]"
+              className="inline-flex items-center gap-2 rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-slate-50 transition-transform hover:brightness-110 active:scale-[0.98]"
             >
               Start at step one
               <ArrowRight className="h-4 w-4" aria-hidden />
@@ -62,7 +62,7 @@ export default function LadderPage() {
                   <div className="relative flex sm:flex-col sm:items-center">
                     <span
                       aria-hidden
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gold-border bg-slate-900 font-mono text-sm text-gold"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gold-border bg-slate-900 font-mono text-sm text-gold-ink"
                     >
                       {rung.rung}
                     </span>
@@ -79,7 +79,7 @@ export default function LadderPage() {
                       <h2 className="text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
                         {rung.name}
                       </h2>
-                      <span className="font-mono text-sm text-gold">
+                      <span className="font-mono text-sm text-gold-ink">
                         {rung.priceDisplay}
                       </span>
                       {!rung.available && (
@@ -100,7 +100,7 @@ export default function LadderPage() {
                           className="flex gap-2.5 text-sm leading-relaxed text-slate-300"
                         >
                           <Check
-                            className="mt-0.5 h-4 w-4 shrink-0 text-gold"
+                            className="mt-0.5 h-4 w-4 shrink-0 text-gold-ink"
                             aria-hidden
                           />
                           <span>{item}</span>
@@ -113,7 +113,7 @@ export default function LadderPage() {
                     {rung.available && (
                       <Link
                         href={rung.href}
-                        className="mt-6 inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-semibold text-slate-950 transition-transform hover:brightness-110 active:scale-[0.98]"
+                        className="mt-6 inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-semibold text-slate-50 transition-transform hover:brightness-110 active:scale-[0.98]"
                       >
                         {rung.ctaLabel}
                         <ArrowRight className="h-4 w-4" aria-hidden />

@@ -6,13 +6,13 @@ export default function AudienceSection() {
   return (
     <Section
       eyebrow="Fit"
-      title="Who this is for — and who it isn't"
+      title="Who this is for, and who it isn't"
       subtitle="We would rather you skip this than buy it and feel misled."
       className="border-b border-slate-800/60"
     >
       <div className="grid md:grid-cols-2 gap-4">
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6">
-          <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+          <h3 className="text-slate-50 font-semibold mb-4 flex items-center gap-2">
             <Check className="w-4 h-4 text-brand-400" />
             Buy this if you&apos;re…
           </h3>
@@ -27,7 +27,7 @@ export default function AudienceSection() {
         </div>
 
         <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
-          <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+          <h3 className="text-slate-50 font-semibold mb-4 flex items-center gap-2">
             <X className="w-4 h-4 text-slate-500" />
             Skip it if you&apos;re…
           </h3>
