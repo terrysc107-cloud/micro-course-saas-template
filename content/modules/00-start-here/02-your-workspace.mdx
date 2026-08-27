@@ -1,0 +1,161 @@
+---
+title: "Your Workspace"
+description: "Create the folder and the four files your board reads. No terminal, no code, about fifteen minutes."
+order: 2
+duration: "10 min"
+track: board
+quiz:
+  - question: "What is the equivalent of a 'project' for someone who does not write software?"
+    options:
+      - "A spreadsheet"
+      - "An ordinary folder containing the files that describe your business"
+      - "A website"
+      - "You cannot use Claude Code without writing software"
+    answer: 1
+  - question: "Why should METRICS.md record where each number came from, not just the number?"
+    options:
+      - "To make the file longer"
+      - "So any future run can tell whether the number is current and re-derive it, instead of reasoning confidently from a figure you typed months ago"
+      - "Because the file will not save otherwise"
+      - "To credit the source"
+    answer: 1
+  - question: "What belongs in DECISION-LOG.md that does not belong in METRICS.md?"
+    options:
+      - "The current revenue figure"
+      - "The reasoning behind a choice and what would make you reverse it"
+      - "Your traffic numbers"
+      - "Nothing, they hold the same thing"
+    answer: 1
+  - question: "You have no real number for a metric yet. What should you write?"
+    options:
+      - "A reasonable estimate so the file is complete"
+      - "Leave the line out entirely"
+      - "Write that it is unknown, and where it will come from when you have it"
+      - "Copy a number from a competitor"
+    answer: 2
+---
+
+Every guide to this kind of tool starts by telling you to open your project.
+
+If you do not write software, you do not have one, and that sentence quietly
+ends the tutorial. So let us deal with it first.
+
+## Your project is your business
+
+A "project" is just **a folder with files in it**. Software people keep code in
+theirs. You are going to keep your business in yours.
+
+That is not a workaround. It is the same thing. The tool reads files and writes
+files; it was never picky about what the files contained.
+
+## Step 1: make the folder
+
+Wherever you keep documents, make a new folder and name it `ai-board`.
+
+Somewhere you will actually find it again. Your Documents folder is fine. Your
+desktop is fine. If you sync with Dropbox, iCloud, or Drive, inside that is
+fine and gives you version history for free.
+
+That is the whole step.
+
+## Step 2: make four files
+
+Inside `ai-board`, create four plain text files. Any text editor works. On a
+Mac, TextEdit in plain-text mode. On Windows, Notepad. If you have a markdown
+app like Obsidian or Bear, even better, but nothing here requires one.
+
+The `.md` on the end means markdown, which is a fancy way of saying "text with
+a few conventions for headings and lists." You already know enough of it.
+
+### `GOALS.md`
+
+```
+# Goals
+
+## This quarter
+- Revenue: floor $4,000/month. Currently around $2,600.
+- New enquiries: floor 8/month. Currently 3 or 4.
+
+## What I am NOT doing this quarter
+- No new service lines. Depth over breadth until revenue is stable.
+
+## How I will know it worked
+- Three months in a row at or above the floor, not one good month.
+```
+
+Write floors, not dreams. A floor is the lowest number you would accept without
+concluding the quarter went badly. Floors make a seat's advice concrete;
+aspirations make it vague.
+
+### `METRICS.md`
+
+```
+# Metrics
+
+Last updated: (put today's date here)
+
+| Metric | Value | Where it came from |
+|---|---|---|
+| Monthly revenue | $2,640 | Stripe dashboard, this month to date |
+| Enquiries this month | 4 | Contact form inbox, counted by hand |
+| Email list | 212 | Mailchimp, audience tab |
+| Website visits (30d) | unknown | No analytics installed yet |
+```
+
+**The third column is the important one.** A number with no source is
+indistinguishable from a number you made up six months ago, and a seat reading
+it cannot tell either. Recording where it came from means any future run can
+check whether it is still true.
+
+Note the last row. `unknown` is a legitimate, useful entry. Never invent a
+placeholder to make the table look finished.
+
+### `DECISION-LOG.md`
+
+```
+# Decisions
+
+## Stopped offering the $200 starter package
+Decided: (date)
+Why: Took the same effort as the $800 package and attracted people who
+wanted the $800 outcome for $200.
+What would change my mind: If three people ask for it unprompted in a month.
+```
+
+This is the file that stops you relitigating settled questions every few weeks,
+and stops a seat suggesting something you already tried and rejected.
+
+The "what would change my mind" line is the valuable part. A decision with no
+reversal condition is just an opinion with a date on it.
+
+### `PIPELINE.md`
+
+```
+# Pipeline
+
+| Who | What they want | Stage | Last contact | Next step | Owner |
+|---|---|---|---|---|---|
+| Ravi Mehta | Full package | Quote sent | (date) | Follow up Thursday | me |
+| Bright Lane Dental | Not sure yet | First call done | (date) | Send options | me |
+```
+
+Be honest about the stage. A pipeline that reads better than reality is the
+most expensive file in the folder, because you will make decisions from it.
+
+## Step 3: nothing
+
+That is it. You now have a workspace.
+
+It will look sparse and slightly disappointing. That is correct. Four short
+files that are true beat forty pages that are aspirational, and the board reads
+these on every single run.
+
+## A note on what you just did
+
+You did not configure anything. There is no account to connect, no integration
+to authorise, no data leaving your machine yet. You made a folder and typed
+into four files.
+
+Everything from here is pointing an assistant at that folder.
+
+<KeyPoint>Your project is a folder, and your business belongs in it. Four files: goals with floors, metrics with sources, decisions with reversal conditions, and an honest pipeline. Write "unknown" wherever you do not have a number, because an invented number is indistinguishable from a real one to whatever reads it next.</KeyPoint>

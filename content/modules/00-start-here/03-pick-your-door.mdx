@@ -1,0 +1,111 @@
+---
+title: "Pick Your Door"
+description: "Three ways into Claude Code. Which one fits a board, what each requires, and why the popular answer is the wrong one here."
+order: 3
+duration: "8 min"
+track: board
+quiz:
+  - question: "Why is the Desktop app the recommended door for running a board?"
+    options:
+      - "It is the cheapest option"
+      - "It can reach the files on your own machine and can run work on a schedule, which is exactly what a board needs"
+      - "It is the only one that works"
+      - "It has the best interface"
+    answer: 1
+  - question: "What does a paid Claude plan get you that the free plan does not?"
+    options:
+      - "Faster responses"
+      - "Access to Claude Code at all. The free plan does not include it"
+      - "More file storage"
+      - "Nothing, the free plan is the same"
+    answer: 1
+  - question: "A cloud routine runs without your machine on. Why is that not automatically the right choice for a board?"
+    options:
+      - "Cloud routines are more expensive"
+      - "Cloud routines work from a fresh copy and cannot reach the files on your own machine, so they cannot read the folder your board lives in"
+      - "Cloud routines are slower"
+      - "Cloud routines cannot write files at all"
+    answer: 1
+  - question: "You are not sure which door to use. What is the sensible first move?"
+    options:
+      - "Install all three and compare"
+      - "Start with the Desktop app, and only add another door when you hit something it cannot do"
+      - "Wait until you understand the tool better"
+      - "Use the web version, since it needs no setup"
+    answer: 1
+---
+
+Claude Code is one engine behind several front doors. The same files, the same
+settings, the same behaviour. What changes is where it runs and what it can
+reach.
+
+Pick one now. You can add others later, and everything you build carries over.
+
+## The three doors
+
+| | **Desktop app** | **Terminal** | **Web** |
+|---|---|---|---|
+| What it looks like | A normal application window | A text window you type commands into | A tab in your browser |
+| Reads files on your machine | Yes | Yes | No |
+| Runs work on a schedule | Yes | While a session is open | No |
+| Setup required | Install it | Install it, learn a little terminal | None |
+| Needs your machine awake | Yes | Yes | No |
+
+## The recommendation: Desktop
+
+**Start with the Desktop app.** Two reasons, and they are both about the board
+specifically.
+
+It can **read the folder you just made**. Your board lives in `ai-board` on
+your own machine, and a seat that cannot open `METRICS.md` has nothing to
+reason about.
+
+It can **run work on a schedule**. That is the difference between a board and a
+chat window, and it is the whole point of the next few lessons.
+
+You will need a paid Claude plan. **The free plan does not include Claude Code
+at all**, which is the single most common reason a first attempt appears to
+work and then refuses to start.
+
+## The trap worth knowing about
+
+There is a third scheduling option you will read about called **cloud
+routines**. They run on Anthropic's machines, on a schedule, without your
+laptop being on. That sounds strictly better, and for a board it is not.
+
+A cloud routine works from **a fresh copy and cannot reach the files on your
+own machine.** Your `ai-board` folder is on your machine. So a cloud routine
+would run faithfully, on time, forever, with no access to the four files that
+are the entire point.
+
+This catches people out because the limitation is invisible until you read the
+output and realise it is generic. Worth knowing before you build on it, not
+after.
+
+Later, if you move your board files somewhere the cloud can reach, cloud
+routines become a genuine option. Not yet.
+
+## Opening your folder
+
+However you get in, the first move is the same: **point it at `ai-board`.**
+
+In the Desktop app, that is opening the folder the way you would in any
+application. In the terminal, you move into the folder and start there. Either
+way, the assistant now treats those four files as its working context.
+
+If you have used an AI chat before, this is the meaningful difference. You are
+not pasting your business into a message box each time. It is looking at your
+actual files, and it can change them.
+
+Which is also why the next lesson is about permission before it is about
+output.
+
+## If the terminal appeals to you
+
+Nothing here requires it, but it is not off limits either. The terminal door is
+the same engine, and some people find it faster once the novelty of typing
+commands wears off. Module 1 covers installing it properly.
+
+Skip it if you would rather not. You will not fall behind.
+
+<KeyPoint>Same engine, three doors. Use Desktop: it reaches your files and it can run on a schedule, which is what a board is. A paid plan is required, and cloud routines cannot see your local folder no matter how convenient they sound.</KeyPoint>

@@ -135,6 +135,12 @@ export interface ModuleMeta {
  */
 export const MODULE_META: ModuleMeta[] = [
   {
+    slug: "00-start-here",
+    title: "Start Here: Your AI Board",
+    description:
+      "Go from an empty folder to a working AI board. What a board is, where it lives, how to open it, and how to tell a useful run from a plausible one. No code.",
+  },
+  {
     slug: "01-getting-started",
     title: "Getting Started",
     description:

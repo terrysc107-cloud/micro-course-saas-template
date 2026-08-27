@@ -1,0 +1,125 @@
+---
+title: "Your First Run"
+description: "Point an assistant at your folder, ask it something real, and learn the review habit on a change you can actually judge."
+order: 4
+duration: "10 min"
+track: board
+quiz:
+  - question: "Why is the first prompt a question rather than an instruction to change something?"
+    options:
+      - "Changes are not allowed on the first run"
+      - "A question tests whether it understood your business before it is allowed to alter anything"
+      - "Questions are cheaper"
+      - "It does not matter which you start with"
+    answer: 1
+  - question: "It proposes a change to DECISION-LOG.md. What should you do before approving?"
+    options:
+      - "Approve it, since you asked for the change"
+      - "Read the actual lines it wants to add or remove, not the summary of them"
+      - "Ask it to explain what it did"
+      - "Approve it and check the file afterwards"
+    answer: 1
+  - question: "Its summary says one thing and the proposed lines say another. Which do you trust?"
+    options:
+      - "The summary, since it explains the intent"
+      - "The lines. The summary is a description; the lines are what will actually happen"
+      - "Neither, start over"
+      - "Whichever is longer"
+    answer: 1
+  - question: "It reports a revenue figure that is not in METRICS.md. What is going on?"
+    options:
+      - "It found the number somewhere else and you should record it"
+      - "It filled a gap with something plausible, which is the failure you most need to catch"
+      - "It is estimating, which is helpful"
+      - "It made a rounding error"
+    answer: 1
+---
+
+You have a folder and four files. Time to open them.
+
+## Open the folder, then ask a question
+
+Start a session pointed at `ai-board`, and make the first thing you ask a
+**question, not an instruction**:
+
+```
+Read GOALS.md and METRICS.md. In your own words, what am I trying to move
+this quarter, and what is the gap between where I am and the floor I set?
+
+If a number you need is missing, say it is missing. Do not estimate it.
+```
+
+Two things are happening here, and only one of them is obvious.
+
+The obvious one: you get a summary. The useful one: **you find out whether it
+actually understood your business** before it has permission to change
+anything.
+
+Read what comes back carefully. If it describes goals you did not set, the
+problem is your `GOALS.md`, not the assistant. Fix the file. That is a normal
+and productive first hour.
+
+## The most important sentence in the prompt
+
+> If a number you need is missing, say it is missing. Do not estimate it.
+
+Include some version of this every time.
+
+Left to itself, an assistant asked to analyse a business with a gap in the data
+will produce something reasonable-sounding to fill the gap. It is not lying;
+it is completing a pattern. But a plausible number looks exactly like a real
+one on the page, and you will make decisions from it.
+
+Remember `unknown` in your metrics table. This is the prompt that respects it.
+
+## Now let it change something
+
+Ask for a small, real edit:
+
+```
+Add an entry to DECISION-LOG.md recording that I am not adding new service
+lines this quarter, and what would make me revisit that.
+```
+
+It will not just do it. It will show you the change and ask.
+
+**This is the moment the whole course is built around, so slow down here.**
+
+## Read the change, not the summary
+
+You will see two things: a description of what it intends to do, and the actual
+lines it wants to add or remove.
+
+**Read the lines.** Not the description.
+
+The description is generally accurate, and being generally accurate is exactly
+what makes it dangerous. It is a summary written by the same thing that wrote
+the change. When they disagree, the lines are what happens to your file.
+
+For a board, this is a genuinely easy habit to build, because **the change is
+to your own prose**. You wrote `DECISION-LOG.md`. You know what it should say.
+You do not need any technical skill to notice that it has invented a reason you
+never gave, softened a decision you meant firmly, or quietly rewritten a line
+you wanted left alone.
+
+Software people call this reading the diff, and they make it sound like a
+skill. On your own files it is just reading.
+
+## Approve, or do not
+
+If it is right, approve it. If it is not, say what is wrong and it will
+revise. You are not committed to anything it proposes.
+
+Then open `DECISION-LOG.md` in your own editor and look at it. Not because you
+distrust the approval, but because seeing your file change from something you
+typed in a chat window is the moment this stops being abstract.
+
+## What you have now
+
+An assistant that can read your business and edit your files, with you
+approving every change.
+
+That is already useful. It is not yet a board, because none of it happens
+unless you start it. Two lessons from now, that changes.
+
+<KeyPoint>Ask before you instruct. Always tell it to report missing numbers instead of estimating them. And read the proposed lines rather than the summary of them, which on your own prose is not a technical skill, just reading.</KeyPoint>

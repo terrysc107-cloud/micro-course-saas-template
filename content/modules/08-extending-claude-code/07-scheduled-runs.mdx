@@ -1,0 +1,145 @@
+---
+title: "Scheduled Runs"
+description: "The three ways to make work happen without you starting it, what each one can reach, and the limitation that decides between them."
+order: 7
+duration: "10 min"
+track: both
+quiz:
+  - question: "Which scheduling option runs without your machine being on?"
+    options:
+      - "Desktop scheduled tasks"
+      - "Cloud routines"
+      - "A session loop"
+      - "All three"
+    answer: 1
+  - question: "Why can a cloud routine not read the files in a folder on your laptop?"
+    options:
+      - "It is a permissions setting you can change"
+      - "It runs from a fresh copy on Anthropic's infrastructure and has no access to your local machine"
+      - "It can, but only for text files"
+      - "Cloud routines cannot read files at all"
+    answer: 1
+  - question: "What is the minimum interval for a cloud routine?"
+    options:
+      - "One minute"
+      - "Five minutes"
+      - "One hour"
+      - "One day"
+    answer: 2
+  - question: "You want a daily run over business files that live on your own machine. Which option fits?"
+    options:
+      - "A cloud routine, because it is the most reliable"
+      - "A Desktop scheduled task, because it is the only durable option that can reach local files"
+      - "A session loop, left open overnight"
+      - "Any of them, they are equivalent"
+    answer: 1
+---
+
+Everything so far has been you-initiated. You open a session, you ask, you
+review. The ceiling is your attention, and nothing happens on a day you do not
+sit down.
+
+This lesson removes that ceiling. It is also the lesson the operating-company
+material depends on, so it is worth getting the distinctions right rather than
+picking whichever option you read about first.
+
+## Three options, and they are not interchangeable
+
+| | **Cloud routines** | **Desktop tasks** | **Session loop** |
+|---|---|---|---|
+| Runs on | Anthropic's infrastructure | Your machine | Your machine |
+| Needs your machine on | No | Yes | Yes |
+| Needs a session open | No | No | Yes |
+| Reads your local files | **No** | **Yes** | Yes |
+| Survives a restart | Yes | Yes | Restored on resume, if unexpired |
+| Minimum interval | 1 hour | 1 minute | 1 minute |
+| Permission prompts | None, runs autonomously | Configurable per task | Inherits the session |
+
+Read the "reads your local files" row twice. It decides most real choices.
+
+## Cloud routines
+
+Scheduled work on Anthropic's infrastructure. Your laptop can be shut. They can
+also fire on an API call or a repository event rather than a clock.
+
+The catch: **a routine works from a fresh copy and cannot reach files on your
+own machine.** Anything that lives only on your laptop is invisible to it.
+
+This is the trap in the operating-company setup. A routine will run faithfully,
+on time, forever, and produce generic output, because the files it was supposed
+to reason over were never there. The failure is silent. Nothing errors; the
+work is simply uninformed.
+
+Minimum interval is one hour, which is fine for a daily pulse and unsuitable
+for anything reactive.
+
+## Desktop scheduled tasks
+
+Scheduled work on your own machine, through the Desktop app. It can reach your
+files, including business notes and anything you keep in a folder rather than a
+repository. Permissions are configurable per task.
+
+Your machine has to be awake when the task is due.
+
+**For a board whose files live locally, this is the right answer.** It is the
+only durable option that satisfies both requirements at once: it runs without
+you, and it can see the folder.
+
+## Session loops
+
+Within an open session, `/loop` re-runs a prompt on an interval:
+
+```
+/loop 30m check whether anything new landed in the pipeline notes
+```
+
+Give it an interval and a prompt for a fixed cadence. Give it a prompt with no
+interval and it picks a delay each time based on what it saw, which is usually
+what you want when you are waiting on something rather than polling a clock.
+
+Two limits worth holding on to. Loops are **session-scoped**: close the session
+and they stop. And recurring tasks **expire after seven days**, firing one last
+time before deleting themselves, which bounds how long a forgotten loop can
+run.
+
+That expiry makes loops the wrong tool for standing work and the right tool for
+"watch this until it finishes."
+
+## Timing you should expect
+
+Scheduled fires land **between turns, not mid-response**. If work is in flight
+when a task comes due, it waits.
+
+There is also deliberate jitter, so every session on earth does not hit the API
+at the same instant. A recurring hourly job set for the hour may fire any time
+in the following half hour. If exact timing matters, avoid the top and bottom
+of the hour.
+
+Times are local, not UTC. A nine-o'clock job means nine where you are.
+
+And there is no catch-up. A fire missed while the machine slept happens once
+when things resume, not once per missed interval.
+
+## Choosing
+
+Ask one question: **does the work need to read something that only exists on my
+machine?**
+
+If yes, Desktop tasks. If no, cloud routines, and enjoy not needing your laptop
+on. If you are waiting for a specific thing to finish rather than establishing a
+rhythm, a session loop, and let it expire.
+
+Most boards land on Desktop tasks, for exactly the reason in the table.
+
+## A sane first schedule
+
+Do not schedule four seats on day one. Schedule one:
+
+- **A daily run**, early, that reads your metrics and goals and reports what
+  changed and what is off its floor.
+
+Live with that for a week. If you read it every morning, add a weekly run. If
+you did not read it, adding more will not help, and the problem is the brief
+rather than the cadence.
+
+<KeyPoint>Cloud routines need no machine but cannot see local files. Desktop tasks can see local files but need the machine awake. Session loops are for watching, not for standing work, and expire after seven days. Pick on file access first, convenience second.</KeyPoint>
