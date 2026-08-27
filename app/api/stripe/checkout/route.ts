@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getStripe, getCheckoutConfig, StripeConfigError } from "@/lib/stripe";
 import { hasPurchased } from "@/lib/progress";
+import { PRODUCT } from "@/lib/course-config";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -36,6 +37,23 @@ export async function POST() {
   }
 
   try {
+    // ASSERT THE LIVE PRICE AGAINST CONFIG BEFORE CHARGING ANYONE.
+    //
+    // This route previously trusted the price id blindly, which was survivable
+    // while the page and Stripe had both said $97 since launch. It stopped
+    // being survivable when the course was repriced: a config change without a
+    // matching Stripe price would quietly charge the old amount while the page
+    // advertised the new one. Refusing is the only acceptable behaviour when
+    // the two disagree. The Lab and ladder checkouts already do this.
+    const price = await getStripe().prices.retrieve(config.priceId);
+    if (price.unit_amount !== PRODUCT.priceCents) {
+      console.error(
+        `[stripe/checkout] price mismatch: stripe=${price.unit_amount} ` +
+          `config=${PRODUCT.priceCents} (price ${config.priceId}). Refusing to charge.`
+      );
+      return NextResponse.json({ error: "Checkout is not available" }, { status: 503 });
+    }
+
     const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       // Restrict to immediate card payments. The webhook intentionally grants only

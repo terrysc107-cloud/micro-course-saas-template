@@ -54,9 +54,24 @@ export const DOCS_NOTE = {
 export const LAST_VERIFIED = "2026-08-26";
 
 export const PRODUCT = {
-  priceDisplay: "$97",
+  /**
+   * REPRICED $97 -> $57 when the course became the board path.
+   *
+   * The $97 buyer was a developer buying a developer course. The $57 buyer is a
+   * solopreneur buying a narrower product: the board path, with the developer
+   * curriculum moved to the DEV_PACK add-on at the old price. Less content for
+   * less money, aimed at the person actually asking.
+   *
+   * ⚠️ priceCents is asserted against the live Stripe price in
+   * app/api/stripe/checkout/route.ts. Changing this line WITHOUT creating the
+   * matching Stripe price and updating NEXT_PUBLIC_STRIPE_PRICE_ID makes
+   * checkout refuse with a 503 rather than charge the wrong amount. That is the
+   * intended failure: a page advertising $57 must never take $97.
+   */
+  priceDisplay: "$57",
+  priceCents: 5700,
   priceNote: "One-time payment. Lifetime access, including future updates.",
-  ctaLabel: "Get the course — $97",
+  ctaLabel: "Get the course — $57",
   /** Stripe price is read from env at runtime; never hardcode a price id. */
   priceIdEnvVar: "NEXT_PUBLIC_STRIPE_PRICE_ID",
 } as const;
@@ -283,6 +298,22 @@ export function getModuleMeta(slug: string): ModuleMeta | undefined {
  * the capstone, and the ship checklist so learners see the same spine
  * everywhere.
  */
+/**
+ * The board path's spine, as CORE_LOOP is the developer path's.
+ *
+ * "Act" is a step because 10/06 and 00/01 both say plainly that the machine
+ * does not act. A loop ending at "Decide" would quietly imply otherwise, and
+ * the most common way a board fails is that nobody does anything with it.
+ */
+export const BOARD_LOOP = [
+  { step: "Brief", detail: "Say what the run is for, what to read, and what not to do." },
+  { step: "Gather", detail: "Keep the four files true. Stale inputs produce confident nonsense." },
+  { step: "Run", detail: "On a schedule, so it happens on days you never sit down." },
+  { step: "Review", detail: "Trace every claim to a number. Expect it to name what it did not have." },
+  { step: "Decide", detail: "Log the decision and what would reverse it." },
+  { step: "Act", detail: "The board does not do this part. You do." },
+] as const;
+
 export const CORE_LOOP = [
   { step: "Inspect", detail: "Read the code before changing it. Make Claude prove it understands." },
   { step: "Plan", detail: "Agree on the approach in plan mode, before a single file is edited." },
@@ -307,9 +338,9 @@ export const OUTCOMES = [
 ] as const;
 
 export const WHO_ITS_FOR = [
-  "Developers who already write code and want a disciplined AI workflow, not a magic button",
-  "Freelancers and consultants who need output they can defend to a client",
-  "Team leads deciding how their team should adopt an agentic coding tool safely",
+  "Solopreneurs and small-business owners who have never written code and want AI doing standing work, not one-off chats",
+  "Operators and consultants who want to run this on their own business before they run it for anyone else",
+  "Anyone tired of AI that only helps on the days they remember to open it",
 ] as const;
 
 /**
@@ -317,14 +348,15 @@ export const WHO_ITS_FOR = [
  * reducer. Do not soften this into a second "who it's for" list.
  */
 export const WHO_ITS_NOT_FOR = [
-  "Complete beginners who have never written code — learn programming fundamentals first; this course assumes you can read a diff",
-  "Anyone looking for passive income or a guaranteed outcome — this teaches a skill, and what you do with it is on you",
-  "Teams needing Anthropic's official enterprise training or support — that comes from Anthropic, not from us",
+  "Anyone who wants AI to run the business for them. This builds a board that produces analysis and drafts. The decisions and the work stay yours",
+  "Anyone looking for passive income or a guaranteed outcome. This teaches a system, and what you do with it is on you",
+  "Anyone who wants to learn to program. The Dev Pack assumes you can already read code, and nothing here teaches you to write it from zero",
+  "Teams needing Anthropic's official enterprise training or support. That comes from Anthropic, not from us",
 ] as const;
 
 export const INCLUDED = [
-  "10 modules of written lessons, kept current against the official docs",
-  "A guided capstone build with a standardized workflow",
+  "The board path: from an empty folder to a board that runs on a schedule",
+  "Written lessons, kept current against the official docs and dated so you can check",
   "Downloadable templates: CLAUDE.md, build brief, preflight and ship checklists, and a Skill starter",
   "Per-lesson quizzes and progress tracking",
   "Lifetime access, including future updates as Claude Code changes",
@@ -402,7 +434,15 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "What experience do I need?",
-    a: "You should be able to read code, use a terminal, and understand a Git diff. You do not need to be senior. If you have never programmed, start with programming fundamentals first — this course will not land.",
+    a: "For the board path, none. It starts with an empty folder and assumes you have never written a line of code. The Dev Pack is the other half, and that one does assume you can read code and use a terminal.",
+  },
+  {
+    q: "Do I need to use a terminal?",
+    a: "No. The Desktop app is the recommended way in, and it looks like an ordinary application. The terminal is one of three doors and the board path never requires it. If you want to use it, the Dev Pack covers it properly.",
+  },
+  {
+    q: "What is the Dev Pack?",
+    a: "The developer half of the material: working with real codebases, debugging, tests, Git, stack-specific tactics, and the full capstone build. It is a separate add-on rather than part of the course, because a solopreneur building a board should not be paying for lessons about SQL indexes.",
   },
   {
     q: "What about the live Build Lab?",
@@ -519,8 +559,9 @@ export const LADDER: readonly LadderRung[] = [
     rung: 1,
     name: "The Course",
     promise:
-      "Learn to build real software with Claude Code, from install to shipping something you can hand to someone else.",
-    forWho: "You have an idea and a terminal you are not yet comfortable in.",
+      "Build your own AI board: a few narrow assistants that read your real numbers on a schedule and hand you a meeting you can act on. No coding.",
+    forWho:
+      "You run something small and you are tired of AI that only works when you are sitting in front of it.",
     kind: "onetime",
     // Derived from PRODUCT for the same reason — the course is live and
     // selling; its price must not be able to disagree with itself.
@@ -531,9 +572,9 @@ export const LADDER: readonly LadderRung[] = [
     href: "/#pricing",
     ctaLabel: "Get the course — $97",
     includes: [
-      "48 lessons across 10 modules, self-paced",
-      "The capstone build, start to finish",
-      "Downloads: preflight checklist, skill template",
+      "The board path, from an empty folder to a scheduled run",
+      "The four files your board reads, with worked examples",
+      "How to tell a useful run from a plausible one",
       "Lifetime access, including updates as Claude Code changes",
     ],
   },
