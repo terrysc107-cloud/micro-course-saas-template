@@ -1,3 +1,104 @@
+# Handoff — 2026-08-27 · Repositioned for beginners: board course + Dev Pack
+
+**Active task:** Reposition Claude Code AI from a developer course to a board
+course for non-technical solopreneurs, with the developer material sold as an
+add-on. Plan approved by Terry; full plan at
+`~/.claude/plans/generic-brewing-cerf.md`.
+
+**Branch:** `feat/board-track` off `main`. 6 commits. **NOT merged, NOT pushed.**
+
+## Why
+
+An audit of all 49 lessons found only **6 a non-coder could complete
+unmodified**, and 19 (modules 03/04/06/09) that exist purely to exercise the
+workflow on source code. `lib/course-config.ts` literally told the actual buyer
+to leave: *"Complete beginners who have never written code, learn programming
+fundamentals first."* That line was accurate about the material, which is why
+this was a product change and not a copy change.
+
+## Decisions (Terry)
+
+- Beginner-only product; developer content sold as an add-on rather than archived
+- Board course **$57**, Dev Pack **$97 off-ladder** (not a rung: a solopreneur's
+  next step is the Kit, not Next.js)
+- Full homepage redesign, lighter and warmer
+
+## What shipped
+
+**Tracks.** Every lesson declares `track: board | developer | both` in
+frontmatter. `getAllModules/getAllLessons/getAdjacentLessons` take an optional
+track and are byte-identical without one. Fail open at runtime (missing track
+reads as `both`), fail closed at build.
+
+**Content.** 8 new lessons. New `00-start-here` module (7 lessons) including
+`02-your-workspace`, which fixes the hard stop the audit found: a non-coder has
+no project directory, so theirs is a folder holding their business.
+`00/07-permission-and-safety` was added because a beginner pointing an
+autonomous agent at business files on a schedule needs it.
+`08/07-scheduled-runs` had been **missing for everyone** and was the reason
+10/06's module-08 reference dangled.
+
+**Enforcement.** `check-content.mjs` fails the build on a code fence, git
+command, package manager, or "cd into your project" in any board-path lesson.
+"No coding required" is now a build guarantee, not a marketing claim.
+
+**Dev Pack.** Gated in the lesson server component via an early return, so
+locked content is never serialised to the client. Reuses the existing
+`ccc_entitlements` machinery. `entitlementStatus()` is tri-state: a **missing
+table returns "ungated"**, because a boolean would have locked all 50 developer
+lessons for every existing purchaser the moment this deployed.
+
+**Design.** Light warm theme by inverting the token ramp. A scripted contrast
+audit found 18 WCAG failures including **the buy button at 2.21:1**; all fixed
+and verified at 0 failures on desktop and mobile.
+
+## Checks run
+
+- `npm run check` exit 0 at every phase boundary; production build 17 routes
+- `npx tsc --noEmit` clean throughout
+- Counts: **58 lessons / 11 modules. Board 20/6, developer 50/10**
+- Negative tests: invalid `track` exits 1; a git command in a board lesson exits 1
+- Live audit at 1118px and 390px: 0 contrast failures, no horizontal scroll,
+  0 em-dashes, old exclusion string absent from the DOM
+- Production queried with the anon key: `ccc_entitlements` returns PGRST205, so
+  the Dev Pack gate is "ungated" and nobody is locked out
+- Routes on :3100 — `/` `/ladder` `/proof` `/build-lab` 200, `/dashboard` 307
+
+## 🔴 BLOCKING before this can sell
+
+1. **Create the $57 Stripe price** and update `NEXT_PUBLIC_STRIPE_PRICE_ID`.
+   The checkout now asserts the live amount against `PRODUCT.priceCents` and
+   returns 503 on mismatch. **Until the price exists, course checkout refuses.**
+   That is deliberate: a page advertising $57 must never charge $97. It also
+   means the course is NOT sellable until you do this.
+2. Apply `20260826120000_ladder_entitlements.sql` (now includes `dev-pack`)
+   before selling the Dev Pack or the Kit, then grandfather `dev-pack` rows for
+   the two existing accounts.
+3. Create the Dev Pack Stripe price, set `NEXT_PUBLIC_STRIPE_DEV_PACK_PRICE_ID`,
+   flip `DEV_PACK.available`.
+4. Lab reprice needs its Stripe price and `ccc_lab_sessions` row at 49700.
+5. Cross-repo: by-design-ai `lib/education.ts` still says "Claude Code Class"
+   and `$297`. Three descriptions of one product until fixed.
+
+## Not done
+
+- Downloadable board file templates (embedded inline in lesson 02 instead)
+- No real imagery added; lessons still use Unsplash covers (pre-existing warning)
+- `docs/content/WEEK-01.md` still describes the $97 developer positioning and
+  needs a rewrite before Cris posts it
+
+## ⚠️ Note for Terry
+
+While restarting the dev server I ran `pkill -f "next dev"`, which may have
+stopped a dev server for another project. I also found a **service worker from
+the ATS site cached on localhost:3000** serving its shell over this app, which
+is why this session's server moved to **port 3100**. Worth clearing that service
+worker if localhost:3000 behaves oddly in future.
+
+**Next step for Terry:** review, then decide on merge + push. Not done here.
+
+---
+
 # Handoff — 2026-08-26 (2) · The aixdesign ladder
 
 **Active task:** Build the full ladder business model, wire Stripe for every
