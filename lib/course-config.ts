@@ -196,6 +196,76 @@ export const MODULE_META: ModuleMeta[] = [
   },
 ];
 
+// ── Tracks ───────────────────────────────────────────────────────────────────
+
+/**
+ * THE TWO PATHS THROUGH THIS COURSE.
+ *
+ * WHY THIS EXISTS: the curriculum was written for developers, and an audit of
+ * all 49 lessons found only 6 that a non-coder could complete unmodified.
+ * Nineteen more (all of modules 03, 04, 06 and 09) exist purely to exercise the
+ * workflow on source code. Meanwhile the actual buyer is a solopreneur who
+ * wants an AI board running their small business and has never written code.
+ *
+ * The fix is not to soften the copy. Copy that welcomes a beginner into
+ * lessons about Vitest and RLS policies produces refunds. Instead every lesson
+ * declares which path it is on, and the board path is the product.
+ *
+ * "both" is the honest default for a lesson that genuinely serves either
+ * reader. It is also the fail-open value in lib/content.ts, so a lesson
+ * missing its frontmatter is shown rather than silently hidden from a paying
+ * customer.
+ */
+export type TrackId = "board" | "developer";
+export type LessonTrack = TrackId | "both";
+
+export interface TrackMeta {
+  id: TrackId;
+  name: string;
+  promise: string;
+  forWho: string;
+  /** What this path does NOT cover. Rendered beside the promise, never buried. */
+  notFor: string;
+  /** Plain words, or "" when there is genuinely no prerequisite. */
+  prerequisite: string;
+}
+
+export const TRACKS: readonly TrackMeta[] = [
+  {
+    id: "board",
+    name: "The Board Path",
+    promise:
+      "Go from an empty folder to an AI board that reads your real numbers on a schedule and hands you a meeting you can act on.",
+    forWho:
+      "You run something small, you have never written code, and you want AI doing standing work instead of one-off chats.",
+    notFor:
+      "It does not teach you to build software. If you want that too, the Dev Pack is a separate add-on.",
+    prerequisite: "",
+  },
+  {
+    id: "developer",
+    name: "The Dev Pack",
+    promise:
+      "The disciplined agentic coding workflow: inspect, plan, build, review, test, ship, on real code in real stacks.",
+    forWho:
+      "You already write software and want an AI workflow you can defend in review.",
+    notFor:
+      "It does not teach programming. It assumes you can read a diff and run a test suite.",
+    prerequisite: "You can read code and use a terminal.",
+  },
+] as const;
+
+/** What a buyer is on unless they own the Dev Pack. */
+export const DEFAULT_TRACK: TrackId = "board";
+
+export function getTrackMeta(id: TrackId): TrackMeta | undefined {
+  return TRACKS.find((t) => t.id === id);
+}
+
+export function isTrackId(value: unknown): value is TrackId {
+  return value === "board" || value === "developer";
+}
+
 export function getModuleMeta(slug: string): ModuleMeta | undefined {
   return MODULE_META.find((m) => m.slug === slug);
 }

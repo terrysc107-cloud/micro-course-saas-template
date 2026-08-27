@@ -158,9 +158,47 @@ for (const file of lessons) {
   }
   const block = fm[1];
 
-  for (const key of ["title", "description", "order", "duration"]) {
+  for (const key of ["title", "description", "order", "duration", "track"]) {
     if (!new RegExp(`^${key}:`, "m").test(block)) {
       fail(rel(file), `Frontmatter missing required key: ${key}`);
+    }
+  }
+
+  // track must be one of the three known values. A typo here silently changes
+  // which learners see the lesson, so it is a hard failure rather than a warn.
+  const trackMatch = block.match(/^track:\s*["']?(board|developer|both)["']?\s*$/m);
+  if (!trackMatch) {
+    fail(rel(file), "track: must be exactly board, developer, or both.");
+  }
+
+  // ── Board-shibboleth sweep ────────────────────────────────────────────────
+  //
+  // A lesson on the board path is read by someone who has never written code.
+  // These patterns are the tells that a lesson still assumes otherwise: a code
+  // fence in a programming language, a git command, a package manager, or the
+  // "cd into your project" instruction that is the single hardest stop a
+  // non-coder hits in this course.
+  //
+  // SHIPPED AS WARNINGS DELIBERATELY. `npm run check:content` runs inside
+  // `npm run build`, so promoting these to failures before the example swaps
+  // land would block every deploy. Promote in the same commit that fixes the
+  // last one, and the exit code becomes the proof the swaps are real.
+  const trackValue = trackMatch ? trackMatch[1] : "both";
+  if (trackValue === "board" || trackValue === "both") {
+    const SHIBBOLETHS = [
+      { re: /```(ts|tsx|js|jsx|py|sql|go|rb|java|sh|bash)\b/g, why: "Code fence in a language a board-path reader cannot read." },
+      { re: /cd \/path\/to\/your\/project|your (repo|repository|codebase)/gi, why: "Assumes the reader has a code project. A board reader's workspace is their business folder." },
+      { re: /\bgit (diff|commit|branch|rebase|merge|push|add)\b/gi, why: "Git command on a board-path lesson." },
+      { re: /\bnpm (run|install|test)\b|\byarn\b|\bpnpm\b|\bnpx\b/gi, why: "Package manager command on a board-path lesson." },
+    ];
+    for (const { re, why } of SHIBBOLETHS) {
+      for (const m of raw.matchAll(re)) {
+        const line = raw.slice(0, m.index).split("\n").length;
+        const lineText = raw.split("\n")[line - 1] ?? "";
+        if (CORRECTION_MARKERS.test(lineText)) continue;
+        if (isQuizOption(lineText)) continue;
+        warn(`${rel(file)}:${line}`, `"${m[0].trim()}" — ${why}`);
+      }
     }
   }
 
@@ -229,7 +267,7 @@ for (const t of TEMPLATES) {
     fail("public/downloads", `TEMPLATES entry "${t.name}" → ${t.path} does not exist. The link 404s.`);
   } else {
     const body = fs.readFileSync(onDisk, "utf8");
-    if (!/claude code class|ai by design/i.test(body)) {
+    if (!/claude code class|claude code ai|ai by design/i.test(body)) {
       fail(rel(onDisk), "Download does not identify itself as course material — it could read as an Anthropic asset.");
     }
   }

@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { getModuleMeta } from "@/lib/course-config";
+import type { LessonTrack, TrackId } from "@/lib/course-config";
 
 const MODULES_DIR = path.join(process.cwd(), "content", "modules");
 
@@ -16,9 +17,38 @@ export interface LessonFrontmatter {
   description: string;
   order: number;
   duration: string;
+  /**
+   * Which path this lesson is on. Required in every .mdx file and validated by
+   * scripts/check-content.mjs, which fails the build on a missing or invalid
+   * value.
+   */
+  track: LessonTrack;
+  /** Plain-language prerequisite, rendered above the lesson body when present. */
+  prerequisite?: string;
   videoUrl?: string;
   coverImage?: string;
   quiz: QuizQuestion[];
+}
+
+/**
+ * FAIL OPEN AT RUNTIME, FAIL CLOSED AT BUILD.
+ *
+ * matter().data is an unchecked cast, so a lesson missing its `track` key is
+ * `undefined` here rather than a type error. Treating that as "both" means the
+ * worst case of a bad frontmatter slip is that a paying customer sees a lesson
+ * they were not targeted with. The opposite default would silently hide bought
+ * content, which is a much worse failure. The build-time check is what actually
+ * enforces the field.
+ */
+function lessonTrack(fm: LessonFrontmatter | undefined): LessonTrack {
+  return fm?.track ?? "both";
+}
+
+/** A lesson is in a track if it is on that path or on both. No track = everything. */
+export function isInTrack(fm: LessonFrontmatter | undefined, track?: TrackId): boolean {
+  if (!track) return true;
+  const t = lessonTrack(fm);
+  return t === "both" || t === track;
 }
 
 export interface Lesson {
@@ -73,7 +103,15 @@ function moduleOrder(folder: string) {
   return m ? parseInt(m[1]) : 99;
 }
 
-export function getAllModules(): Module[] {
+/**
+ * All modules, optionally filtered to one track.
+ *
+ * Called with no argument this returns exactly what it always has, so every
+ * existing caller is unaffected. With a track, lessons are filtered and modules
+ * left with nothing are dropped entirely, so a board learner's sidebar is short
+ * and honest rather than a list of empty shells.
+ */
+export function getAllModules(track?: TrackId): Module[] {
   return getModuleFolders().map((folder) => {
     const lessonFiles = getLessonFiles(folder);
     const lessons = lessonFiles.map((file) => {
@@ -90,9 +128,10 @@ export function getAllModules(): Module[] {
       title: moduleTitle(folder),
       description: getModuleMeta(folder)?.description ?? "",
       order: moduleOrder(folder),
-      lessons,
+      lessons: lessons.filter((l) => isInTrack(l.frontmatter, track)),
     };
-  });
+  })
+  .filter((m) => m.lessons.length > 0);
 }
 
 export function getLesson(moduleSlug: string, lessonSlug: string): Lesson | null {
@@ -114,13 +153,21 @@ export function getLesson(moduleSlug: string, lessonSlug: string): Lesson | null
   };
 }
 
-export function getAllLessons(): Omit<Lesson, "content">[] {
-  const modules = getAllModules();
-  return modules.flatMap((m) => m.lessons);
+export function getAllLessons(track?: TrackId): Omit<Lesson, "content">[] {
+  return getAllModules(track).flatMap((m) => m.lessons);
 }
 
-export function getAdjacentLessons(moduleSlug: string, lessonSlug: string) {
-  const all = getAllLessons();
+/**
+ * Prev/next within a track, so each path has its own beginning and its own
+ * ending. The board path ending is what makes the ladder upsell fire at the
+ * right moment.
+ */
+export function getAdjacentLessons(
+  moduleSlug: string,
+  lessonSlug: string,
+  track?: TrackId
+) {
+  const all = getAllLessons(track);
   const idx = all.findIndex(
     (l) => l.moduleSlug === moduleSlug && l.lessonSlug === lessonSlug
   );
