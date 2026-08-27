@@ -8,6 +8,7 @@ import LessonContent from "@/components/course/LessonContent";
 import LessonVideo from "@/components/course/LessonVideo";
 import LessonQuiz from "@/components/course/LessonQuiz";
 import LessonNav from "@/components/course/LessonNav";
+import LadderNext from "@/components/course/LadderNext";
 
 interface PageProps {
   params: Promise<{ moduleSlug: string; lessonSlug: string }>;
@@ -78,6 +79,14 @@ export default async function LessonPage({ params }: PageProps) {
 
         {/* Nav */}
         <LessonNav prev={prev} next={next} nextUnlocked={true} />
+
+        {/*
+          Final lesson only. `next` is null exactly once in the course, at the
+          end of the last module, which is the highest-intent moment a buyer
+          reaches: they just finished, and they feel capable. Before this, that
+          moment offered nothing at all.
+        */}
+        {!next && <LadderNext currentRungId="course" variant="banner" />}
       </div>
     </LessonLayout>
   );

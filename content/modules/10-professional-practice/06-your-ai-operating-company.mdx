@@ -1,0 +1,136 @@
+---
+title: "Your AI Operating Company"
+description: "Standing agents that run on a schedule, read your real numbers, and write to files you own."
+order: 6
+duration: "12 min"
+coverImage: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&auto=format&fit=crop&q=80"
+quiz:
+  - question: "What distinguishes an 'operating company' setup from just using Claude Code well?"
+    options:
+      - "It uses more expensive models"
+      - "The work is initiated on a schedule against durable files and real data, rather than only when you sit down and type a prompt"
+      - "It replaces you as the decision maker"
+      - "It runs entirely without configuration"
+    answer: 1
+  - question: "Why must the metrics an agent reasons over come from a live read rather than a file you update by hand?"
+    options:
+      - "Hand-updated files are slower to parse"
+      - "A number you typed last month is indistinguishable from a current one to the agent, so it will reason confidently from stale data and you will not be able to tell"
+      - "Agents cannot read files"
+      - "It does not matter as long as the number was accurate once"
+    answer: 1
+  - question: "What belongs in a decision log that does not belong in a metrics snapshot?"
+    options:
+      - "The current revenue figure"
+      - "The reasoning behind a choice and what would have to change to reverse it, so a later run does not silently relitigate a settled question"
+      - "Nothing, they are the same document"
+      - "Only dates"
+    answer: 1
+  - question: "What is the honest limit of this setup?"
+    options:
+      - "There is no limit once it is configured"
+      - "It produces analysis, drafts, and reminders on a schedule. It does not make the decisions, do the outreach, or generate demand, and treating its output as finished work is the main way it fails"
+      - "It only works for software businesses"
+      - "It requires a team of engineers to maintain"
+    answer: 1
+---
+
+You have spent this course driving Claude Code by hand. You open a session, you
+give it context, you review what it does, you ship. That loop is the skill, and
+it is the right place to start.
+
+This lesson is about what happens when you stop being the thing that starts the
+loop.
+
+## The shift
+
+Everything so far has been **you-initiated**. You decide there is work, you open
+a terminal, you supply context, you get output. The ceiling is your attention:
+nothing happens on a day you do not sit down.
+
+An operating-company setup inverts that. Work is initiated by a **schedule**,
+against **durable files**, using **live data**. You review output rather than
+produce it.
+
+Three ingredients make the difference, and none of them are exotic. You already
+have all three from earlier modules.
+
+## 1. Seats, not one assistant
+
+A subagent (module 08) with a narrow brief and its own context is a *seat*. The
+useful move is to define seats the way a small company would.
+
+A marketing seat reads your traffic and your content queue and proposes what to
+publish. A finance seat reads your revenue and flags what is about to lapse. A
+product seat reads your issue list and argues about priority.
+
+They are not smarter than one general session. They are **narrower**, which
+means each one can hold its whole job in context and none of them wanders.
+
+```markdown
+---
+name: cmo
+description: Reviews traffic and content performance, proposes next week's queue.
+---
+
+You are the marketing seat. You read METRICS.md and CONTENT-QUEUE.md.
+
+You propose. You never publish. Every recommendation names the number that
+justifies it, and says what you would expect to change if it works.
+
+If a number you need is missing, say it is missing. Do not estimate it.
+```
+
+That last line is the one that matters. An agent that fills a gap with a
+plausible number is worse than one that reports the gap.
+
+## 2. A schedule
+
+A seat that only runs when you remember it is just a slower version of you. The
+scheduling surfaces from module 08 are what make it standing work: a run each
+morning that reads yesterday's numbers, a longer run each week that produces a
+review.
+
+The cadence is the product. Daily catches drift; weekly catches direction.
+
+## 3. Files the agents read and write
+
+This is the part people skip, and it is the part that makes the whole thing
+compound.
+
+Agents are stateless between runs. The files are the memory:
+
+| File | Holds | Why it earns its place |
+|---|---|---|
+| `GOALS.md` | What you are trying to move, and the floor for each | Without it, every run optimises something different |
+| `METRICS.md` | The live numbers, with the query that produced them | The agent reasons over facts, not vibes |
+| `DECISION-LOG.md` | What you chose and what would reverse it | Stops next month's run relitigating a settled question |
+| `PIPELINE.md` | Named opportunities and honest stages | The one file that reveals whether anything is actually moving |
+
+**The metrics file must be generated, never typed.** A number you wrote by hand
+in March reads exactly like a current one to an agent in August. It will reason
+confidently from it, and nothing in the output will tell you it was stale. Write
+the query into the file next to the number so any run can re-derive it.
+
+## What this does not do
+
+Worth saying plainly, because the failure mode is predictable.
+
+This setup produces **analysis, drafts, and reminders on a schedule**. It does
+not make decisions. It does not do outreach. It cannot generate demand, and it
+will not notice that the one thing blocking you is a conversation you have been
+avoiding. A board with no one acting on it produces very well-organised reports
+about a business that is not moving.
+
+The honest description is: it removes the excuse that you did not have the
+analysis. It does not remove the work.
+
+## Summary
+
+Standing seats, a schedule, and durable files turn a tool you operate into a
+system that runs. Every piece is something you already learned: subagents,
+scheduling, and CLAUDE.md-style context discipline. The assembly is the new
+part, and the discipline that keeps it honest is that every number is read, not
+remembered.
+
+<KeyPoint>An operating company is narrow agents on a schedule, reasoning over generated files. The files are the memory and the schedule is the product. It gives you analysis you would not otherwise have made time for. It does not give you decisions, demand, or the courage to send the hard email.</KeyPoint>

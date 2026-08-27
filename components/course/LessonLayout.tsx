@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/course-config";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Zap, Menu, X, PanelLeftClose, PanelLeftOpen } from "lucide-react";
@@ -89,7 +90,7 @@ export default function LessonLayout({ sidebar, children }: LessonLayoutProps) {
             </button>
             <Link href="/dashboard" className="flex items-center gap-2 text-white font-semibold text-sm truncate">
               <Zap className="w-4 h-4 text-brand-400 shrink-0" />
-              <span className="hidden sm:inline">Claude Code Class</span>
+              <span className="hidden sm:inline">{BRAND.name}</span>
             </Link>
           </div>
           <SignOutButton />

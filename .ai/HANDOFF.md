@@ -1,3 +1,94 @@
+# Handoff — 2026-08-26 (2) · The aixdesign ladder
+
+**Active task:** Build the full ladder business model, wire Stripe for every
+rung, bridge the course up the ladder, ship a public dashboard, rebrand to
+Claude Code AI, and produce week-1 content for Cris.
+
+**Branch:** `feat/aixdesign-ladder` off `main`. NOT merged, NOT pushed.
+
+## What shipped
+
+**The ladder (`lib/course-config.ts`)** — `LADDER` is now the single source of
+truth for what is sold and in what order: 1 Course $97 → 2 Kit $297 → 3 Build Lab
+$497 → 4 Board Room $49/mo → 5 Install (application). Course and Lab rungs DERIVE
+their price from `PRODUCT` / `BUILD_LAB` so no rung can disagree with the number
+checkout asserts against.
+
+**Build Lab repriced $297 → $497.** It could not stay level with the Kit once the
+Kit occupied $297, and its promise grew (stand up your own operating company,
+live, Kit included). `BUILD_LAB` remains the charge authority. Changing it needs
+this line + a new Stripe price + the `ccc_lab_sessions` row.
+
+**Stripe, all rungs** — new `POST /api/ladder/checkout` handles the entitlement
+rungs, fail-closed in order: signed in → known rung → `available` flag → price id
+configured → live Stripe price matches config → mode matches `kind`. Webhook now
+branches to `grantEntitlement` for kit/board-room AND handles
+`customer.subscription.updated|deleted`, without which a cancelled Board Room
+would grant access forever. Course and Lab checkout paths untouched.
+
+**`ccc_entitlements`** (`supabase/migrations/20260826120000_ladder_entitlements.sql`)
+— SELECT-own-rows only, no write policy at all, grants revoked. Follows the
+course_purchases security migration precedent.
+
+**The conversion hole is closed.** Before today the Build Lab CTA existed in
+exactly 4 files, all under `components/marketing` (pre-purchase). Someone who
+finished all 48 lessons was offered nothing. New `LadderNext` component now
+renders on the dashboard and at the end of the FINAL lesson (`next === null`).
+
+**Course bridges into the ladder** — new lesson
+`10-professional-practice/06-your-ai-operating-company.mdx` (49 lessons now).
+Assembles module 08's subagents + scheduling + context discipline into the
+operating-company idea the Kit delivers. Includes an explicit "what this does
+not do" section.
+
+**`/proof` — public dashboard.** Live counts read per request via `lib/proof.ts`.
+Every number is counted from a table or the filesystem; a failed read renders
+"not available", never 0, because those mean opposite things. Verified live:
+49 lessons, 10 modules, **2 students enrolled**, 1 lesson completed, 0 on the Lab
+list.
+
+**`/ladder` page** — the whole model as a vertical spine, not equal pricing
+columns. Unavailable rungs render as steps, never as CTAs with invented dates.
+
+**Rebrand** — `BRAND.name` is now "Claude Code AI". Four UI files had the name
+HARDCODED (dashboard, sign-in, sign-up, LessonLayout); all now read from config.
+Nav anchors fixed from bare `#pricing` to `/#pricing` (they scrolled nowhere on
+/build-lab, /ladder, /proof) and Ladder + Numbers added.
+
+**`docs/content/WEEK-01.md`** — 7 days of posts for Cris, with an approved-facts
+block and explicit bans (no income claims, no fake scarcity, no invented numbers).
+
+## Checks run
+
+- `npm run check` → **exit 0** (49 lessons, 10 modules, 5 downloads; production
+  build passes, **17 routes**, no type errors)
+- `npx tsc --noEmit` → exit 0 at every step
+- Dev server route probe: `/` 200, `/ladder` 200, `/proof` 200, `/build-lab` 200,
+  `/dashboard` 307 → sign-in (correct when signed out)
+- `/proof` inspected live and returns real counts, not placeholders
+
+## NOT done — read before selling anything
+
+1. **No Stripe prices exist for the Kit or Board Room.** `NEXT_PUBLIC_STRIPE_KIT_PRICE_ID`
+   and `NEXT_PUBLIC_STRIPE_BOARD_ROOM_PRICE_ID` are unset, and both rungs are
+   `available: false`. Nothing can be bought. To open one: create the Stripe
+   price, set the env var, flip `available`, apply the migration.
+2. **The migration is NOT applied.** Apply it with the procedure in
+   `docs/PAYMENT-GATE-SECURITY.md` before either rung goes live.
+3. **The Build Lab reprice needs its Stripe price and `ccc_lab_sessions` row
+   updated to 49700** or Lab checkout will refuse (by design).
+4. **Cross-repo brand sync:** by-design-ai `lib/education.ts` still says
+   COURSE_NAME = "Claude Code Class" and `$297` for the Lab. Both now disagree
+   with this repo. Fix before the next marketing push.
+5. **Homepage hero not redesigned.** New surfaces (/ladder, /proof) are modern;
+   the existing landing page was left alone to avoid touching a page that is
+   converting.
+6. **Subscription proration/refund handling** beyond status changes is not built.
+
+**Next step for Terry:** review, then decide on merge + push. Not done here.
+
+---
+
 # Handoff — 2026-08-26 · Freshness pass on the Claude Code fact base
 
 **Active task:** Re-verify the curriculum against code.claude.com/docs before any marketing
@@ -171,9 +262,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-26 22:49:54 EDT
-- Branch: chore/aixdesign-rebrand
-- Last commit: 4c0cbec docs: handoff checkpoint — Phases 5 and 6 complete
-- Working tree: 7 uncommitted file(s)
+- Updated: 2026-08-26 22:58:36 EDT
+- Branch: main
+- Last commit: e26b462 docs+content: freshness pass — re-verify curriculum against current docs
+- Working tree: clean
 
 <!-- END AUTO-STATE -->

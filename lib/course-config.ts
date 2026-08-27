@@ -11,7 +11,16 @@
  */
 
 export const BRAND = {
-  name: "Claude Code Class",
+  /**
+   * RENAMED to "Claude Code AI" (2026-08-26, Terry's call).
+   *
+   * ⚠️ CROSS-REPO SYNC REQUIRED: by-design-ai's `lib/education.ts` still sets
+   * COURSE_NAME = "Claude Code Class". Two spellings of one product is two
+   * products — that repo must be updated to match before the next marketing
+   * push. The domain stays claudecodeclass.com; a domain and a brand name are
+   * allowed to differ, but two brand names are not.
+   */
+  name: "Claude Code AI",
   tagline: "An AI by Design course",
   siteUrl: "https://claudecodeclass.com",
   supportEmail: "terrysc107@gmail.com",
@@ -22,7 +31,7 @@ export const PARENT_BRAND = {
   url: "https://aixdesign.dev",
   /** Shown on the landing page to explain who teaches this and why. */
   blurb:
-    "AI by Design is Terry Scott's practice helping teams put AI to work in real production systems. Claude Code Class is the self-paced course arm of that practice — the same workflow, written down.",
+    "AI by Design is Terry Scott's practice helping teams put AI to work in real production systems. Claude Code AI is the self-paced course arm of that practice: the same workflow, written down.",
 } as const;
 
 /**
@@ -88,13 +97,20 @@ export const BUILD_LAB = {
   /** MUST be null while status is 'waitlist'. Enforced by check-content.mjs. */
   dateDisplay: null as string | null,
 
-  /** $297 for the founding run: 3x the course is a real step without
-   *  colliding with the $499 sprint, and there is no social proof yet to buy
-   *  premium pricing with. Asserted against the live Stripe price at
-   *  checkout — if they disagree, checkout refuses rather than surprising
-   *  someone. Raising it is this line plus a new Stripe price id. */
-  priceDisplay: "$297",
-  priceCents: 29700,
+  /** $497 for the founding run.
+   *
+   *  REPRICED when the ladder landed. $297 was set when the Lab sat directly
+   *  above a $97 course with nothing between them. The Kit now occupies $297,
+   *  and the Lab's promise grew — it is no longer "watch one feature get
+   *  built", it is "stand up your own operating company with me, live, on your
+   *  repo, Kit included". A rung cannot cost the same as the rung below it.
+   *
+   *  Still a founding number: there is no social proof yet, and this is the
+   *  first run. Asserted against the live Stripe price at checkout — if they
+   *  disagree, checkout refuses rather than surprising someone. Changing it is
+   *  this line plus a new Stripe price id plus the ccc_lab_sessions row. */
+  priceDisplay: "$497",
+  priceCents: 49700,
   priceIdEnvVar: "NEXT_PUBLIC_STRIPE_BUILD_LAB_PRICE_ID",
 
   description:
@@ -324,3 +340,184 @@ export const FAQ: FaqItem[] = [
     a: "Email " + BRAND.supportEmail + " within 14 days and we will refund you. No form to fill out and no questions designed to talk you out of it.",
   },
 ];
+
+// ── The ladder ───────────────────────────────────────────────────────────────
+
+/**
+ * THE LADDER — the single source of truth for what aixdesign.dev sells and in
+ * what order.
+ *
+ * Everything above this comment describes ONE product ($97 course) plus ONE
+ * upsell (the Lab). That shape sold each thing in isolation. The ladder exists
+ * to make each rung the obvious next step from the one below it, so a buyer
+ * moves up rather than being re-acquired from cold every time.
+ *
+ * THE SPINE: the course teaches you to build with Claude Code. The kit hands
+ * you the machine that runs a business with it. The Lab builds YOUR machine
+ * with you, live. The Board Room keeps it current every month. The Install is
+ * us doing it for you. Each rung is the same idea at a higher level of
+ * done-for-you — that is what makes it a ladder and not a catalogue.
+ *
+ * RULES THIS OBJECT ENFORCES (all checked by scripts/check-content.mjs):
+ *  - No rung promises an income, an outcome, or a timeline. We sell a system
+ *    and the work, never a result. See BANNED in check-content.mjs.
+ *  - Prices render from here. Stripe price ids come from env, never hardcoded.
+ *  - `kind: "application"` rungs have NO checkout by design — a five-figure
+ *    engagement is a conversation, and a Buy button on one is a lie about how
+ *    it actually gets sold.
+ *  - A rung with `available: false` renders as "what's next", never as a thing
+ *    you can buy today. Nothing here manufactures urgency.
+ *
+ * ORDERING: `rung` is the display order and the upgrade path. Keep it dense.
+ */
+
+export type LadderKind = "onetime" | "recurring" | "application";
+
+export interface LadderRung {
+  /** Stable id. Also the Stripe `product` metadata value the webhook branches on. */
+  id: "course" | "kit" | "build-lab" | "board-room" | "install";
+  rung: number;
+  name: string;
+  /** One line. What this rung IS. */
+  promise: string;
+  /** Who has outgrown the rung below and is ready for this one. */
+  forWho: string;
+  kind: LadderKind;
+  priceDisplay: string;
+  /** Cents. Asserted against the live Stripe price at checkout. null for application rungs. */
+  priceCents: number | null;
+  /** Env var holding the Stripe price id. null when there is nothing to charge. */
+  priceIdEnvVar: string | null;
+  /** Can someone buy this right now? False renders as "next", never as a CTA. */
+  available: boolean;
+  /** Where the CTA goes. */
+  href: string;
+  ctaLabel: string;
+  /** What you get. Concrete deliverables only — no adjectives, no outcomes. */
+  includes: readonly string[];
+}
+
+export const LADDER: readonly LadderRung[] = [
+  {
+    id: "course",
+    rung: 1,
+    name: "The Course",
+    promise:
+      "Learn to build real software with Claude Code, from install to shipping something you can hand to someone else.",
+    forWho: "You have an idea and a terminal you are not yet comfortable in.",
+    kind: "onetime",
+    // Derived from PRODUCT for the same reason — the course is live and
+    // selling; its price must not be able to disagree with itself.
+    priceDisplay: PRODUCT.priceDisplay,
+    priceCents: 9700,
+    priceIdEnvVar: PRODUCT.priceIdEnvVar,
+    available: true,
+    href: "/#pricing",
+    ctaLabel: "Get the course — $97",
+    includes: [
+      "48 lessons across 10 modules, self-paced",
+      "The capstone build, start to finish",
+      "Downloads: preflight checklist, skill template",
+      "Lifetime access, including updates as Claude Code changes",
+    ],
+  },
+  {
+    id: "kit",
+    rung: 2,
+    name: "The Operating Company Kit",
+    promise:
+      "The actual files behind an AI board: the agents, the scheduled runs, and the documents they read and write.",
+    forWho:
+      "You finished the course and want the machine, not another tutorial about the machine.",
+    kind: "onetime",
+    priceDisplay: "$297",
+    priceCents: 29700,
+    priceIdEnvVar: "NEXT_PUBLIC_STRIPE_KIT_PRICE_ID",
+    available: false,
+    href: "/ladder#kit",
+    ctaLabel: "Get the Kit — $297",
+    includes: [
+      "Agent definitions for a CEO, CMO, and CFO seat",
+      "The scheduled daily pulse and weekly board meeting",
+      "Templates: goals, metrics snapshot, decision log, pipeline",
+      "The freshness routine that keeps your context from rotting",
+      "A worked example from a business that actually runs on it",
+    ],
+  },
+  {
+    id: "build-lab",
+    rung: 3,
+    name: "The Build Lab",
+    promise:
+      "A live, small-group run where you stand up your own AI operating company and watch every decision, including the ones that go wrong.",
+    forWho: "You want it built with you, in your business, not adapted from a template alone.",
+    kind: "onetime",
+    // Derived, not repeated. BUILD_LAB is what checkout asserts against, so it
+    // stays the authority for the Lab's price; this rung only displays it.
+    priceDisplay: BUILD_LAB.priceDisplay,
+    priceCents: BUILD_LAB.priceCents,
+    priceIdEnvVar: BUILD_LAB.priceIdEnvVar,
+    available: false,
+    href: "/build-lab",
+    ctaLabel: "Join the Build Lab list",
+    includes: [
+      "Live small-group sessions, working on your repo",
+      "Your board configured against your real numbers",
+      "The Kit included",
+      "Recordings and the working files afterward",
+    ],
+  },
+  {
+    id: "board-room",
+    rung: 4,
+    name: "The Board Room",
+    promise:
+      "Your board keeps meeting. Every month: a fresh run against your numbers, and the updates that keep your setup current as the tools change.",
+    forWho: "You have a board running and do not want to be the one maintaining it.",
+    kind: "recurring",
+    priceDisplay: "$49/mo",
+    priceCents: 4900,
+    priceIdEnvVar: "NEXT_PUBLIC_STRIPE_BOARD_ROOM_PRICE_ID",
+    available: false,
+    href: "/ladder#board-room",
+    ctaLabel: "Join the Board Room",
+    includes: [
+      "A monthly board meeting run against your submitted metrics",
+      "The freshness report — what changed in the tools, and what it breaks",
+      "Kit updates as they ship",
+      "A members' channel",
+    ],
+  },
+  {
+    id: "install",
+    rung: 5,
+    name: "The Install",
+    promise:
+      "We build your AI operating company with you over a few weeks, then hand you the keys and the documentation.",
+    forWho: "You would rather buy the outcome of the work than do the work.",
+    kind: "application",
+    priceDisplay: "By application",
+    priceCents: null,
+    priceIdEnvVar: null,
+    available: false,
+    href: "/ladder#install",
+    ctaLabel: "Start a conversation",
+    includes: [
+      "A working board wired to your real data",
+      "Your agents written against your business, not a template",
+      "Documentation your team can maintain",
+      "A handover session, recorded",
+    ],
+  },
+] as const;
+
+export function getRung(id: LadderRung["id"]): LadderRung | undefined {
+  return LADDER.find((r) => r.id === id);
+}
+
+/** The rung above `id`, or undefined at the top. Drives every in-app upsell. */
+export function nextRung(id: LadderRung["id"]): LadderRung | undefined {
+  const current = getRung(id);
+  if (!current) return undefined;
+  return LADDER.find((r) => r.rung === current.rung + 1);
+}

@@ -1,9 +1,12 @@
+import { BRAND } from "@/lib/course-config";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getAllModules } from "@/lib/content";
 import { getCompletedLessons } from "@/lib/progress";
 import SignOutButton from "@/components/ui/SignOutButton";
+import LadderNext from "@/components/course/LadderNext";
+import { getMyEntitlements } from "@/lib/entitlements";
 import { Zap, BookOpen, ChevronRight, CheckCircle2, PlayCircle } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -12,10 +15,23 @@ export default async function DashboardPage() {
 
   if (!user) redirect("/sign-in");
 
-  const [modules, completed] = await Promise.all([
+  const [modules, completed, entitlements] = await Promise.all([
     Promise.resolve(getAllModules()),
     getCompletedLessons(user.id),
+    getMyEntitlements(),
   ]);
+
+  // Show the rung above the HIGHEST one they already hold, so the card is never
+  // selling something they own. Reaching the dashboard at all means they bought
+  // the course, so "course" is the floor.
+  const active = new Set(
+    entitlements.filter((e) => e.status === "active").map((e) => e.product)
+  );
+  const currentRungId = active.has("board-room")
+    ? ("board-room" as const)
+    : active.has("kit")
+      ? ("kit" as const)
+      : ("course" as const);
 
   const completedSet = new Set(completed);
   const allLessons = modules.flatMap((m) =>
@@ -35,7 +51,7 @@ export default async function DashboardPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2 text-white font-bold">
             <Zap className="w-5 h-5 text-brand-400" />
-            Claude Code Class
+            {BRAND.name}
           </Link>
           <SignOutButton />
         </div>
@@ -134,6 +150,12 @@ export default async function DashboardPage() {
               </div>
             );
           })}
+        </div>
+
+        {/* The ladder's in-app entry point. Sits below the modules so it never
+            competes with the reason they signed in, which is to keep learning. */}
+        <div className="mt-10">
+          <LadderNext currentRungId={currentRungId} />
         </div>
       </main>
     </div>

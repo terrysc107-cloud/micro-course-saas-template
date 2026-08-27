@@ -27,14 +27,22 @@ export default function MarketingNav() {
         </Link>
 
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          {/* Absolute, not bare "#curriculum". These render on /ladder,
+              /proof and /build-lab too, where a bare hash scrolls nowhere. */}
           <Link
-            href="#curriculum"
+            href="/ladder"
             className="hidden sm:block text-slate-400 hover:text-white text-sm transition-colors"
           >
-            Curriculum
+            Ladder
           </Link>
           <Link
-            href="#pricing"
+            href="/proof"
+            className="hidden md:block text-slate-400 hover:text-white text-sm transition-colors"
+          >
+            Numbers
+          </Link>
+          <Link
+            href="/#pricing"
             className="hidden sm:block text-slate-400 hover:text-white text-sm transition-colors"
           >
             Pricing

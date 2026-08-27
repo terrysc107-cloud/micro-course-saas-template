@@ -1,6 +1,11 @@
 import { getStripe, getWebhookConfig, StripeConfigError } from "@/lib/stripe";
 import { createServiceClient } from "@/lib/supabase/server";
 import { recordLabRegistration } from "@/lib/build-lab";
+import {
+  recordEntitlement,
+  setEntitlementStatusBySubscription,
+  type EntitlementProduct,
+} from "@/lib/entitlements";
 import { NextResponse, type NextRequest } from "next/server";
 import type Stripe from "stripe";
 
@@ -62,6 +67,42 @@ async function grantLabSeat(session: Stripe.Checkout.Session, userId: string) {
 }
 
 /**
+ * Grant a ladder entitlement (the Kit, the Board Room). Reached only from the
+ * `product` branch below, which means the signature is verified and Stripe
+ * reported the session paid.
+ *
+ * Separate from both the course grant and the Lab grant on purpose: three
+ * products, three tables, three shapes. A Kit purchase must never be able to
+ * write to course_purchases.
+ */
+async function grantEntitlement(
+  session: Stripe.Checkout.Session,
+  userId: string,
+  product: EntitlementProduct
+) {
+  const ok = await recordEntitlement({
+    userId,
+    product,
+    // amount_total is what Stripe actually charged. Trust it over any local
+    // constant — if they ever disagree, the charge is the truth.
+    amountCents: session.amount_total ?? 0,
+    currency: session.currency ?? "usd",
+    stripeSessionId: session.id,
+    stripeCustomerId: typeof session.customer === "string" ? session.customer : null,
+    stripeSubscriptionId:
+      typeof session.subscription === "string" ? session.subscription : null,
+  });
+
+  if (!ok) {
+    // 500 so Stripe retries — a paying customer must not lose access to a
+    // transient database error.
+    return NextResponse.json({ error: "DB error" }, { status: 500 });
+  }
+
+  return NextResponse.json({ received: true });
+}
+
+/**
  * The ONLY path that grants course access.
  *
  * Clients cannot write to course_purchases (see
@@ -102,6 +143,33 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
+  // Subscription lifecycle for the Board Room. Without these, a cancelled or
+  // failed subscription would keep granting access forever, because the only
+  // other write path is the initial checkout.
+  if (
+    event.type === "customer.subscription.deleted" ||
+    event.type === "customer.subscription.updated"
+  ) {
+    const sub = event.data.object as Stripe.Subscription;
+    const status =
+      event.type === "customer.subscription.deleted" || sub.status === "canceled"
+        ? "canceled"
+        : sub.status === "past_due" || sub.status === "unpaid"
+          ? "past_due"
+          : sub.status === "active" || sub.status === "trialing"
+            ? "active"
+            : null;
+
+    // Statuses we do not map (e.g. incomplete) are left alone rather than
+    // guessed at — a wrong guess either revokes a paying member or grants a
+    // lapsed one.
+    if (status) {
+      const ok = await setEntitlementStatusBySubscription(sub.id, status);
+      if (!ok) return NextResponse.json({ error: "DB error" }, { status: 500 });
+    }
+    return NextResponse.json({ received: true });
+  }
+
   if (event.type !== "checkout.session.completed") {
     return NextResponse.json({ received: true });
   }
@@ -135,6 +203,10 @@ export async function POST(request: NextRequest) {
 
   if (product === "build-lab") {
     return await grantLabSeat(session, userId);
+  }
+
+  if (product === "kit" || product === "board-room") {
+    return await grantEntitlement(session, userId, product);
   }
 
   const supabase = createServiceClient();
