@@ -87,8 +87,12 @@ async function countPurchases(): Promise<{ paid: number | null; comped: number |
 }
 
 export async function getProofSnapshot(): Promise<ProofSnapshot> {
-  const modules = getAllModules();
-  const lessons = getAllLessons();
+  // BOARD FIRST, because that is what the $57 buys. The unfiltered totals are
+  // true about the repository and misleading about the purchase, and this is
+  // the page that cannot afford that distinction to be sloppy. Both are shown.
+  const boardModules = getAllModules("board");
+  const boardLessons = getAllLessons("board");
+  const allLessons = getAllLessons();
 
   // ⚠️ THE FIX THAT MATTERS ON THIS PAGE.
   //
@@ -113,14 +117,19 @@ export async function getProofSnapshot(): Promise<ProofSnapshot> {
     curriculumVerified: LAST_VERIFIED,
     metrics: [
       {
-        label: "Lessons published",
-        value: lessons.length,
-        basis: "MDX files under content/modules, counted at build",
+        label: "Lessons in the course",
+        value: boardLessons.length,
+        basis: "Board-track lessons. This is what the course includes.",
       },
       {
-        label: "Modules",
-        value: modules.length,
-        basis: "Module folders with a MODULE_META entry",
+        label: "Modules in the course",
+        value: boardModules.length,
+        basis: "Board-track modules, counted from the filesystem",
+      },
+      {
+        label: "Lessons written, all tracks",
+        value: allLessons.length,
+        basis: "Everything in the repo, including the developer lessons sold separately. Shown so the smaller number above cannot look like the whole story.",
       },
       {
         label: "Paying students",
