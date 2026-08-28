@@ -35,7 +35,8 @@ export default function LandingPage() {
         <Hero
           moduleCount={modules.length}
           lessonCount={lessonCount}
-          templateCount={TEMPLATES.length}
+          // Board buyers are not promised the Dev Pack downloads.
+          templateCount={TEMPLATES.filter((t) => !t.devPackOnly).length}
         />
         <CoreLoopSection />
         <TracksSection />

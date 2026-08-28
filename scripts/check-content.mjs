@@ -354,6 +354,38 @@ for (const file of walk(path.join(ROOT, "components", "marketing"), ".tsx")) {
   }
 }
 
+// ── Downloads must be reachable by the buyer who was promised them ──────────
+//
+// TEMPLATES entries were only checked for route existence, never for TRACK. So
+// three downloads promised in INCLUDED to a $57 board buyer hung off lessons
+// that had been moved to the developer track: the files resolved, the lessons
+// were behind DevPackGate, and nothing failed. A promise the product cannot
+// keep is worse than a 404, because a 404 is at least obvious.
+{
+  const boardLessonRoutes = new Set();
+  for (const file of lessons) {
+    const raw = fs.readFileSync(file, "utf8");
+    const fm = raw.match(/^---\n([\s\S]*?)\n---/);
+    if (!fm) continue;
+    const t = fm[1].match(/^track:\s*["']?(board|developer|both)["']?\s*$/m);
+    if (!t || t[1] === "developer") continue;
+    const mod = path.basename(path.dirname(file));
+    const les = path.basename(file).replace(/^\d+-/, "").replace(/\.mdx$/, "");
+    boardLessonRoutes.add(`/learn/${mod}/${les}`);
+  }
+  for (const t of TEMPLATES) {
+    if (t.devPackOnly) continue;
+    if (!boardLessonRoutes.has(t.lesson)) {
+      fail(
+        "lib/course-config.ts",
+        `Template "${t.name}" hangs off ${t.lesson}, which is not on the board track. ` +
+          `A board buyer cannot reach it. Either move the download to a board lesson ` +
+          `or mark the entry devPackOnly: true.`
+      );
+    }
+  }
+}
+
 // The disclaimer must actually reach the page, not just exist in config.
 const footer = path.join(ROOT, "components", "marketing", "MarketingFooter.tsx");
 if (!fs.existsSync(footer)) {

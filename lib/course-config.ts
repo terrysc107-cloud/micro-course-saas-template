@@ -400,7 +400,7 @@ export const WHO_ITS_NOT_FOR = [
 export const INCLUDED = [
   "The board path: from an empty folder to a board that runs on a schedule",
   "Written lessons, kept current against the official docs and dated so you can check",
-  "Downloadable templates: CLAUDE.md, build brief, preflight and ship checklists, and a Skill starter",
+  "The four board files as downloads, ready to fill in",
   "Per-lesson quizzes and progress tracking",
   "Lifetime access, including future updates as Claude Code changes",
 ] as const;
@@ -416,9 +416,52 @@ export interface TemplateAsset {
   description: string;
   /** Lesson route that links this download, so nothing ships orphaned. */
   lesson: string;
+  /**
+   * True when the download belongs to the developer curriculum and hangs off a
+   * `developer` lesson. Board buyers are never shown or promised these, and
+   * check-content.mjs fails the build on any entry that is neither reachable
+   * from a board lesson nor marked here.
+   */
+  devPackOnly?: boolean;
 }
 
 export const TEMPLATES: TemplateAsset[] = [
+  // ── The board files ───────────────────────────────────────────────────────
+  // These four are what the $57 buyer actually needs, and they are attached to
+  // a board-track lesson so they are reachable without the Dev Pack.
+  //
+  // THE BUG THIS FIXES: INCLUDED promised "build brief, preflight and ship
+  // checklists" to a board buyer, and all three hang off `developer` lessons
+  // behind the Dev Pack gate. The files existed and resolved; the buyer could
+  // not reach the lessons that link them.
+  {
+    name: "GOALS.md",
+    path: "/downloads/board/GOALS.md",
+    description:
+      "Your goals file, written as floors rather than targets, with the section for what you have ruled out.",
+    lesson: "/learn/00-start-here/your-workspace",
+  },
+  {
+    name: "METRICS.md",
+    path: "/downloads/board/METRICS.md",
+    description:
+      "The metrics table with the source column, which is the one that stops a stale number reading like a current one.",
+    lesson: "/learn/00-start-here/your-workspace",
+  },
+  {
+    name: "DECISION-LOG.md",
+    path: "/downloads/board/DECISION-LOG.md",
+    description:
+      "Decisions with reversal conditions, so your board stops re-proposing things you already ruled out.",
+    lesson: "/learn/00-start-here/your-workspace",
+  },
+  {
+    name: "PIPELINE.md",
+    path: "/downloads/board/PIPELINE.md",
+    description:
+      "An honest pipeline with stages. The file most likely to flatter you if you let it.",
+    lesson: "/learn/00-start-here/your-workspace",
+  },
   {
     name: "CLAUDE.md template",
     path: "/downloads/claude-md-template.md",
@@ -432,18 +475,21 @@ export const TEMPLATES: TemplateAsset[] = [
     description:
       "The one-page brief you write before any feature, so plan mode has something real to work from.",
     lesson: "/learn/09-capstone/brief-and-inspect",
+    devPackOnly: true,
   },
   {
     name: "Preflight checklist",
     path: "/downloads/preflight-checklist.md",
     description: "What to verify before you let an agent touch a repository.",
     lesson: "/learn/01-getting-started/permission-modes",
+    devPackOnly: true,
   },
   {
     name: "Ship checklist",
     path: "/downloads/ship-checklist.md",
     description: "The review, test, deploy, and rollback gate before anything reaches production.",
     lesson: "/learn/09-capstone/qa-ship-and-rollback",
+    devPackOnly: true,
   },
   {
     name: "Skill starter",

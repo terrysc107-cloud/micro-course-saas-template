@@ -439,9 +439,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-28 11:28:38 EDT
-- Branch: feat/board-track
-- Last commit: 6805d0e feat(pricing): Board Room to $29, and the $57 Stripe price now exists
-- Working tree: 1 uncommitted file(s)
+- Updated: 2026-08-28 11:34:13 EDT
+- Branch: main
+- Last commit: 9215790 fix(proof): count what the course includes, not what the repo contains
+- Working tree: clean
 
 <!-- END AUTO-STATE -->
