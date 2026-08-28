@@ -1,3 +1,79 @@
+# Handoff — 2026-08-28 · AI board built, system modules written, page repositioned
+
+**Branch:** `feat/board-track`, 10 commits, **NOT pushed.** `npm run check` exit 0.
+
+## The direction that changed
+
+The course is no longer "learn Claude Code." It is **build AI board employees**:
+tool-agnostic in concept, verified against one implementation. Students will fork
+a GitHub template whose onboarding interview fills in their charter; the course
+teaches what is happening under the hood so they can run and extend it.
+**Maintenance is the product** — a cron proposes course updates, Terry approves.
+
+## Phase 1 — the board (done)
+
+`docs/business/ceo/` now runs this business and is the case study the curriculum
+teaches from. Ported from the crcst structure: `README.md` (memory index, five
+tiers, rotation rule), `CHARTER.md` (L1, drafts only), `GOALS.md` (floors),
+`METRICS.md` (every row carries its source), `PROMOTION-LADDER.md`,
+`PLAYBOOKS/WEEKLY.md` (encodes the freshness pass), `DECISION-LOG.md` with the
+Rank column, `CHAIRMAN-NOTES.md`, `memory/{CANDIDATES,LEARNINGS}.md`.
+
+First board meeting filed: `BOARD-MEETINGS/2026-08-27.md`. Its headline is that
+the product is finished enough to sell and structurally unable to take money.
+
+## Phase 2 — the course (core done)
+
+- **`20-memory`** (3 lessons) closes the gap Terry caught. Four flat files are
+  not a memory system; evidence is crcst measured today (56KB decision log,
+  150KB across five files, a SHIPPED file split by date by hand). Five tiers,
+  reading order, and the candidates/learnings split with the two-run rule.
+- **`21-seats`** (3 lessons): charter, floors-not-targets, promotions.
+- `check-content.mjs` gained ONE narrow escape, `teaches: <tool>`, so a lesson
+  whose job is teaching git gently is exempt from the no-code sweep. Greppable.
+
+**64 lessons / 13 modules. Board 26/8, developer 50/10.**
+
+## Phase 3 — marketing (done)
+
+- **Conversion bug:** the page advertised 64 lessons; a buyer gets 26. Fixed.
+- **Hero overclaim:** "runs while you are not looking" contradicted our own
+  scheduling lesson. Now "on a schedule, not on your memory."
+- **Prerequisite moved above the buy button.** The paid-plan requirement was
+  only visible after checkout.
+- **Three unanswered objections answered**, including "I already use ChatGPT",
+  which appeared zero times across the entire product before today.
+- **`MaintenanceSection`** renders `LAST_VERIFIED`, so the page cannot claim
+  freshness the codebase lacks.
+- **Kit boundary redrawn:** it was selling what the course now teaches.
+
+Verified live at 1440px and 390px: 0 contrast failures, 0 em-dashes, no
+horizontal scroll, prices consistent.
+
+## 🔴 Blocking the first sale (Terry only)
+
+1. **Create the $57 Stripe price**, update `NEXT_PUBLIC_STRIPE_PRICE_ID`.
+   Checkout asserts the amount and returns 503 until it exists. Nothing sells
+   until this is done.
+2. Apply `20260826120000_ladder_entitlements.sql` before selling Dev Pack or Kit.
+3. by-design-ai `lib/education.ts` still says "Claude Code Class" and `$297`.
+4. `docs/content/WEEK-01.md` still describes the retired $97 positioning.
+   Do not let Cris post it.
+
+## Open decisions
+
+- Template repo name and home (blocks writing the fork/onboarding lessons)
+- Pricing shape: $57 including 3 months, converting to $49/mo?
+
+## Not done
+
+- The onboarding interview itself, which is the highest-leverage artifact left
+- Modules for the meeting, schedules, commands, review loop, and real-data
+- The 8 planned demotions of `both` lessons to `developer`
+- Redaction policy and gate, required before any real board excerpt ships
+
+---
+
 # Handoff — 2026-08-27 · Repositioned for beginners: board course + Dev Pack
 
 **Active task:** Reposition Claude Code AI from a developer course to a board
