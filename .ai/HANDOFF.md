@@ -439,9 +439,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-28 08:34:27 EDT
+- Updated: 2026-08-28 09:09:32 EDT
 - Branch: feat/board-track
-- Last commit: 0d1c1e1 docs: handoff checkpoint
-- Working tree: clean
+- Last commit: 9caf1c4 feat(config): name the starter template ai-board
+- Working tree: 1 uncommitted file(s)
 
 <!-- END AUTO-STATE -->

@@ -689,20 +689,37 @@ export const LADDER: readonly LadderRung[] = [
     rung: 4,
     name: "The Board Room",
     promise:
-      "Your board keeps meeting. Every month: a fresh run against your numbers, and the updates that keep your setup current as the tools change.",
-    forWho: "You have a board running and do not want to be the one maintaining it.",
+      "Your board stays current, and you watch mine run. Every month: the archive of a real board working on a real business, and the updates that keep your copy true as the tools move.",
+    forWho:
+      "You have a board running and you would rather not be the one maintaining it.",
     kind: "recurring",
-    priceDisplay: "$49/mo",
-    priceCents: 4900,
+    /**
+     * $29, not $49.
+     *
+     * REPRICED before launch. With zero customers, retention matters far more
+     * than revenue per customer: a $29 someone keeps for a year beats a $49 they
+     * cancel in month two, and raising a price later is easy while lowering one
+     * is a signal. This buyer is also already paying an AI provider on top of
+     * the course.
+     *
+     * NOT SOLD AT CHECKOUT, deliberately. The constraint today is the first
+     * sale, not ARPU, and attaching a subscription to the $57 adds friction at
+     * the exact moment we can least afford it. This is sold after a board is
+     * running, from the final lesson and the dashboard, where "keep it current"
+     * means something. Revisit the whole recurring question when there is
+     * evidence rather than a theory.
+     */
+    priceDisplay: "$29/mo",
+    priceCents: 2900,
     priceIdEnvVar: "NEXT_PUBLIC_STRIPE_BOARD_ROOM_PRICE_ID",
     available: false,
     href: "/ladder#board-room",
     ctaLabel: "Join the Board Room",
     includes: [
-      "A monthly board meeting run against your submitted metrics",
-      "The freshness report, what changed in the tools, and what it breaks",
-      "Kit updates as they ship",
-      "A members' channel",
+      "My board's meetings each month, redacted, corrections included",
+      "The freshness report: what changed in the tools and what it breaks",
+      "Template and playbook updates as they ship",
+      "The shared configs library, once there are members to fill it",
     ],
   },
   {
