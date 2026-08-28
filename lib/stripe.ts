@@ -19,10 +19,26 @@ export class StripeConfigError extends Error {
   }
 }
 
+/**
+ * Reads required env vars and TRIMS them.
+ *
+ * The trim is not tidiness. Every secret in this project's Vercel production
+ * environment was stored with a trailing newline, and a newline inside
+ * `Authorization: Bearer <key>` makes Node reject the header outright with
+ * ERR_INVALID_CHAR. Checkout returned 503 on every attempt for months, and the
+ * surfaced error was "connection to Stripe" — which points at Stripe, not at
+ * the key, so it reads like an outage rather than a config fault.
+ *
+ * The environment has been cleaned, but a value pasted with a trailing newline
+ * is far too easy to recreate and far too hard to see. Trimming here means the
+ * mistake can never take payments down again.
+ */
 function requireEnv(names: string[]): Record<string, string> {
-  const missing = names.filter((n) => !process.env[n]);
+  const missing = names.filter((n) => !process.env[n]?.trim());
   if (missing.length > 0) throw new StripeConfigError(missing);
-  return Object.fromEntries(names.map((n) => [n, process.env[n] as string]));
+  return Object.fromEntries(
+    names.map((n) => [n, (process.env[n] as string).trim()])
+  );
 }
 
 let client: Stripe | null = null;

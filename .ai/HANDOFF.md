@@ -439,9 +439,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-28 12:02:45 EDT
+- Updated: 2026-08-28 13:31:58 EDT
 - Branch: main
-- Last commit: 61b4b75 fix(downloads): board buyers can reach every download they are promised
+- Last commit: 66e01f5 fix(copy): promise corrections, not updates
 - Working tree: clean
 
 <!-- END AUTO-STATE -->

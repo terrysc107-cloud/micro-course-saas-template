@@ -77,8 +77,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  const priceId = rung.priceIdEnvVar ? process.env[rung.priceIdEnvVar] : undefined;
+  // .trim() for the same reason as lib/stripe.ts: every production secret in
+  // this project was stored with a trailing newline, which is invisible in a
+  // dashboard and fatal inside an HTTP header.
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "");
+  const priceId = rung.priceIdEnvVar
+    ? process.env[rung.priceIdEnvVar]?.trim()
+    : undefined;
 
   if (!siteUrl || !priceId) {
     const missing = [
