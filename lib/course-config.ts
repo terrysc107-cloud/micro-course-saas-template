@@ -229,6 +229,37 @@ export const MODULE_META: ModuleMeta[] = [
   },
 ];
 
+// ── The starter template ─────────────────────────────────────────────────────
+
+/**
+ * The repo a student forks to get their board.
+ *
+ * NAMED `ai-board`, not `ai-board-starter`, and the reason is what happens on
+ * fork. A fork of `ai-board-starter` leaves someone owning a repo called
+ * "ai-board-starter" forever, which reads like a template they never made their
+ * own. A fork of `ai-board` leaves them owning `ai-board`. The name is already
+ * correct for them on day one.
+ *
+ * It also matches the folder name the curriculum already teaches in
+ * `00-start-here/02-your-workspace`, so forking produces exactly the folder
+ * every later lesson refers to. And it says nothing about which AI, which tool,
+ * or which course, so it survives the tool-agnostic direction intact.
+ *
+ * ⚠️ The TEMPLATE is public so it can be forked. A student's FORK must be
+ * private: it fills with real revenue, pipeline, and customer names. That
+ * warning lives in `20-memory/03-version-history-with-git`.
+ */
+export const TEMPLATE_REPO = {
+  name: "ai-board",
+  owner: "terrysc107-cloud",
+  url: "https://github.com/terrysc107-cloud/ai-board",
+  /** The GitHub About field. The slug is permanent; this can change freely. */
+  tagline:
+    "A folder of markdown files that becomes an AI board for your business.",
+  /** Set true once the repo exists. Until then, nothing links to it. */
+  published: false,
+} as const;
+
 // ── Tracks ───────────────────────────────────────────────────────────────────
 
 /**
