@@ -439,9 +439,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-28 09:09:32 EDT
+- Updated: 2026-08-28 11:28:38 EDT
 - Branch: feat/board-track
-- Last commit: 9caf1c4 feat(config): name the starter template ai-board
+- Last commit: 6805d0e feat(pricing): Board Room to $29, and the $57 Stripe price now exists
 - Working tree: 1 uncommitted file(s)
 
 <!-- END AUTO-STATE -->
