@@ -73,7 +73,10 @@ export default function Hero({ moduleCount, lessonCount, templateCount }: HeroPr
           </div>
 
           <p className="text-slate-500 text-sm mt-4">
-            {PRODUCT.priceNote} Verified against the official docs on {LAST_VERIFIED}.
+            {PRODUCT.priceNote}{" "}
+            <span className="whitespace-nowrap">
+              Last verified {LAST_VERIFIED}.
+            </span>
           </p>
         </div>
 

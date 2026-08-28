@@ -70,7 +70,21 @@ export const PRODUCT = {
    */
   priceDisplay: "$57",
   priceCents: 5700,
-  priceNote: "One-time payment. Lifetime access, including future updates.",
+  /**
+  * "Corrections", NOT "future updates", and the distinction is load-bearing.
+  *
+  * The Board Room sells updates: my board's archive, new seats and playbooks,
+  * the freshness report. If the one-time purchase already promised "future
+  * updates", the subscription would be selling something the buyer had been
+  * told they already own, and the ladder would contradict itself on the pricing
+  * page.
+  *
+  * The honest line is the one software has used for decades: fixes to what you
+  * bought are free forever, new material is not. We cannot sell a course with a
+  * lesson we know to be false, so corrections were never a bonus.
+  */
+  priceNote:
+    "One-time payment. Lifetime access, and the lessons stay correct as the tools change.",
   ctaLabel: "Get the course, $57",
   /** Stripe price is read from env at runtime; never hardcode a price id. */
   priceIdEnvVar: "NEXT_PUBLIC_STRIPE_PRICE_ID",
@@ -402,7 +416,7 @@ export const INCLUDED = [
   "Written lessons, kept current against the official docs and dated so you can check",
   "The four board files as downloads, ready to fill in",
   "Per-lesson quizzes and progress tracking",
-  "Lifetime access, including future updates as Claude Code changes",
+  "Lifetime access, and corrections whenever the tools move under a lesson",
 ] as const;
 
 /**
@@ -515,7 +529,7 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "Are there videos?",
-    a: "Not yet. The written lessons are complete and are the course. We are recording original walkthroughs now, and they will be added to the relevant lessons as they ship, included at no extra cost, because your purchase covers future updates. We would rather ship no video than someone else's video.",
+    a: "Not yet. The written lessons are complete and are the course. We are recording original walkthroughs now, and they will be added to the relevant lessons as they ship, included at no extra cost, because they are lessons you already bought presented another way, not new material. We would rather ship no video than someone else's video.",
   },
   {
     q: "Will this go out of date?",
@@ -676,7 +690,7 @@ export const LADDER: readonly LadderRung[] = [
       "The board path, from an empty folder to a scheduled run",
       "The four files your board reads, with worked examples",
       "How to tell a useful run from a plausible one",
-      "Lifetime access, including updates as Claude Code changes",
+      "Lifetime access, and corrections whenever the tools move under a lesson",
     ],
   },
   {
