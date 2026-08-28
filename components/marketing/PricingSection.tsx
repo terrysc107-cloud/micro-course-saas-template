@@ -40,6 +40,22 @@ export default function PricingSection() {
           ))}
         </ul>
 
+        {/*
+          THE PREREQUISITE GOES ABOVE THE BUY BUTTON, NOT IN AN FAQ.
+          Claude Code needs a paid plan, billed by Anthropic. Someone on the free
+          plan installs, hits a wall, and refunds. Losing a few sales here is
+          strictly better than taking money from people the product cannot serve.
+        */}
+        <div className="mb-6 rounded-xl border border-slate-700 bg-slate-950/40 p-4">
+          <p className="text-sm text-slate-300 leading-relaxed">
+            <span className="font-semibold text-slate-50">Before you buy:</span>{" "}
+            this course drives an AI coding agent, and the one it is written
+            against needs a paid plan billed separately by Anthropic. The free
+            tier will not run it. Everything else you need is a folder and a text
+            editor.
+          </p>
+        </div>
+
         <BuyButton
           label={PRODUCT.ctaLabel}
           className="w-full bg-gold hover:brightness-95 text-slate-50 py-4 rounded-xl text-lg shadow-[0_0_28px_rgba(201,168,76,0.28)] hover:shadow-[0_0_36px_rgba(201,168,76,0.42)] transition-shadow"

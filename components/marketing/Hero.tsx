@@ -37,8 +37,8 @@ export default function Hero({ moduleCount, lessonCount, templateCount }: HeroPr
           </a>
 
           <h1 className="text-4xl sm:text-6xl font-bold text-slate-50 leading-[1.05] tracking-tight mb-6 text-balance">
-            Build an AI board that runs{" "}
-            <span className="text-brand-400">while you are not looking.</span>
+            Build AI employees that run{" "}
+            <span className="text-brand-400">on a schedule, not on your memory.</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-slate-400 leading-relaxed mb-8 text-pretty">

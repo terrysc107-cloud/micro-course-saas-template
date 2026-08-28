@@ -449,6 +449,18 @@ export const FAQ: FaqItem[] = [
     a: "For the board path, none. It starts with an empty folder and assumes you have never written a line of code. The Dev Pack is the other half, and that one does assume you can read code and use a terminal.",
   },
   {
+    q: "I already use ChatGPT every day. Why do I need this?",
+    a: "Because ChatGPT cannot start work without you. It waits for you to open it, and it cannot read or write the files your business actually lives in. This teaches you to build something that runs on a schedule against your real numbers and hands you a decision when you sit down. If what you want is a better chat, keep the one you have. This is for when you want work to happen on days you never log in.",
+  },
+  {
+    q: "Is this only for one AI tool?",
+    a: "No. The system is a folder of markdown files and a schedule, so it runs on any agent that can read your folder and act on a schedule. The lessons are written and verified against one implementation so the instructions are concrete rather than vague, and each one names the capability it needs so you can map it onto whatever you use.",
+  },
+  {
+    q: "Will this still be right in six months?",
+    a: "That is the actual product. These tools change weekly, so the course carries a verification date, the corrections are published rather than quietly patched, and you can check the date before you buy. It has already caught its own stale correction once: a note saying a command had been removed, when the command had come back.",
+  },
+  {
     q: "Do I need to use a terminal?",
     a: "No. The Desktop app is the recommended way in, and it looks like an ordinary application. The terminal is one of three doors and the board path never requires it. If you want to use it, the Dev Pack covers it properly.",
   },
@@ -594,10 +606,15 @@ export const LADDER: readonly LadderRung[] = [
     id: "kit",
     rung: 2,
     name: "The Operating Company Kit",
+    // BOUNDARY, and it needs to stay sharp. The course now teaches the whole
+    // system, so "the agents and the templates" would be selling what someone
+    // already bought. The line is: the course is how to write it, the Kit is
+    // mine, filled in, plus three months of it actually running. The archive is
+    // the part that cannot be taught in prose and cannot be copied.
     promise:
-      "The actual files behind an AI board: the agents, the scheduled runs, and the documents they read and write.",
+      "My board, filled in: four more seats with the reporting lines between them, the real playbooks, and three months of meetings it actually produced.",
     forWho:
-      "You finished the course and want the machine, not another tutorial about the machine.",
+      "You have one seat running and you want the org, plus the archive of someone else's board working and getting things wrong.",
     kind: "onetime",
     priceDisplay: "$297",
     priceCents: 29700,
@@ -606,11 +623,11 @@ export const LADDER: readonly LadderRung[] = [
     href: "/ladder#kit",
     ctaLabel: "Get the Kit, $297",
     includes: [
-      "Agent definitions for a CEO, CMO, and CFO seat",
-      "The scheduled daily pulse and weekly board meeting",
-      "Templates: goals, metrics snapshot, decision log, pipeline",
-      "The freshness routine that keeps your context from rotting",
-      "A worked example from a business that actually runs on it",
+      "Four more seats, pre-chartered, with the reporting lines between them",
+      "The five real playbooks, not templates to fill in",
+      "The query-pack pattern: locked queries so a number cannot be improvised",
+      "The archive: real board meetings and the full decision log, redacted",
+      "Corrections included. You see where the board was wrong and how it noticed",
     ],
   },
   {
