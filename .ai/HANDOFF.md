@@ -363,9 +363,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-26 23:32:12 EDT
-- Branch: feat/aixdesign-ladder
-- Last commit: a85d3c7 feat(ladder): full aixdesign ladder, Stripe for every rung, public dashboard
+- Updated: 2026-08-27 22:02:40 EDT
+- Branch: feat/board-track
+- Last commit: fc2b249 docs: handoff checkpoint for the beginner repositioning
 - Working tree: 2 uncommitted file(s)
 
 <!-- END AUTO-STATE -->
