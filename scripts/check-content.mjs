@@ -184,8 +184,17 @@ for (const file of lessons) {
   // code fence, a git command, or a "cd into your project" instruction without
   // failing the build. That is the whole enforcement mechanism behind claiming
   // this path needs no coding.
+  //
+  // ONE ESCAPE, AND IT IS DELIBERATELY NARROW. `teaches: <tool>` in frontmatter
+  // exempts a lesson from the sweep. The gate exists to stop a lesson ASSUMING
+  // coding ability; a lesson whose entire job is to TEACH a tool gently is the
+  // opposite of that, and without the escape the course could never teach git
+  // at all. The value is recorded so the exemptions are greppable, and a lesson
+  // claiming it must actually be about that tool — a reviewer's job, not a
+  // regex's.
   const trackValue = trackMatch ? trackMatch[1] : "both";
-  if (trackValue === "board" || trackValue === "both") {
+  const teaches = block.match(/^teaches:\s*["']?([a-z-]+)["']?\s*$/m);
+  if (!teaches && (trackValue === "board" || trackValue === "both")) {
     const SHIBBOLETHS = [
       { re: /```(ts|tsx|js|jsx|py|sql|go|rb|java|sh|bash)\b/g, why: "Code fence in a language a board-path reader cannot read." },
       { re: /cd \/path\/to\/your\/project|your (repo|repository|codebase)/gi, why: "Assumes the reader has a code project. A board reader's workspace is their business folder." },

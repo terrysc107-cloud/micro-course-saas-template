@@ -1,0 +1,150 @@
+---
+title: "Version History, Gently"
+description: "Why your board should keep its own history, the four commands that do it, and what you get that a synced folder cannot give you."
+order: 3
+duration: "12 min"
+track: board
+teaches: git
+quiz:
+  - question: "What does version history give a board that a synced folder does not?"
+    options:
+      - "Backups"
+      - "A record of what changed, when, and why, that you can read later and reason over"
+      - "Faster access"
+      - "More storage"
+    answer: 1
+  - question: "Why does this matter more for an AI board than for ordinary documents?"
+    options:
+      - "The files are larger"
+      - "Something other than you is editing your files, so being able to see exactly what it changed is how you keep trusting it"
+      - "It is required by the tools"
+      - "It does not matter more"
+    answer: 1
+  - question: "You made a mess of your charter. What is the recovery?"
+    options:
+      - "Rewrite it from memory"
+      - "Restore the last saved version, because every save is a point you can return to"
+      - "Start a new file"
+      - "There is no recovery"
+    answer: 1
+  - question: "How often should you save a checkpoint?"
+    options:
+      - "Once a month"
+      - "After anything you would be annoyed to lose, which in practice is most sessions"
+      - "Only when the board changes something"
+      - "Every few minutes"
+    answer: 1
+---
+
+Your board folder should keep its own history. This lesson is why, and the four
+commands that do it.
+
+If you have never used git, that word may carry some baggage. Ignore it. You are
+going to use a very small corner of it, and none of it involves programming.
+
+## Why bother
+
+You already have Dropbox or iCloud, which recovers deleted files. This is a
+different thing.
+
+**Something other than you is editing these files now.** Your board writes the
+meeting, updates the metrics, appends to the decision log. Version history means
+you can look at exactly what it changed, in what order, and decide whether you
+agree. That is not a backup feature. It is how you keep trusting a thing that
+edits your work while you are asleep.
+
+There is a second reason that matters later. When your decision log says a choice
+was made in June and revised in August, history is what makes that credible
+rather than a claim. If you ever hand this to someone, or sell the business, the
+difference between "documented process" and "some files" is exactly this.
+
+## The mental model
+
+A **repository** is your folder, with memory.
+
+A **commit** is a saved checkpoint. You choose when. Each one has a note saying
+what changed and why.
+
+That is the whole model. There is a great deal more to git and you do not need
+any of it.
+
+## Four commands
+
+Once, to give your folder a memory:
+
+```
+git init
+```
+
+Then, whenever you have done something worth keeping:
+
+```
+git add .
+git commit -m "Set my Q4 floors and logged why I dropped the starter package"
+```
+
+`add .` means "include everything that changed." `commit` saves the checkpoint
+with your note.
+
+To see what has happened:
+
+```
+git log --oneline
+```
+
+You will get one line per checkpoint, newest first. That list is your board's
+history.
+
+## Writing the note
+
+The note is the part with lasting value, and the temptation is to type
+"updates" every time.
+
+Write what a stranger would need. Not *what* changed, which the history already
+shows, but *why*:
+
+- **Weak:** `updated goals`
+- **Strong:** `Raised the revenue floor to 4k after three months above 3k`
+
+Six months later the first tells you nothing and the second tells you everything.
+
+## When to save
+
+After anything you would be annoyed to lose. In practice that means at the end of
+most sessions, and always after a board run that changed your files.
+
+A useful habit: save the checkpoint immediately after reviewing what your board
+wrote. You have just read the changes, so the note practically writes itself.
+
+## Undo
+
+You made a mess of your charter and want yesterday's version back. Every
+checkpoint is a point you can return to, so nothing you have saved is ever
+really lost.
+
+The exact command depends on what you are undoing, and this is a fine place to
+ask your agent: *"I want to restore CHARTER.md to how it was two checkpoints
+ago."* It will tell you the command and explain it. That is a legitimate use of
+the tool sitting right there, and it beats memorising commands you will use
+twice a year.
+
+## Where it lives
+
+Locally, your folder now has history. That is enough.
+
+If you also want it stored online, GitHub is where most people put it, and it
+gives you a copy that survives your laptop dying. It is free for this, and if
+you started from a template you are already there.
+
+One thing to be careful about: **a repository can be public or private, and your
+board contains your real numbers, your pipeline, and your customers' names.**
+Keep it private. This is the one setting worth double-checking.
+
+## What you have now
+
+A folder that remembers every version of itself, notes explaining every change,
+and the ability to see exactly what your board did while you were not watching.
+
+Four commands. That is the whole of it.
+
+<KeyPoint>A repository is your folder with memory, and a commit is a checkpoint with a note saying why. This matters more than ordinary backups because something other than you is editing these files, and seeing precisely what it changed is how you keep trusting it. Keep the repository private: it holds your real numbers.</KeyPoint>

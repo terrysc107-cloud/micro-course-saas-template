@@ -156,6 +156,18 @@ export const MODULE_META: ModuleMeta[] = [
       "Go from an empty folder to a working AI board. What a board is, where it lives, how to open it, and how to tell a useful run from a plausible one. No code.",
   },
   {
+    slug: "20-memory",
+    title: "Memory: How the System Remembers",
+    description:
+      "Four files in a folder work for about six weeks. Tiers, an index, an inbox that drains, dated archives, and the split between what your board proposes and what you promote.",
+  },
+  {
+    slug: "21-seats",
+    title: "Seats: Charters, Goals, and Promotions",
+    description:
+      "Who a seat is, what it may do alone, what floors it is measured against, and how it earns more autonomy without you getting burned.",
+  },
+  {
     slug: "01-getting-started",
     title: "Getting Started",
     description:

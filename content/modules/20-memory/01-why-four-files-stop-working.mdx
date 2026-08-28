@@ -1,0 +1,116 @@
+---
+title: "Why Four Files Stop Working"
+description: "The failure that arrives around month three, why it is invisible until it happens, and the shape that survives it."
+order: 1
+duration: "9 min"
+track: board
+quiz:
+  - question: "Why do four flat files stop working after a few months?"
+    options:
+      - "The agent forgets how to read them"
+      - "They grow without bound, so every run either reads a huge amount of history or misses recent context"
+      - "Markdown has a size limit"
+      - "They do not stop working"
+    answer: 1
+  - question: "What is the difference between hot state and the record?"
+    options:
+      - "Hot state is more important"
+      - "Hot state is small, current, and read every run; the record is written often, read almost never, and grows forever"
+      - "The record is private"
+      - "There is no difference"
+    answer: 1
+  - question: "A board that has run for three months has a 56KB decision log. What should a weekly run do with it?"
+    options:
+      - "Read all of it, for full context"
+      - "Append to it and read almost none of it, consulting it only when a specific past decision is in question"
+      - "Delete the old entries"
+      - "Summarise it into the goals file"
+    answer: 1
+  - question: "What is the tell that this failure is happening to you?"
+    options:
+      - "The board returns an error"
+      - "Nothing visible. Runs get vaguer and start missing recent context while still sounding confident"
+      - "Your files become unreadable"
+      - "The schedule stops firing"
+    answer: 1
+---
+
+Everything so far has had you keeping four files in a folder. That shape is
+correct for week one and it has a shelf life.
+
+Here is the failure, stated plainly so you recognise it before it costs you
+anything.
+
+## The failure
+
+Your board writes every week. Decisions accumulate. Meetings accumulate. The
+files that were four short pages in September are a small book by December.
+
+Every run reads them. So one of two things happens, and both are bad.
+
+Either the run reads everything, and most of its attention is spent on a
+decision from four months ago instead of the thing that changed on Tuesday. Or
+it reads part of it and quietly misses what matters most, which is almost always
+the most recent part.
+
+**There is no error message.** The board keeps producing confident, articulate
+reports. They just get vaguer, and slightly wrong, and you will assume the model
+got worse.
+
+## This is not hypothetical
+
+Here is a real board that has run for three months, measured today:
+
+```
+DECISION-LOG.md      56 KB
+DAILY-PULSE.md       36 KB
+CONTENT-QUEUE.md     28 KB
+CEO-GOALS.md         24 KB
+CHARTER.md           20 KB
+```
+
+Over 150KB across the top five files, and that is one seat out of five.
+
+Look at two other files in the same folder: `SHIPPED-2026-06-04.md` and
+`SHIPPED-2026-07-04.md`. That is not two documents. That is **one file that got
+too big and was split by date** by a person who hit this exact wall and solved it
+by hand, in the middle of doing something else.
+
+You are going to hit the same wall. The rest of this module is the shape that
+survives it.
+
+## Four different jobs
+
+The mistake is treating "the files" as one thing. They are doing four jobs with
+completely different read and write patterns.
+
+| Job | Example | Read | Written | Size |
+|---|---|---|---|---|
+| **Identity** | the charter | every run | rarely | small, stable |
+| **Hot state** | goals, metrics, inbox | every run | constantly | **must stay small** |
+| **The record** | decisions, meetings | almost never | every run | grows forever |
+| **Learned** | what the system worked out | occasionally | rarely | slow |
+
+Once you see them as four jobs, the fix is obvious: **the things that grow
+forever must not be things that are read every time.**
+
+## What that looks like
+
+- Identity and hot state stay in a handful of short files at the top level
+- The record moves to a folder of dated files, one per meeting, never one
+  growing file
+- When a hot file does grow fat, it splits by date and the old part stops being
+  read
+- One index file says what is where and what to read when
+
+That is the entire architecture. It is not clever. It is just the difference
+between a system that works in month one and a system that still works in month
+twelve.
+
+## The honest version of the promise
+
+Nobody tells you this part, because a course that ends at "make four files"
+looks complete and demos beautifully. It works right up until the point where
+you have invested three months of your business's thinking into it.
+
+<KeyPoint>Four flat files work for about six weeks. The things that grow forever must not be read every run, and there is no error when you get this wrong: the board just gets quietly vaguer while sounding exactly as confident. Identity and hot state stay small; the record moves to dated files.</KeyPoint>
