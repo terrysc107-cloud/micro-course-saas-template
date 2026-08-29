@@ -64,10 +64,10 @@ of a stale figure is a decision.
 
 That asymmetry is why this is worth a module rather than a footnote.
 
-## The minimum fix, before connecting anything
+## The column you already have
 
-You do not need an integration to make this much safer. You need two extra
-columns:
+You do not need an integration to make this much safer. You already built the
+defence in module 1, and this is the failure it was for:
 
 ```markdown
 | Metric          | Value  | Source                          | As of  |
@@ -77,7 +77,8 @@ columns:
 | Website visits  | unknown| No analytics installed          | -      |
 ```
 
-Now a run in July can see the date and say so:
+`As of` is the one doing the work. Because it is there, a run in July can see
+the date and say so:
 
 > Revenue is dated March 3, four months ago. I am not going to reason about
 > revenue trends from it. Refresh it or tell me to proceed anyway.

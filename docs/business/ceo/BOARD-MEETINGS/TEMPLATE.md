@@ -40,7 +40,7 @@ The changelog and the newsletter, ready to send and not sent.
 
 ## 8. Next week
 
-## 9. Promotion status *(Step 5.5 — mandatory)*
+## 9. Promotion status *(Step 5 — mandatory)*
 
 Current rank. Requesting or not, and the evidence either way. My goals for next
 week. The one executable thing I need.
@@ -52,4 +52,4 @@ week. The one executable thing I need.
 - [ ] Nothing published, sent, merged, deployed, or spent
 - [ ] `content/` not edited directly
 - [ ] Decisions logged with rank
-- [ ] Step 5.5 not skipped
+- [ ] Step 5 not skipped

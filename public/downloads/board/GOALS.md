@@ -23,4 +23,4 @@
 - (three months at or above the floor, not one good month)
 
 ---
-Template from Claude Code AI, an AI by Design course. https://claudecodeclass.com
+Template from My AI Board, an AI by Design course. https://runyouraiboard.com

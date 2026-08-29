@@ -94,18 +94,19 @@ aspirations make it vague.
 
 Last updated: (put today's date here)
 
-| Metric | Value | Where it came from |
-|---|---|---|
-| Monthly revenue | $2,640 | Stripe dashboard, this month to date |
-| Enquiries this month | 4 | Contact form inbox, counted by hand |
-| Email list | 212 | Mailchimp, audience tab |
-| Website visits (30d) | unknown | No analytics installed yet |
+| Metric | Value | Source | As of |
+|---|---|---|---|
+| Monthly revenue | $2,640 | Stripe dashboard, month to date | Mar 03 |
+| Enquiries this month | 4 | Contact form inbox, counted by hand | Mar 03 |
+| Email list | 212 | Mailchimp, audience tab | Mar 01 |
+| Website visits (30d) | unknown | No analytics installed yet | - |
 ```
 
-**The third column is the important one.** A number with no source is
+**The last two columns are the important ones.** A number with no source is
 indistinguishable from a number you made up six months ago, and a seat reading
-it cannot tell either. Recording where it came from means any future run can
-check whether it is still true.
+it cannot tell either. `Source` lets a future run check where it came from;
+`As of` lets it notice the figure is four months stale and say so instead of
+reasoning from it.
 
 Note the last row. `unknown` is a legitimate, useful entry. Never invent a
 placeholder to make the table look finished.
@@ -115,28 +116,35 @@ placeholder to make the table look finished.
 ```
 # Decisions
 
-## Stopped offering the $200 starter package
-Decided: (date)
-Why: Took the same effort as the $800 package and attracted people who
-wanted the $800 outcome for $200.
-What would change my mind: If three people ask for it unprompted in a month.
+| Date | Rank | Decision | Why | What would change my mind | Outcome |
+|---|---|---|---|---|---|
+| Mar 03 | me | Stopped the $200 starter package | Same effort as the $800 one, and it attracted people who wanted the $800 outcome for $200 | Three people ask for it unprompted in a month | |
 ```
 
 This is the file that stops you relitigating settled questions every few weeks,
 and stops a seat suggesting something you already tried and rejected.
 
-The "what would change my mind" line is the valuable part. A decision with no
-reversal condition is just an opinion with a date on it.
+Two columns carry the weight. **"What would change my mind"** is the valuable
+one: a decision with no reversal condition is just an opinion with a date on it.
+
+And **`Rank`** records who made the call and under what authority. Yours say
+`me`. Once a seat is making decisions it stamps its own rank there, and that
+column is what later makes a promotion request checkable rather than a claim.
+Leave `Outcome` blank; you fill it in later, honestly, including when you were
+wrong.
 
 ### `PIPELINE.md`
 
 ```
 # Pipeline
 
+Stages: **Targeted, Touched, Replied, Quoted, Won, Cold.** Use these words
+exactly. A board can count stages it recognises; it cannot count free text.
+
 | Who | What they want | Stage | Last contact | Next step | Owner |
 |---|---|---|---|---|---|
-| Ravi Mehta | Full package | Quote sent | (date) | Follow up Thursday | me |
-| Bright Lane Dental | Not sure yet | First call done | (date) | Send options | me |
+| Ravi Mehta | Full package | Quoted | (date) | Follow up Thursday | me |
+| Bright Lane Dental | Not sure yet | Replied | (date) | Send options | me |
 ```
 
 Be honest about the stage. A pipeline that reads better than reality is the

@@ -69,7 +69,7 @@ justify its own existence is how a list dies.
 Goal: the Chairman can act on it in five minutes. Asks capped at three, ordered
 by what they unblock.
 
-## Step 5.5 — Promotion and asks. Mandatory, never skip.
+## Step 5 — Promotion and asks. Mandatory, never skip.
 
 State the current rank, whether you are requesting a promotion, and if not, why
 not. Then state your own goals for the coming week and the specific executable
@@ -95,5 +95,5 @@ Before the report is considered done:
 - [ ] Nothing was published, sent, merged, deployed, or spent
 - [ ] `content/` was not edited directly
 - [ ] Decisions logged with rank; asks are specific and executable
-- [ ] Step 5.5 was not skipped
+- [ ] Step 5 not skipped
 - [ ] When unsure, I escalated rather than acted

@@ -81,11 +81,12 @@ just learned something important before you started depending on it.
 
 The part that matters more than the connection.
 
-When a number arrives from a source, write down **how it was obtained**, next to
-the number, in `METRICS.md`:
+When a number arrives from a connection, the `Source` column stops naming a
+tool and starts holding the **definition**. Not "Stripe" but what exactly was
+counted:
 
 ```markdown
-| Metric          | Value  | How it was obtained                  |
+| Metric          | Value  | Source                               |
 |-----------------|--------|--------------------------------------|
 | Paid customers  | 12     | Active subscriptions, excluding
                              cancelled and past-due                |

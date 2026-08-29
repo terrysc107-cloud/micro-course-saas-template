@@ -276,11 +276,16 @@ export const MODULE_META: ModuleMeta[] = [
 /**
  * The repo a student forks to get their board.
  *
- * NAMED `ai-board`, not `ai-board-starter`, and the reason is what happens on
- * fork. A fork of `ai-board-starter` leaves someone owning a repo called
+ * NAMED `ai-board`, not `ai-board-starter`, because of what the student ends
+ * up owning. A copy of `ai-board-starter` leaves someone with a repo called
  * "ai-board-starter" forever, which reads like a template they never made their
- * own. A fork of `ai-board` leaves them owning `ai-board`. The name is already
- * correct for them on day one.
+ * own. A copy of `ai-board` leaves them owning `ai-board`.
+ *
+ * ⚠️ "USE THIS TEMPLATE", NEVER "FORK". A fork of a public repo is permanently
+ * public and cannot be made private afterwards. A student's board holds their
+ * revenue and their customers' names, so the copy has to be one they create as
+ * Private, and only the template flow allows that. This repo MUST be marked as
+ * a GitHub template (`gh repo edit --template`) or that flow does not exist.
  *
  * It also matches the folder name the curriculum already teaches in
  * `00-start-here/02-your-workspace`, so forking produces exactly the folder
@@ -708,12 +713,16 @@ export const LADDER: readonly LadderRung[] = [
     kind: "onetime",
     // Derived from PRODUCT for the same reason — the course is live and
     // selling; its price must not be able to disagree with itself.
+    // ALL THREE derive from PRODUCT. priceCents and ctaLabel were hardcoded to
+    // the retired $97, directly under a comment insisting the price "must not
+    // be able to disagree with itself", so /ladder rendered $57 above a $97
+    // button. Deriving is the only version that cannot drift again.
     priceDisplay: PRODUCT.priceDisplay,
-    priceCents: 9700,
+    priceCents: PRODUCT.priceCents,
     priceIdEnvVar: PRODUCT.priceIdEnvVar,
     available: true,
     href: "/#pricing",
-    ctaLabel: "Get the course, $97",
+    ctaLabel: PRODUCT.ctaLabel,
     includes: [
       "The board path, from an empty folder to a scheduled run",
       "The four files your board reads, with worked examples",
@@ -872,9 +881,9 @@ export const BOARD_ARTIFACTS: readonly BoardArtifact[] = [
   { file: "METRICS.md", purpose: "Numbers, each with its source", lesson: "/learn/00-start-here/your-workspace" },
   { file: "DECISION-LOG.md", purpose: "Choices and what would reverse them", lesson: "/learn/00-start-here/your-workspace" },
   { file: "PIPELINE.md", purpose: "Who is in play, honestly", lesson: "/learn/00-start-here/your-workspace" },
-  { file: "ceo/CHARTER.md", purpose: "Who your first seat is", lesson: "/learn/21-seats/the-charter" },
+  { file: "CHARTER.md", purpose: "Who your first seat is", lesson: "/learn/21-seats/the-charter" },
   { file: "README.md", purpose: "The index your board reads first", lesson: "/learn/20-memory/the-five-tiers" },
   { file: "memory/CANDIDATES.md", purpose: "What it proposes, for you to promote", lesson: "/learn/20-memory/the-five-tiers" },
-  { file: "ceo/PROMOTION-LADDER.md", purpose: "What it must earn the right to do", lesson: "/learn/21-seats/promotions" },
+  { file: "PROMOTION-LADDER.md", purpose: "What it must earn the right to do", lesson: "/learn/21-seats/promotions" },
   { file: "BOARD-MEETINGS/", purpose: "Dated archive, one file per run", lesson: "/learn/10-professional-practice/your-first-board-week" },
 ] as const;
