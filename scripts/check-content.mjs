@@ -22,7 +22,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const MODULES_DIR = path.join(ROOT, "content", "modules");
 const PUBLIC_DIR = path.join(ROOT, "public");
 
-const { MODULE_META, TEMPLATES, DISCLAIMER, BUILD_LAB } = await import(
+const { MODULE_META, TEMPLATES, DISCLAIMER, BUILD_LAB, BOARD_ARTIFACTS } = await import(
   path.join(ROOT, "lib", "course-config.ts")
 );
 
@@ -351,6 +351,79 @@ for (const file of walk(path.join(ROOT, "components", "marketing"), ".tsx")) {
       `${rel(file)}:${line}`,
       `Date literal "${m[0]}" in a marketing component. Dates render from BUILD_LAB.dateDisplay, never a literal.`
     );
+  }
+}
+
+// ── Canonical board vocabulary ──────────────────────────────────────────────
+//
+// An audit before building the ai-board template found ELEVEN places where the
+// lessons contradicted each other about what a file is called. The worst: one
+// lesson told students to create INBOX.md while another told them to read
+// CHAIRMAN-NOTES.md, so the weekly playbook referenced a file that was never
+// made. None of it was catchable, because a lesson can say anything.
+//
+// This is the check that would have caught five of the eleven on the commit
+// that introduced them. Scoped to content/ and public/downloads only, because
+// this file necessarily contains every banned string.
+{
+  const BANNED_VARIANTS = [
+    { bad: /\bINBOX\.md\b/g, good: "CHAIRMAN-NOTES.md" },
+    { bad: /(?<!BOARD-)\bMEETINGS\//g, good: "BOARD-MEETINGS/" },
+    { bad: /^board\/$/gm, good: "ai-board/" },
+    { bad: /\bceo\/(CHARTER|PROMOTION-LADDER)\.md\b/g, good: "the same file at the board root" },
+    { bad: /\bRank: Operator\b/g, good: "Rank: L1 Operator" },
+    { bad: /^## Not doing this quarter$/gm, good: "## What I am NOT doing this quarter" },
+    { bad: /\bStep 5\.5\b/g, good: "Step 5" },
+    { bad: /\| Where it came from \|/g, good: "| Source | As of |" },
+    { bad: /\| How it was obtained \|/g, good: "| Source |" },
+  ];
+  const scoped = [
+    ...walk(MODULES_DIR, ".mdx"),
+    ...walk(path.join(ROOT, "public", "downloads"), ".md"),
+  ];
+  for (const file of scoped) {
+    const raw = fs.readFileSync(file, "utf8");
+    for (const { bad, good } of BANNED_VARIANTS) {
+      for (const m of raw.matchAll(bad)) {
+        const line = raw.slice(0, m.index).split("\n").length;
+        const lineText = raw.split("\n")[line - 1] ?? "";
+        if (CORRECTION_MARKERS.test(lineText)) continue;
+        fail(
+          `${rel(file)}:${line}`,
+          `"${m[0].trim()}" is a retired name for a board artifact. Use ${good}. ` +
+            `Two names for one file is how a playbook ends up referencing something ` +
+            `the student was never told to create.`
+        );
+      }
+    }
+  }
+}
+
+// ── Every promised artifact must be named somewhere a student will read ──────
+//
+// BOARD_ARTIFACTS drives the dashboard's "your board so far" panel. Two entries
+// carried a `ceo/` prefix that appeared in zero lessons, and PROMOTION-LADDER.md
+// was listed as a file the student should be holding while no lesson named it
+// at all. That was silently wrong for longer than anything else in the audit.
+{
+  const boardLessonText = walk(MODULES_DIR, ".mdx")
+    .filter((f) => {
+      const fm = fs.readFileSync(f, "utf8").match(/^---\n([\s\S]*?)\n---/);
+      const t = fm?.[1].match(/^track:\s*["']?(board|developer|both)["']?\s*$/m);
+      return t && t[1] !== "developer";
+    })
+    .map((f) => fs.readFileSync(f, "utf8"))
+    .join("\n");
+
+  for (const a of BOARD_ARTIFACTS) {
+    if (!boardLessonText.includes(a.file)) {
+      fail(
+        "lib/course-config.ts",
+        `BOARD_ARTIFACTS promises "${a.file}" but no board-track lesson mentions it. ` +
+          `The dashboard tells students they should be holding this file; some lesson ` +
+          `has to tell them to make it.`
+      );
+    }
   }
 }
 
