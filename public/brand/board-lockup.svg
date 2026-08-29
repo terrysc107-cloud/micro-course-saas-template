@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" role="img" aria-label="My AI Board">
+  <!--
+    Horizontal lockup: mark plus wordmark, for the nav and email headers.
+    Wordmark is set in a system sans stack rather than embedded outlines, so the
+    file stays under 1KB. The AI by Design mark it replaces embeds Geist
+    outlines and is ~62KB, which is why that one had to be an <img> and could
+    never be inlined.
+  -->
+  <rect x="0" y="0" width="64" height="64" rx="14" fill="#23201b"/>
+  <g fill="#c9a84c">
+    <rect x="14" y="14" width="16" height="16" rx="4"/>
+    <rect x="34" y="14" width="16" height="16" rx="4"/>
+    <rect x="14" y="34" width="16" height="16" rx="4"/>
+  </g>
+  <rect x="35.5" y="35.5" width="13" height="13" rx="3"
+        fill="none" stroke="#c9a84c" stroke-width="3" opacity="0.55"/>
+  <text x="80" y="41"
+        font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+        font-size="26" font-weight="600" letter-spacing="-0.4" fill="#23201b">My AI Board</text>
+</svg>

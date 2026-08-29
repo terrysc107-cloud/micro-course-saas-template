@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="My AI Board">
+  <!--
+    THE MARK: four seats, three filled and one open.
+
+    The product is a board you assemble one seat at a time, and the course
+    deliberately ships you a single working seat with the rest to grow into. The
+    open square is that, and it is also why the mark reads as unfinished on
+    purpose rather than by accident.
+
+    Geometry is a 2x2 grid so it survives 16px, where anything with interior
+    detail turns to mush. No gradients, no strokes under 3px, no text.
+  -->
+  <rect width="64" height="64" rx="14" fill="#23201b"/>
+  <g fill="#c9a84c">
+    <rect x="14" y="14" width="16" height="16" rx="4"/>
+    <rect x="34" y="14" width="16" height="16" rx="4"/>
+    <rect x="14" y="34" width="16" height="16" rx="4"/>
+  </g>
+  <rect x="35.5" y="35.5" width="13" height="13" rx="3"
+        fill="none" stroke="#c9a84c" stroke-width="3" opacity="0.55"/>
+</svg>

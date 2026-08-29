@@ -1,0 +1,37 @@
+[
+  {
+    "slug": "no-floors",
+    "kicker": "The Board Method",
+    "headline": "Your AI says everything looks fine. Every week.",
+    "body": "That is almost never agreeableness. It is that you gave it targets instead of floors, so nothing can be off track.",
+    "footer": "Step 2 of 5"
+  },
+  {
+    "slug": "disposition",
+    "kicker": "The Board Method",
+    "headline": "A prompt is what you ask. A charter is who it is.",
+    "body": "The line that does the work: name something the seat will refuse, even when it would rather not.",
+    "footer": "Step 1 of 5"
+  },
+  {
+    "slug": "silent-death",
+    "kicker": "The Board Method",
+    "headline": "Scheduled work dies without telling you.",
+    "body": "A job that stops does not error. It produces nothing, and nothing looks exactly like a quiet week. Mine went 40 days.",
+    "footer": "Step 3 of 5"
+  },
+  {
+    "slug": "missing-number",
+    "kicker": "The Board Method",
+    "headline": "A plausible number looks exactly like a real one.",
+    "body": "One line fixes it: if a number you need is missing, say it is missing. Do not estimate it.",
+    "footer": "Step 4 of 5"
+  },
+  {
+    "slug": "promotions",
+    "kicker": "The Board Method",
+    "headline": "Autonomy is a ladder, not a switch.",
+    "body": "The seat requests, citing its own decision log. You grant or hold. Promotions are revocable.",
+    "footer": "Step 5 of 5"
+  }
+]
