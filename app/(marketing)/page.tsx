@@ -7,6 +7,7 @@ import MarketingFooter from "@/components/marketing/MarketingFooter";
 import Hero from "@/components/marketing/Hero";
 import TracksSection from "@/components/marketing/TracksSection";
 import MaintenanceSection from "@/components/marketing/MaintenanceSection";
+import ProofSection from "@/components/marketing/ProofSection";
 import CoreLoopSection from "@/components/marketing/CoreLoopSection";
 import OutcomesSection from "@/components/marketing/OutcomesSection";
 import CurriculumSection from "@/components/marketing/CurriculumSection";
@@ -40,6 +41,7 @@ export default function LandingPage() {
         />
         <CoreLoopSection />
         <TracksSection />
+        <ProofSection />
 
         <OutcomesSection />
         <CurriculumSection modules={modules} />

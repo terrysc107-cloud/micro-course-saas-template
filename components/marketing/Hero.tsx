@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { BookOpen, Layers, FileDown } from "lucide-react";
 import { PARENT_BRAND, PRODUCT, BOARD_LOOP, LAST_VERIFIED } from "@/lib/course-config";
 import BuyButton from "./BuyButton";
@@ -27,6 +28,7 @@ export default function Hero({ moduleCount, lessonCount, templateCount }: HeroPr
       />
 
       <div className="relative max-w-6xl mx-auto px-6 pt-16 pb-16 sm:pt-24 sm:pb-20">
+        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)]">
         <div className="max-w-3xl">
           <a
             href={PARENT_BRAND.url}
@@ -91,6 +93,25 @@ export default function Hero({ moduleCount, lessonCount, templateCount }: HeroPr
               <p className="text-slate-500 text-xs mt-0.5">{label}</p>
             </div>
           ))}
+        </div>
+
+        {/*
+          The mark as a physical object. Generated rather than hand-built: a CSS
+          approximation of studio lighting looks exactly like a CSS
+          approximation of studio lighting. object-left keeps the tiles in frame
+          as the column narrows, since the source has its subject left and its
+          negative space right.
+        */}
+        <div className="relative mt-12 hidden lg:mt-0 lg:block">
+          <Image
+            src="/hero/board-hero.png"
+            alt="Four tiles in a two by two grid, three filled and one open: a board being assembled"
+            width={1376}
+            height={768}
+            priority
+            className="w-full rounded-2xl border border-slate-800 object-cover object-left"
+          />
+        </div>
         </div>
       </div>
     </section>
