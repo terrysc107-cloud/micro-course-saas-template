@@ -68,7 +68,7 @@ export default function LabBuyButton({ className }: { className?: string }) {
         {pending ? "Starting checkout…" : "Take a seat"}
       </button>
       {error && (
-        <p role="alert" className="text-red-300 text-sm mt-2 text-center">
+        <p role="alert" className="text-red-800 text-sm mt-2 text-center">
           {error}
         </p>
       )}

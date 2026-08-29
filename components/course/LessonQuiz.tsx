@@ -37,10 +37,10 @@ export default function LessonQuiz({
 
   if (alreadyPassed) {
     return (
-      <div className="mt-10 rounded-xl border border-green-700/50 bg-green-900/20 p-6">
+      <div className="mt-10 rounded-xl border border-green-300 bg-green-50 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <CheckCircle2 className="w-6 h-6 text-green-400" />
-          <h3 className="text-lg font-semibold text-green-300">Quiz Passed</h3>
+          <CheckCircle2 className="w-6 h-6 text-green-700" />
+          <h3 className="text-lg font-semibold text-green-800">Quiz Passed</h3>
         </div>
         <p className="text-slate-400 text-sm mb-4">You&apos;ve already passed this quiz.</p>
         {nextLesson && (
@@ -117,9 +117,9 @@ export default function LessonQuiz({
                         "w-full text-left px-4 py-3 rounded-lg text-sm border transition-all",
                         result
                           ? isCorrect
-                            ? "border-green-500 bg-green-900/20 text-green-300"
+                            ? "border-green-500 bg-green-50 text-green-800"
                             : isWrong
-                            ? "border-red-500 bg-red-900/20 text-red-300"
+                            ? "border-red-500 bg-red-50 text-red-800"
                             : "border-slate-700 text-slate-500"
                           : isSelected
                           ? "border-brand-500 bg-brand-600/20 text-slate-50"
@@ -129,9 +129,9 @@ export default function LessonQuiz({
                       <div className="flex items-center gap-3">
                         {result ? (
                           isCorrect ? (
-                            <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
+                            <CheckCircle2 className="w-4 h-4 text-green-700 shrink-0" />
                           ) : isWrong ? (
-                            <XCircle className="w-4 h-4 text-red-400 shrink-0" />
+                            <XCircle className="w-4 h-4 text-red-700 shrink-0" />
                           ) : (
                             <div className="w-4 h-4 shrink-0" />
                           )
@@ -159,8 +159,8 @@ export default function LessonQuiz({
             className={cn(
               "mt-6 rounded-xl p-5 border",
               result.passed
-                ? "border-green-700/50 bg-green-900/20"
-                : "border-red-700/50 bg-red-900/20"
+                ? "border-green-300 bg-green-50"
+                : "border-red-300 bg-red-50"
             )}
           >
             <div className="flex items-center justify-between">
@@ -168,7 +168,7 @@ export default function LessonQuiz({
                 <p
                   className={cn(
                     "text-lg font-bold",
-                    result.passed ? "text-green-300" : "text-red-300"
+                    result.passed ? "text-green-800" : "text-red-800"
                   )}
                 >
                   {result.passed ? "Passed!" : "Not quite."}{" "}

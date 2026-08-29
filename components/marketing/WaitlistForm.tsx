@@ -93,7 +93,7 @@ export default function WaitlistForm({ source }: WaitlistFormProps) {
         </button>
       </div>
       {error && (
-        <p role="alert" className="text-red-300 text-sm">
+        <p role="alert" className="text-red-800 text-sm">
           {error}
         </p>
       )}

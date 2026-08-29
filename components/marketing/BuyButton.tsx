@@ -64,7 +64,7 @@ export default function BuyButton({ label, className, showChevron, children }: B
           caution. Amber also sat one hue-step from brand gold and read as a
           broken accent rather than a problem. */}
       {error && (
-        <p role="alert" className="text-red-300 text-sm mt-2 text-center">
+        <p role="alert" className="text-red-800 text-sm mt-2 text-center">
           {error}
         </p>
       )}

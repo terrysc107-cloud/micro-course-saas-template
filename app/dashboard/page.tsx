@@ -145,7 +145,7 @@ export default async function DashboardPage() {
                   className="inline-flex items-center gap-1.5 text-brand-400 hover:text-brand-300 text-sm font-medium transition-colors shrink-0 ml-3"
                 >
                   {done ? (
-                    <><CheckCircle2 className="w-4 h-4 text-green-400" /><span className="hidden sm:inline">Done</span></>
+                    <><CheckCircle2 className="w-4 h-4 text-green-700" /><span className="hidden sm:inline">Done</span></>
                   ) : modCompleted > 0 ? (
                     <><span className="hidden sm:inline">Continue</span><ChevronRight className="w-4 h-4" /></>
                   ) : (

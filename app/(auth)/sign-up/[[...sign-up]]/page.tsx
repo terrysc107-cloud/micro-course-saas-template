@@ -41,7 +41,7 @@ export default function SignUpPage() {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
         <div className="w-full max-w-sm text-center">
-          <div className="w-16 h-16 bg-green-900/40 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <span className="text-3xl">✉️</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-50 mb-3">Check your email</h1>
@@ -74,7 +74,7 @@ export default function SignUpPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-red-900/30 border border-red-800 text-red-300 text-sm rounded-lg px-4 py-3">
+            <div className="bg-red-50 border border-red-300 text-red-800 text-sm rounded-lg px-4 py-3">
               {error}
             </div>
           )}

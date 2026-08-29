@@ -439,9 +439,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-28 16:53:31 EDT
+- Updated: 2026-08-28 20:09:17 EDT
 - Branch: main
-- Last commit: ede3cc6 fix(env): trailing newlines in production secrets broke checkout entirely
+- Last commit: 86f1dc6 feat(brand): mark, favicon, and a social card renderer
 - Working tree: clean
 
 <!-- END AUTO-STATE -->
