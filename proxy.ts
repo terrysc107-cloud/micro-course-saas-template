@@ -13,6 +13,10 @@ const PUBLIC_ROUTES = [
   // so the intent is legible rather than incidental.
   "/build-lab",
   "/api/build-lab",
+  // Post-purchase landing. MUST stay reachable signed out: buyers no longer
+  // need an account before paying, so most people arriving here have no
+  // session and are waiting on a set-password email.
+  "/welcome",
 ];
 
 const PROTECTED_ROUTES = ["/dashboard", "/learn"];

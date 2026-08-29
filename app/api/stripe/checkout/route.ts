@@ -12,14 +12,17 @@ export async function POST() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // BuyButton turns a 401 into a redirect to sign-up. We need a user id to
-  // attach the purchase to, so there is no anonymous checkout path.
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  // Don't let someone pay twice for a course they already own.
-  if (await hasPurchased(user.id)) {
+  // ANONYMOUS CHECKOUT IS ALLOWED, and that is the point of this route now.
+  //
+  // This used to 401 anyone without an account, and BuyButton turned that into
+  // a redirect to sign-up. A stranger who clicked buy therefore had to create a
+  // password and then leave for their inbox to confirm it, all BEFORE paying.
+  // The account is no longer a precondition: Stripe collects the email, and the
+  // webhook provisions the account from the receipt.
+  //
+  // A signed-in buyer still gets their id attached, which skips provisioning
+  // entirely and keeps their purchase on the account they are already using.
+  if (user && (await hasPurchased(user.id))) {
     return NextResponse.json({ error: "Already purchased", alreadyOwned: true }, { status: 409 });
   }
 
@@ -61,13 +64,21 @@ export async function POST() {
       // asynchronous methods would also require handling async_payment_succeeded.
       payment_method_types: ["card"],
       line_items: [{ price: config.priceId, quantity: 1 }],
-      success_url: `${config.siteUrl}/dashboard?success=true`,
+      // Anonymous buyers have no session, so /dashboard would bounce them to
+      // sign-in the moment they land. /welcome explains what happens next and
+      // works signed in or out.
+      success_url: `${config.siteUrl}/welcome?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${config.siteUrl}/?checkout=cancelled`,
       // The webhook trusts this to identify the buyer. Stripe signs the webhook
       // payload, so metadata set here can't be tampered with in transit.
-      metadata: { userId: user.id },
-      client_reference_id: user.id,
-      customer_email: user.email,
+      // userId only when we have one. Its absence is the webhook's signal to
+      // provision an account from customer_details.email.
+      metadata: user ? { userId: user.id } : {},
+      client_reference_id: user?.id,
+      customer_email: user?.email,
+      // Required for anonymous checkout: this is the address the account gets
+      // created against, so Stripe must ask for it.
+      customer_creation: "always",
     });
 
     if (!session.url) {

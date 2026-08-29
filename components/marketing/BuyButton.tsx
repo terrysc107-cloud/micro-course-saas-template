@@ -12,8 +12,12 @@ interface BuyButtonProps {
 }
 
 /**
- * Starts Stripe Checkout. Anonymous visitors are sent to sign-up first — the
- * checkout route needs a user id to attach the purchase to.
+ * Starts Stripe Checkout. Anyone can buy, signed in or not.
+ *
+ * This used to redirect anonymous visitors to sign-up on a 401, which meant a
+ * stranger had to make a password and confirm it by email BEFORE paying. The
+ * account is now created from the receipt, so the button goes straight to
+ * Stripe. A 401 here would be a bug, not a flow.
  */
 export default function BuyButton({ label, className, showChevron, children }: BuyButtonProps) {
   const [pending, setPending] = useState(false);
@@ -26,7 +30,8 @@ export default function BuyButton({ label, className, showChevron, children }: B
       const res = await fetch("/api/stripe/checkout", { method: "POST" });
 
       if (res.status === 401) {
-        window.location.href = "/sign-up";
+        // Should be unreachable: the route no longer requires a session.
+        setError("Checkout is unavailable right now. Please try again.");
         return;
       }
 

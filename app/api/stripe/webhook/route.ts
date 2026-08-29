@@ -1,6 +1,7 @@
 import { getStripe, getWebhookConfig, StripeConfigError } from "@/lib/stripe";
 import { createServiceClient } from "@/lib/supabase/server";
 import { recordLabRegistration } from "@/lib/build-lab";
+import { findOrCreateUser } from "@/lib/provisioning";
 import {
   recordEntitlement,
   setEntitlementStatusBySubscription,
@@ -175,14 +176,7 @@ export async function POST(request: NextRequest) {
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
-  const userId = session.metadata?.userId ?? session.client_reference_id;
-
-  if (!userId) {
-    // 200: retrying won't add metadata that was never set. Log and move on so
-    // the event doesn't wedge the Stripe retry queue.
-    console.error("[stripe/webhook] no userId on session:", session.id);
-    return NextResponse.json({ received: true, ignored: "missing userId" });
-  }
+  let userId = session.metadata?.userId ?? session.client_reference_id ?? null;
 
   // A completed session is not necessarily a paid one (e.g. async payment
   // methods). Only `paid` grants access.
@@ -191,6 +185,41 @@ export async function POST(request: NextRequest) {
       `[stripe/webhook] session ${session.id} completed with payment_status=${session.payment_status}; not granting`
     );
     return NextResponse.json({ received: true, ignored: "not paid" });
+  }
+
+  // ── Provision an account for anonymous buyers ─────────────────────────────
+  //
+  // No userId means they bought without signing in, which is now the normal
+  // path. The account is created from the address Stripe collected, and
+  // Supabase sends them a set-password email.
+  //
+  // FAILING HERE MEANS SOMEONE PAID AND CANNOT GET IN, so this returns 500 to
+  // make Stripe retry rather than swallowing it with a 200. A retry that
+  // eventually succeeds is recoverable; a silent 200 is not.
+  if (!userId) {
+    const email = session.customer_details?.email ?? session.customer_email;
+    if (!email) {
+      console.error(
+        `[stripe/webhook] CRITICAL: session ${session.id} is paid with neither a ` +
+          `userId nor an email. Cannot provision. Reconcile by hand.`
+      );
+      // 200: a retry cannot conjure an email that was never collected.
+      return NextResponse.json({ received: true, ignored: "no identity" });
+    }
+
+    const provisioned = await findOrCreateUser(email);
+    if (!provisioned) {
+      console.error(
+        `[stripe/webhook] provisioning failed for ${session.id}. Returning 500 so ` +
+          `Stripe retries; the customer has paid.`
+      );
+      return NextResponse.json({ error: "Provisioning failed" }, { status: 500 });
+    }
+    userId = provisioned.userId;
+    console.log(
+      `[stripe/webhook] session ${session.id}: ${provisioned.created ? "created" : "matched"} ` +
+        `account for buyer`
+    );
   }
 
   // ── The one branch between a customer's money and their access ────────────
