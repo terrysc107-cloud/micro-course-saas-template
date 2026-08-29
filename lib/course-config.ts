@@ -39,7 +39,9 @@ export const PARENT_BRAND = {
   url: "https://aixdesign.dev",
   /** Shown on the landing page to explain who teaches this and why. */
   blurb:
-    "AI by Design is Terry Scott's practice helping teams put AI to work in real production systems. Claude Code AI is the self-paced course arm of that practice: the same workflow, written down.",
+    // Interpolated rather than written out, so the next rename cannot leave a
+    // stale brand name buried in a paragraph the way this one did.
+    `AI by Design is Terry Scott's practice helping teams put AI to work in real production systems. ${BRAND.name} is the self-paced course arm of that practice: the same workflow, written down.`,
 } as const;
 
 /**
