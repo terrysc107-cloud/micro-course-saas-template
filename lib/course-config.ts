@@ -303,8 +303,8 @@ export const TEMPLATE_REPO = {
   /** The GitHub About field. The slug is permanent; this can change freely. */
   tagline:
     "A folder of markdown files that becomes an AI board for your business.",
-  /** Set true once the repo exists. Until then, nothing links to it. */
-  published: false,
+  /** Live since 2026-08-29, marked as a GitHub template so copies can be private. */
+  published: true,
 } as const;
 
 // ── Tracks ───────────────────────────────────────────────────────────────────

@@ -1,0 +1,153 @@
+---
+title: "Start From the Template"
+description: "Take a private copy of a board that is already built, then answer thirteen questions and it becomes yours."
+order: 3
+duration: "9 min"
+track: board
+teaches: github
+quiz:
+  - question: "Why must you use the template button rather than the fork button?"
+    options:
+      - "The fork button is slower"
+      - "A copy made by forking a public project is permanently public and cannot be made private afterwards, and your board will hold your real numbers and customers' names"
+      - "Forking costs money"
+      - "There is no difference"
+    answer: 1
+  - question: "What does the onboarding interview do if you give it a vague answer?"
+    options:
+      - "Accepts it and moves on"
+      - "Asks once more in a sharper form, then leaves a visible blank with your own words quoted underneath"
+      - "Keeps asking until the answer is good"
+      - "Writes its best guess"
+    answer: 1
+  - question: "Why does it deliberately leave blanks rather than filling them in?"
+    options:
+      - "To save time"
+      - "Because an invented answer is indistinguishable from something you actually said, while a blank is visible and can be fixed"
+      - "Blanks look more professional"
+      - "It is a limitation of the tool"
+    answer: 1
+  - question: "You stop the interview halfway. What happens?"
+    options:
+      - "Everything is lost"
+      - "What you answered is written and the rest stays as visible blanks, with a note in the inbox so the next run says setup is unfinished"
+      - "The files are left broken"
+      - "It fills in the rest automatically"
+    answer: 1
+---
+
+The last lesson had you make a folder and four files by hand. That was the point:
+you now know what each one is for.
+
+This lesson hands you the finished version, and something better than files.
+
+## Take a private copy
+
+The board lives in a public starter project on GitHub. You take a copy of it, and
+your copy is yours alone.
+
+**Go to the starter, and press the green "Use this template" button.** Choose
+*Create a new repository*, name it `ai-board`, and here is the part that matters:
+
+> **Set it to Private.**
+
+Your board is going to hold your revenue, your pipeline, and your customers'
+names. Private is not a preference.
+
+## The trap: use the template, do not fork
+
+GitHub offers a second button called **Fork**, and it looks like it does the same
+thing. It does not, in one way that matters enormously:
+
+**A fork of a public project is permanently public.** You cannot make it private
+afterwards. There is no setting for it, no toggle buried in preferences. If you
+take your copy by forking, everything you write into your board is readable by
+anyone who finds it, and checking the settings page will not tell you otherwise
+because the settings page has nothing to offer.
+
+"Use this template" creates a fresh, unlinked copy and lets you choose Private.
+It is the only route that gives you the choice.
+
+If you are ever unsure which you used, open your copy on GitHub. A fork says
+*"forked from…"* in small text under its name.
+
+## Get it onto your machine
+
+Two ways, both fine:
+
+- **GitHub Desktop** is an ordinary application. Install it, sign in, and it will
+  offer to clone your new copy to a folder you pick.
+- **Download ZIP**, from the green Code button on your copy, and unzip it
+  wherever you keep documents.
+
+Either way you end up with an `ai-board` folder that looks like the one you made
+by hand, plus a few files you have not met yet.
+
+Then open a session pointed at that folder, the same way you did in lesson two.
+
+## Now let it interview you
+
+Type this:
+
+```
+/onboard
+```
+
+If your assistant does not have slash commands, open the file called
+`ONBOARDING.md`, copy all of it, and paste it into the chat. Same thing.
+
+What happens next is about fifteen minutes of questions in four short blocks:
+your business and your numbers, your floors, the seat itself, and what it may
+never do. Thirteen questions.
+
+It writes your answers into the files as it goes, block by block, so stopping
+halfway leaves you with real files rather than a mess.
+
+## What it will not do
+
+Worth knowing before you start, because it explains the behaviour that would
+otherwise look like the tool being awkward.
+
+**It will not invent an answer.** Give it something vague and it asks once more,
+in a sharper form, usually offering you three real examples to pick from and
+edit. If the second answer is still thin, it writes a visible blank instead:
+
+```
+<<FILL: when in doubt, prefer ___ over ___>>
+> you said: "thoughtful and strategic"
+```
+
+That looks like a failure. It is the single most important behaviour in the
+whole thing. A blank is visible, and you will come back and fix it. An invented
+sentence is indistinguishable from something you actually said, and you never
+will, because you will not know it is there.
+
+**It will not say it does not know for you.** "I don't track that" is a real
+answer and gets recorded honestly as `unknown`. That is different from vague,
+and it is treated differently.
+
+**It will not write a board meeting.** A meeting file dated today would make
+your board's own health check report a board that has never run as perfectly
+healthy. It leaves that folder alone on purpose.
+
+**It will not schedule anything.** You run the weekly by hand for a couple of
+weeks first. You are learning what this seat is like when it is wrong, and you
+cannot learn that from a report that arrived while you were asleep.
+
+## When it finishes
+
+It tells you what it wrote, lists every blank that is left along with the
+question that fills each one, and gives you three things to do. The first is to
+open the charter and change one line, because the first rewrite is where it
+stops being a template and starts being yours.
+
+## You can still do it by hand
+
+Nothing here is required. Everything the template contains is something the
+lessons teach you to write, and typing them yourself is genuinely not wasted:
+you read every line that way.
+
+The template exists because most people would rather start from something that
+already works and edit it. Both roads end in the same folder.
+
+<KeyPoint>Use the template button and choose Private, because a fork of a public project can never be made private and your board holds real customer data. Then run the interview: thirteen questions, four blocks, and it leaves visible blanks rather than inventing answers, because a blank gets fixed and an invention never does.</KeyPoint>

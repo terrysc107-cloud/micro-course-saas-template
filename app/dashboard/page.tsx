@@ -137,8 +137,8 @@ export default async function DashboardPage() {
             </span>
           </div>
           <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-slate-400">
-            The files you should be holding by now. Each one appears when you
-            finish the lesson that produces it.
+            The files your board is built from. Each one lights up when you finish
+            the lesson that explains it.
           </p>
 
           <ul className="mt-6 grid gap-x-8 gap-y-3 sm:grid-cols-2">

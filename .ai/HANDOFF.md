@@ -439,9 +439,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-28 22:41:55 EDT
+- Updated: 2026-08-28 23:18:31 EDT
 - Branch: main
-- Last commit: 05c2aa2 feat(content): the meeting, the review loop, and connecting real data
+- Last commit: 8d21bae feat(check): two guards so the board vocabulary cannot drift again
 - Working tree: clean
 
 <!-- END AUTO-STATE -->
