@@ -12,17 +12,25 @@
 
 export const BRAND = {
   /**
-   * RENAMED to "Claude Code AI" (2026-08-26, Terry's call).
+   * RENAMED again, 2026-08-28: "Claude Code AI" -> "My AI Board".
    *
-   * ⚠️ CROSS-REPO SYNC REQUIRED: by-design-ai's `lib/education.ts` still sets
-   * COURSE_NAME = "Claude Code Class". Two spellings of one product is two
-   * products — that repo must be updated to match before the next marketing
-   * push. The domain stays claudecodeclass.com; a domain and a brand name are
-   * allowed to differ, but two brand names are not.
+   * The product stopped being about one tool. It teaches a system of files,
+   * seats and schedules that runs on any capable agent, so a name built around
+   * a single vendor was describing something we had already moved past. It also
+   * put us third in a lane two competitors already own ("Two Hour CEO",
+   * "Bionic CEO"), where "board" is genuinely ours: it is the repo name, the
+   * vocabulary of every lesson, and the method itself.
+   *
+   * ⚠️ CROSS-REPO SYNC still required: by-design-ai's `lib/education.ts`
+   * COURSE_NAME. Two spellings of one product is two products.
    */
-  name: "Claude Code AI",
+  name: "My AI Board",
   tagline: "An AI by Design course",
-  siteUrl: "https://claudecodeclass.com",
+  /**
+   * Canonical since 2026-08-28. claudecodeclass.com stays attached to the
+   * project and keeps resolving, so no existing link breaks.
+   */
+  siteUrl: "https://runyouraiboard.com",
   supportEmail: "terrysc107@gmail.com",
 } as const;
 
