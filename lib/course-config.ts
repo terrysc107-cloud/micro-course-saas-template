@@ -825,3 +825,38 @@ export function nextRung(id: LadderRung["id"]): LadderRung | undefined {
   if (!current) return undefined;
   return LADDER.find((r) => r.rung === current.rung + 1);
 }
+
+// ── Board artifacts ──────────────────────────────────────────────────────────
+
+/**
+ * The files a student ends up holding, and the lesson that produces each.
+ *
+ * This exists so the dashboard can show what someone has BUILT rather than only
+ * what they have read. The product's promise is that the pieces accumulate into
+ * a working system; a lessons-completed counter does not show that, and a list
+ * of files on disk does.
+ *
+ * Lives in config rather than lesson frontmatter deliberately: it is a small
+ * fixed set, and keeping it here avoids a frontmatter key that every future
+ * lesson would have to think about.
+ */
+export interface BoardArtifact {
+  /** Path inside the student's board folder. */
+  file: string;
+  /** What it holds, in a few words. */
+  purpose: string;
+  /** Lesson route that produces it. */
+  lesson: string;
+}
+
+export const BOARD_ARTIFACTS: readonly BoardArtifact[] = [
+  { file: "GOALS.md", purpose: "Floors, and what you ruled out", lesson: "/learn/00-start-here/your-workspace" },
+  { file: "METRICS.md", purpose: "Numbers, each with its source", lesson: "/learn/00-start-here/your-workspace" },
+  { file: "DECISION-LOG.md", purpose: "Choices and what would reverse them", lesson: "/learn/00-start-here/your-workspace" },
+  { file: "PIPELINE.md", purpose: "Who is in play, honestly", lesson: "/learn/00-start-here/your-workspace" },
+  { file: "ceo/CHARTER.md", purpose: "Who your first seat is", lesson: "/learn/21-seats/the-charter" },
+  { file: "README.md", purpose: "The index your board reads first", lesson: "/learn/20-memory/the-five-tiers" },
+  { file: "memory/CANDIDATES.md", purpose: "What it proposes, for you to promote", lesson: "/learn/20-memory/the-five-tiers" },
+  { file: "ceo/PROMOTION-LADDER.md", purpose: "What it must earn the right to do", lesson: "/learn/21-seats/promotions" },
+  { file: "BOARD-MEETINGS/", purpose: "Dated archive, one file per run", lesson: "/learn/10-professional-practice/your-first-board-week" },
+] as const;

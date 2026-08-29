@@ -6,6 +6,7 @@ const PUBLIC_ROUTES = [
   "/sign-in",
   "/sign-up",
   "/auth/callback",
+  "/auth/confirm",
   "/api/stripe/webhook",
   // The Build Lab surface is deliberately reachable signed-out: the waitlist
   // measures demand, and requiring an account first would measure sign-ups.
