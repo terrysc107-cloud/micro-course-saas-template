@@ -1,4 +1,4 @@
-import { BRAND, BOARD_ARTIFACTS, TEMPLATE_REPO } from "@/lib/course-config";
+import { BRAND, BOARD_ARTIFACTS, TEMPLATE_REPO, TEMPLATES, LAST_VERIFIED } from "@/lib/course-config";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -7,7 +7,7 @@ import { getCompletedLessons } from "@/lib/progress";
 import SignOutButton from "@/components/ui/SignOutButton";
 import LadderNext from "@/components/course/LadderNext";
 import { getMyEntitlements, entitlementStatus } from "@/lib/entitlements";
-import { Zap, BookOpen, ChevronRight, CheckCircle2, PlayCircle, FolderGit2, FileCheck2, Circle } from "lucide-react";
+import { Zap, BookOpen, ChevronRight, CheckCircle2, PlayCircle, FolderGit2, FileCheck2, Circle, Download, PlayCircle as Play, CalendarCheck } from "lucide-react";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -173,6 +173,58 @@ export default async function DashboardPage() {
               Open the {TEMPLATE_REPO.name} template
             </a>
           )}
+        </section>
+
+        {/* RESOURCES. The dashboard previously offered nothing to take away, so
+            anyone wanting the templates had to remember which lesson linked
+            them. Board downloads only: the Dev Pack ones are filtered out. */}
+        <section className="mb-8 grid gap-4 lg:grid-cols-[1.1fr_1fr]">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-50">
+              <Download className="h-4 w-4 text-gold-ink" aria-hidden />
+              Downloads
+            </h2>
+            <p className="mt-2 text-sm text-slate-400">
+              The starting files, with the notes explaining each section.
+            </p>
+            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+              {TEMPLATES.filter((t) => !t.devPackOnly).map((t) => (
+                <li key={t.path}>
+                  <a
+                    href={t.path}
+                    download
+                    className="font-mono text-sm text-slate-300 underline-offset-4 hover:text-slate-50 hover:underline"
+                  >
+                    {t.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-50">
+              <Play className="h-4 w-4 text-gold-ink" aria-hidden />
+              See one run
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-400">
+              A real weekly meeting, start to finish, from the board that runs
+              this business. Including the week it reported its own scheduled job
+              dead for 40 days.
+            </p>
+            <video
+              className="mt-4 w-full rounded-lg border border-slate-800"
+              src="/proof/board-run.webm"
+              controls
+              muted
+              playsInline
+              preload="metadata"
+            />
+            <p className="mt-4 flex items-center gap-2 text-xs text-slate-500">
+              <CalendarCheck className="h-3.5 w-3.5" aria-hidden />
+              Course verified against the official docs on {LAST_VERIFIED}
+            </p>
+          </div>
         </section>
 
         {/* The full curriculum, secondary: for jumping around, not deciding. */}

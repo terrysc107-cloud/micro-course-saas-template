@@ -1,0 +1,121 @@
+---
+title: "Keeping It Running"
+description: "Your board only runs if something is awake to run it. Three tiers, from free to a dedicated machine, and how to fix it from your phone."
+order: 4
+duration: "11 min"
+track: board
+teaches: infrastructure
+quiz:
+  - question: "Why does a scheduled board need something to be awake?"
+    options:
+      - "It does not, schedules run in the cloud"
+      - "A run that reads files on your machine happens on your machine, so a sleeping laptop means no run at all"
+      - "The AI needs constant internet"
+      - "Only for the first week"
+    answer: 1
+  - question: "What is the right first tier for most people?"
+    options:
+      - "A dedicated always-on machine"
+      - "The laptop you already own, scheduled during hours it is open anyway"
+      - "A cloud server"
+      - "A second phone"
+    answer: 1
+  - question: "You are away and the morning run has clearly not happened. What lets you fix it?"
+    options:
+      - "Nothing, wait until you get home"
+      - "Remote access to the machine, so you can look at it from your phone"
+      - "Rescheduling the job"
+      - "Restarting your router"
+    answer: 1
+  - question: "What is the honest cost of the always-on tier?"
+    options:
+      - "Nothing, it is free"
+      - "A machine you leave on, its power, and a little setup. Worth it only once you are actually reading the output"
+      - "A monthly subscription to us"
+      - "It requires a data centre"
+    answer: 1
+---
+
+Your board runs on a schedule. That sentence hides a requirement nobody
+mentions: **something has to be awake to run it.**
+
+If your board reads files on your laptop, the run happens on your laptop. Closed
+lid, no run. Not an error, not a warning, just a morning where nothing arrived
+and you assume it is still working.
+
+This lesson is the three ways people solve that, in the order you should
+actually adopt them.
+
+## Tier 1: the machine you already own
+
+Schedule the run for a time your laptop is open anyway.
+
+If you start work at nine, schedule it for nine fifteen. You are there, the
+machine is awake, the run happens. Total cost: nothing.
+
+This is where you should start, and most people never need to leave. A daily
+run that fires on weekday mornings while you are having coffee is a working
+board.
+
+The limitation is honest: it will not run on the days you do not open the
+laptop, and those tend to be exactly the days you would most like a summary
+waiting for you.
+
+## Tier 2: something that is always on
+
+Once you are reading the output every day and you want it regardless of your
+schedule, you need a machine that does not sleep.
+
+The common answer is a **small desktop left on permanently.** A Mac mini is the
+usual choice because it is quiet, uses very little power, and will sit on a
+shelf for years. Any always-on computer works. An old laptop with the lid open
+and sleep disabled works.
+
+What you are buying is simple: a computer that is awake at six in the morning
+so your run happens at six in the morning.
+
+Two settings matter more than the hardware. **Disable sleep**, because a
+scheduled job cannot wake a machine that has gone down for the night. And **set
+it to restart automatically after a power cut**, or a brief outage while you are
+away silently ends your board.
+
+<Callout type="warning">This is the tier where the liveness check earns its keep. A dedicated machine feels reliable, so you stop checking, and that is precisely when a silent failure runs the longest. Keep the check in your weekly review.</Callout>
+
+## Tier 3: being able to fix it from anywhere
+
+Here is the failure that decides whether tier 2 was worth it.
+
+You are away for a few days. The run has not appeared. Something needs a
+restart, an approval, or one line changed. The machine is at home, awake, and
+completely out of reach.
+
+So the third tier is not more compute. It is **access**: the ability to look at
+that machine, and fix it, from your phone.
+
+Two pieces, and they are separate:
+
+**A private network between your devices.** Your home machine is not on the open
+internet, and you should not put it there. A mesh VPN, of which
+[Tailscale](https://tailscale.com) is the most commonly used, joins your phone,
+laptop, and home machine into one small private network as if they were in the
+same room. It is free at this scale and it is the piece people skip.
+
+**A way to see the screen.** Screen sharing, or a remote desktop app, running
+over that private network. Now the machine is reachable from a hotel.
+
+Between them, "my board stopped and I am not home" becomes a two-minute fix
+rather than a four-day gap.
+
+## Do not start here
+
+If you are on lesson four of a course, **you do not need tiers 2 or 3 yet.**
+
+The mistake is buying a machine before you have a board worth running on it.
+Start on your laptop. Run it for a month. If you find yourself irritated on the
+mornings it did not fire, that irritation is the signal to move up a tier, and
+it is a much better signal than enthusiasm at the beginning.
+
+The order is deliberate: your laptop, then a machine that stays awake, then the
+ability to reach it. Each step is a response to a problem you have actually hit.
+
+<KeyPoint>Something has to be awake for a schedule to mean anything. Start on the laptop you own, at a time it is already open. Move to an always-on machine when you notice the missed mornings, and add remote access when being away stops being acceptable. Buying the hardware first is buying a solution to a problem you have not had yet.</KeyPoint>
