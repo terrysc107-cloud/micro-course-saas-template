@@ -197,7 +197,7 @@ for (const file of lessons) {
   if (!teaches && (trackValue === "board" || trackValue === "both")) {
     const SHIBBOLETHS = [
       { re: /```(ts|tsx|js|jsx|py|sql|go|rb|java|sh|bash)\b/g, why: "Code fence in a language a board-path reader cannot read." },
-      { re: /cd \/path\/to\/your\/project|your (repo|repository|codebase)/gi, why: "Assumes the reader has a code project. A board reader's workspace is their business folder." },
+      { re: /cd \/path\/to\/your\/project|\byour (repo|repository|codebase)\b/gi, why: "Assumes the reader has a code project. A board reader's workspace is their business folder." },
       { re: /\bgit (diff|commit|branch|rebase|merge|push|add)\b/gi, why: "Git command on a board-path lesson." },
       { re: /\bnpm (run|install|test)\b|\byarn\b|\bpnpm\b|\bnpx\b/gi, why: "Package manager command on a board-path lesson." },
     ];

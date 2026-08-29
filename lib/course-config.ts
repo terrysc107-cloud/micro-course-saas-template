@@ -192,6 +192,24 @@ export const MODULE_META: ModuleMeta[] = [
       "Who a seat is, what it may do alone, what floors it is measured against, and how it earns more autonomy without you getting burned.",
   },
   {
+    slug: "22-the-meeting",
+    title: "The Meeting",
+    description:
+      "The weekly ritual: the report your board writes, the inbox you write back through, and what a useful meeting actually contains.",
+  },
+  {
+    slug: "23-review-loop",
+    title: "Review and Improve",
+    description:
+      "How the system gets better instead of just longer. Candidates, promotion by evidence, and treating your own corrections as output.",
+  },
+  {
+    slug: "24-real-data",
+    title: "Connecting Real Data",
+    description:
+      "Hand-typed numbers rot silently. Give a seat a read-only window onto a system of record, and record the query beside the number.",
+  },
+  {
     slug: "01-getting-started",
     title: "Getting Started",
     description:

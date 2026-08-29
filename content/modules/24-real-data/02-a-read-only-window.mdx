@@ -1,0 +1,127 @@
+---
+title: "A Read-Only Window"
+description: "Connecting a source so numbers arrive current. Read-only always, one source first, and the query recorded beside the number."
+order: 2
+duration: "10 min"
+track: board
+teaches: integrations
+quiz:
+  - question: "Why must a data connection be read-only?"
+    options:
+      - "It is faster"
+      - "A board reasons and drafts; nothing in its job requires changing a system of record, and a connection that cannot write cannot be talked into writing"
+      - "Write access costs more"
+      - "It is a legal requirement"
+    answer: 1
+  - question: "What should be recorded alongside each connected number?"
+    options:
+      - "Nothing, the connection is the source"
+      - "The exact query or view that produced it, so any future run can re-derive it and nobody improvises a variant"
+      - "The time it took"
+      - "A confidence score"
+    answer: 1
+  - question: "Which source should you connect first?"
+    options:
+      - "All of them, for a complete picture"
+      - "The one number you would be most embarrassed to be wrong about"
+      - "The easiest one"
+      - "Whichever has an integration"
+    answer: 1
+  - question: "A connected number and your hand-typed one disagree. What now?"
+    options:
+      - "Average them"
+      - "The connected one wins and the disagreement gets logged, because it usually reveals the hand-typed figure was measuring something subtly different"
+      - "Keep the hand-typed one"
+      - "Remove both"
+    answer: 1
+---
+
+Connecting a source means your board reads a number instead of trusting one you
+wrote down. This lesson is how to do that without handing an autonomous system
+the keys to your business.
+
+## Read-only. Always.
+
+Before any mechanics: **the connection may read and must never write.**
+
+A board reasons, drafts, and reports. Nothing in that job requires modifying a
+system of record. Not your invoices, not your CRM, not your customer list.
+
+This is not caution for its own sake. A connection that *cannot* write cannot be
+talked into writing by a confused run or by instructions hidden in something it
+read. The boundary holds without the model's cooperation, which is the only kind
+of boundary worth having.
+
+Wherever you are generating credentials, look for the read-only option. Most
+tools have one. If a tool only offers full access, that is a reason to hesitate,
+not a reason to proceed.
+
+## One source first
+
+The instinct is to connect everything. Resist it.
+
+**Connect the single number you would be most embarrassed to be wrong about.**
+For most small businesses that is money: what came in this month.
+
+One source, working, that you trust, beats four half-configured ones. And you
+will learn something from the first that changes how you do the rest, which is
+wasted if you have already done the rest.
+
+## The mechanics, in one paragraph
+
+Your agent reaches other systems through connectors. Whatever the tool calls
+them, the shape is the same: you authorise a connection once, the agent can then
+ask that system questions, and it can only do what the credentials permit.
+
+Set it up, then ask the board something you already know the answer to. If it
+comes back right, the connection works. If it comes back subtly wrong, you have
+just learned something important before you started depending on it.
+
+## Record the query beside the number
+
+The part that matters more than the connection.
+
+When a number arrives from a source, write down **how it was obtained**, next to
+the number, in `METRICS.md`:
+
+```markdown
+| Metric          | Value  | How it was obtained                  |
+|-----------------|--------|--------------------------------------|
+| Paid customers  | 12     | Active subscriptions, excluding
+                             cancelled and past-due                |
+| Monthly revenue | $2,640 | Sum of succeeded charges, this
+                             calendar month, refunds subtracted    |
+```
+
+Then one instruction in the playbook: **run these, never improvise a variant.**
+
+This exists because of a real failure. A board reported paid customers as 21 and
+rising when the truth was 14 and falling, because a fresh query was written that
+omitted the expiry condition. The recorded query was never wrong. It was
+bypassable, and it got bypassed.
+
+An improvised query returns a confident number that looks exactly like a correct
+one. Writing the definition down is what makes the difference checkable.
+
+## When numbers disagree
+
+They will, the first time. Your hand-typed revenue says one thing, the
+connection says another.
+
+**The connected number wins, and you log the disagreement.** Nearly always it
+turns out the two were measuring subtly different things: one included refunds,
+one counted a different window, one used a different definition of active.
+
+That discovery is worth more than the number. It usually means a decision you
+made earlier was based on a figure that meant something other than you thought.
+
+## What still will not be connected
+
+Be honest in your metrics file about what remains manual, because that is where
+staleness will now concentrate. Once some numbers refresh themselves and others
+do not, the un-refreshed ones get less attention, not more.
+
+Mark them. `updated by hand` in the source column is a small thing that keeps you
+honest about which half of your table is living and which is a snapshot.
+
+<KeyPoint>Read-only always, because a connection that cannot write cannot be talked into writing. Connect one source first, the number you would hate to be wrong about. Record how each number was obtained and never improvise a variant. When a connected figure disagrees with your typed one, the connection wins and the disagreement is the finding.</KeyPoint>

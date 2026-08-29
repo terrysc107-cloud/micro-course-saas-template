@@ -439,9 +439,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-28 20:57:40 EDT
+- Updated: 2026-08-28 22:33:10 EDT
 - Branch: main
-- Last commit: 7c4b523 feat(brand): real favicon, Apple-style hero, and proof from a running board
+- Last commit: d84e36c feat(proof): record a board run as video, teach the always-on setup
 - Working tree: clean
 
 <!-- END AUTO-STATE -->

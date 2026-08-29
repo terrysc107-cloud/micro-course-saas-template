@@ -1,0 +1,121 @@
+---
+title: "Corrections Are Output"
+description: "A board that never contradicts itself is not being careful. Why self-correction is the signal you want, and how to make it cheap."
+order: 2
+duration: "8 min"
+track: board
+quiz:
+  - question: "Three reports in a row open by correcting something previously stated. What does that indicate?"
+    options:
+      - "The system is failing and should be paused"
+      - "It is catching its own errors, which is what you want. The thing to fix is the verification gap, not the corrections"
+      - "The model is unreliable"
+      - "Someone is editing the files"
+    answer: 1
+  - question: "What is the correct response to discovering a published number was wrong?"
+    options:
+      - "Quietly fix it"
+      - "Lead the next report with it, and harden whatever allowed it so the same error cannot recur"
+      - "Add a disclaimer"
+      - "Stop publishing that number"
+    answer: 1
+  - question: "Why write 'I could not verify this' into a report?"
+    options:
+      - "To cover yourself"
+      - "Because an unverified claim that reads like a verified one is the failure that costs the most, and naming it is the only thing that distinguishes them"
+      - "To make the report longer"
+      - "It is not necessary"
+    answer: 1
+  - question: "What does a board that has never corrected itself most likely mean?"
+    options:
+      - "It is unusually accurate"
+      - "Nothing is being checked after the fact, so errors are being made and not found"
+      - "The business is simple"
+      - "It is well configured"
+    answer: 1
+---
+
+Here is a pattern that looks like failure and is not.
+
+A board runs for three months. Three separate reports open by correcting
+something an earlier report stated as true. A number was wrong. A conclusion was
+drawn from a query that omitted a condition. A fix turned out to have expired.
+
+The instinct is that the system is unreliable. The opposite is true.
+
+## A board that never corrects itself is not checking
+
+Errors happen in every system that produces claims. The question is never
+whether yours makes them. It is whether it finds them.
+
+A board with zero corrections after six months is not more accurate than one
+with six. It is a board where nothing is checked after the fact, so the errors
+are all still there, sitting in reports you acted on.
+
+**Corrections are the visible output of a system that verifies.** They are the
+receipts.
+
+## Make them cheap and they will happen
+
+The reason people hide corrections is that admitting one feels expensive. So
+make it cheap by deciding in advance that it is normal:
+
+```
+A number we previously published that turned out to be wrong is the
+headline of the next report. Above anything good that happened.
+```
+
+That single rule flips it. A correction stops being an embarrassment to bury and
+becomes a thing the routine expects. And because it goes at the top, it arrives
+while it is still cheap to act on.
+
+## Correct the cause, not just the number
+
+Fixing the figure is half the job. The other half is asking what let it be wrong.
+
+Here is a real one, written into the query file as a comment after the fact:
+
+> Query the access view, never the stored tier column directly. Added after a
+> report was written from a hand-rolled query that omitted the expiry field. It
+> reported paid accounts as 21 and rising when the truth was 14 and falling.
+> This pack was never wrong. It was **bypassable**, and it got bypassed.
+
+That last sentence is the whole lesson. The tool was correct; the process
+allowed going around it. Correcting the number alone would have left the same
+error available every week thereafter.
+
+So each correction gets two outputs: **the fix**, and **the change that stops it
+recurring.** Usually the second is one line in a playbook.
+
+## Write down what you could not verify
+
+The most useful habit in this whole lesson.
+
+When a seat cannot confirm something, it should say so, in the report, in those
+words:
+
+```
+I did not verify this.
+```
+
+An unverified claim that reads exactly like a verified one is the expensive
+failure, because nothing in the output distinguishes them. Once a report starts
+marking its own soft spots, you can read everything else with more confidence,
+not less.
+
+A board that noticed it kept opening with corrections wrote this into its own
+goals: *"The pattern is not bad luck, it is missing verification. Every claim of
+state gets checked before it ships, and 'I did not verify this' gets written
+down when I cannot."*
+
+That is a system improving itself, in one sentence, in a file.
+
+## What this looks like over a year
+
+Fewer corrections, and different ones. Early corrections are about numbers. Later
+ones are about judgement, which is a better class of problem to have.
+
+If you are still correcting the same kind of thing in month nine, the fix never
+made it into a playbook. It stayed a note.
+
+<KeyPoint>A board that has never corrected itself is not accurate, it is unchecked. Make corrections the headline so they arrive cheap, fix the cause rather than the number, and have it write "I did not verify this" whenever it cannot, because an unverified claim that looks verified is the one that costs you.</KeyPoint>

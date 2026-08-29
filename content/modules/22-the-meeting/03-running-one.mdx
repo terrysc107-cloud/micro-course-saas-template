@@ -1,0 +1,137 @@
+---
+title: "Running One"
+description: "Thirty minutes, start to finish. The order the steps go in, and the one that catches the failure everyone else misses."
+order: 3
+duration: "9 min"
+track: board
+quiz:
+  - question: "What is Step 1 of the weekly, before any metrics are pulled?"
+    options:
+      - "Read the goals"
+      - "A liveness check: has this playbook itself been running?"
+      - "Draft the newsletter"
+      - "Review last week's report"
+    answer: 1
+  - question: "Why does the playbook say to run the queries rather than ask for the numbers?"
+    options:
+      - "It is faster"
+      - "An improvised query can quietly omit a condition and produce a confident, wrong number that reads exactly like a right one"
+      - "Queries are more professional"
+      - "The seat cannot count"
+    answer: 1
+  - question: "What is the guardrail pre-flight for?"
+    options:
+      - "Formatting the report"
+      - "A short checklist the seat runs before the report is considered done, so a rule is checked rather than remembered"
+      - "Approving spending"
+      - "Logging in"
+    answer: 1
+  - question: "The playbook and an external scheduled prompt disagree. Which wins?"
+    options:
+      - "The scheduled prompt, it is what actually runs"
+      - "The playbook file, because it is the version you edit and review"
+      - "Whichever is newer"
+      - "Neither, start over"
+    answer: 1
+---
+
+You have a charter, floors, an inbox, and a report shape. This is the routine
+that ties them together, in order, once a week.
+
+Thirty minutes. Most of it is the seat's work, not yours.
+
+## The order
+
+```
+0. Read CHAIRMAN-NOTES.md. Act on open items first.
+1. Liveness check. Has this playbook actually been running?
+2. Pull the metrics. Run the recorded queries. Do not improvise.
+3. Update the files. Goals, metrics, pipeline.
+4. Write the report from the template.
+5. Surface promotion status. Mandatory, never skipped.
+6. Log decisions and propose learnings.
+7. Guardrail pre-flight.
+```
+
+Two of those are unusual, and they are the two worth having.
+
+## Step 1: check the checker
+
+**Look at the newest file in `BOARD-MEETINGS/`. If it is more than ten days old,
+that gap is the headline of this report.**
+
+This is the step that catches the failure nobody else catches. A scheduled run
+that dies does not error. It produces nothing, and nothing looks exactly like a
+quiet week. The only thing that notices is something that goes looking.
+
+Put it first, before the interesting work, because a check you do at the end is
+a check you skip when you are busy.
+
+## Step 2: run the queries, do not ask for the numbers
+
+If your metrics come from anywhere real, write the query down once and have the
+playbook say: **run this, verbatim, never a variant.**
+
+The reason is a real failure. A board once reported a paid-customer count as
+rising when it was falling, because someone wrote a fresh query that omitted an
+expiry condition. The recorded query was never wrong. It was bypassable, and it
+got bypassed.
+
+An improvised query produces a confident number that reads exactly like a
+correct one. There is nothing in the output to tell you which you have.
+
+## Step 5: the step people delete
+
+```
+Step 5. Promotion status. MANDATORY. Never skip.
+State the rank. State whether you are requesting a promotion. If not, say
+why not. Then state your own goals for next week and the one executable
+thing you need from me.
+```
+
+This looks like ceremony. It is the most informative section in the report.
+
+A seat explaining why it is *not* asking for more autonomy has to audit its own
+performance honestly, and it will name problems you were avoiding. One wrote:
+*"Not requesting L3. The daily run has been dead 40 days and paid accounts are
+falling. Those fail the last two criteria."* That is the two worst problems in
+the business, volunteered, in the course of declining a raise.
+
+## Step 7: the pre-flight
+
+A short checklist the seat runs before calling the report done:
+
+```
+- [ ] No outcome or income claims anywhere
+- [ ] Every number traces to a source; gaps named as gaps
+- [ ] Nothing sent, published, merged, or spent
+- [ ] Decisions logged with the rank they were made under
+- [ ] Step 5 not skipped
+- [ ] When unsure, I escalated rather than acted
+```
+
+Checklists beat instructions because they are checked rather than remembered.
+Every line here should exist because skipping it once cost something.
+
+## One precedence rule
+
+Write this at the top of the playbook:
+
+> If this file and an external scheduled prompt ever disagree, **this file
+> wins.** It is the version the owner edits.
+
+You will end up with the routine described in two places: here, and in whatever
+schedules it. They will drift. Deciding in advance which is authoritative saves
+you an afternoon of confusion later.
+
+## Your first one will be bad
+
+Run it anyway. The first report will be too long, the metrics will have holes,
+and the asks will be vague.
+
+That is data. The gaps tell you which files are thin, and the vagueness tells
+you which parts of the charter need rewriting. A board improves through its
+playbook being edited after bad runs, which cannot happen until you have had
+one.
+
+<KeyPoint>Inbox first, then check the schedule is alive before anything else, then run recorded queries rather than improvising them. Never skip the promotion step: a seat explaining why it is not asking will name the problems you are avoiding. And the playbook file wins over whatever schedules it.</KeyPoint>

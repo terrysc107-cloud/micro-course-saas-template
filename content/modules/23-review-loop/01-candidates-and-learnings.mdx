@@ -1,0 +1,118 @@
+---
+title: "Candidates and Learnings"
+description: "How the system gets smarter instead of just longer, and why the agent proposes but never promotes."
+order: 1
+duration: "9 min"
+track: board
+quiz:
+  - question: "Why must the agent write to CANDIDATES.md but never to LEARNINGS.md?"
+    options:
+      - "LEARNINGS.md is read-only for technical reasons"
+      - "An agent that edits its own long-term memory unsupervised comes to believe things nobody checked, and afterwards those beliefs are indistinguishable from verified ones"
+      - "It saves tokens"
+      - "It does not matter which it writes to"
+    answer: 1
+  - question: "What is the promotion rule for a candidate lesson?"
+    options:
+      - "Promote anything that sounds right"
+      - "Wait until the same lesson appears in two independent runs, because one run is an anecdote"
+      - "Promote after a month"
+      - "Promote whatever the agent rates highly"
+    answer: 1
+  - question: "Which candidate can be promoted on a single run?"
+    options:
+      - "Any high-confidence one"
+      - "A safety issue, a destructive failure, or a demonstrably false instruction"
+      - "None, ever"
+      - "Whichever is shortest"
+    answer: 1
+  - question: "Your LEARNINGS.md is empty after a month. Is that a problem?"
+    options:
+      - "Yes, the system is not working"
+      - "No. An empty file means nothing has been confirmed twice yet, and filling it early would defeat the rule it exists to enforce"
+      - "Yes, you should promote the best candidates"
+      - "It means the agent is broken"
+    answer: 1
+---
+
+A board that runs every week for a year has produced fifty reports. If nothing
+carries forward except the reports themselves, you have an archive, not a
+system that improves.
+
+This lesson is the smallest mechanism that makes it improve. Two files and one
+rule.
+
+## Two files
+
+**`memory/CANDIDATES.md`** — things the board has noticed and proposes you adopt.
+It writes here freely, every run, without asking.
+
+**`memory/LEARNINGS.md`** — things you have accepted as true about running this
+business. **Only you write here.**
+
+## Why the split is not bureaucracy
+
+Give an agent write access to its own long-term memory and it will, over months,
+come to believe things nobody checked. Not through malice: it notices a pattern,
+records it as a finding, then reads its own finding next month as established
+fact and builds on it.
+
+Afterwards there is no way to tell those beliefs apart from the ones that were
+verified. They are the same words in the same file.
+
+The split keeps a human between "I noticed something" and "this is now true."
+That is the entire safeguard, and it costs you about a minute a week.
+
+## The two-run rule
+
+**Do not promote a candidate until the same lesson has appeared in two
+independent runs.**
+
+One run is an anecdote. A board that saw traffic fall on one Tuesday will
+happily conclude Tuesdays are bad. Two independent sightings is a low bar that
+removes most of the noise.
+
+One exception, and it is worth stating explicitly: **a safety issue, a
+destructive failure, or a demonstrably false instruction gets fixed
+immediately.** You do not wait for a second occurrence of something dangerous.
+
+## What a candidate looks like
+
+```markdown
+| Proposed | Candidate lesson | Evidence | Runs | Status |
+|---|---|---|---|---|
+| Mar 3 | A correction can go stale. Re-check previous corrections,
+          not only original claims | The note saying a command was
+          removed; it had come back | 1 | proposed |
+```
+
+Four columns doing real work: what was noticed, what makes it credible, how many
+times it has been seen, and whether it is still waiting.
+
+**Evidence is the column that matters.** A candidate with no evidence is an
+opinion the board had once.
+
+## Where a promoted learning goes
+
+Not just into `LEARNINGS.md`. That file is the record; the *behaviour* changes
+somewhere else.
+
+- A lesson about how to run the weekly goes into the **playbook**
+- A lesson about what the seat may or may not do goes into the **charter**
+- A lesson about which numbers matter goes into **goals**
+
+`LEARNINGS.md` records that you decided it and why. The file that changes
+behaviour is the one that gets read at the point the behaviour happens.
+
+Promoting into the record and forgetting to change the playbook is the common
+mistake. You end up with a documented lesson the system never applies.
+
+## An empty file is correct
+
+After a month you may have five candidates and nothing promoted.
+
+That is the rule working, not failing. Filling `LEARNINGS.md` early to feel
+productive defeats the only thing it is for. The value is that everything in it
+survived a second look.
+
+<KeyPoint>The board proposes into candidates, you promote into learnings, and promotion waits for a second independent sighting. The split exists because an agent editing its own memory unsupervised ends up believing things nobody checked. And a promoted lesson has to change a playbook, not just get recorded.</KeyPoint>

@@ -1,0 +1,110 @@
+---
+title: "Why Typed Numbers Lie"
+description: "A figure you typed in March reads exactly like one from this morning. The failure is invisible in the output, which is what makes it expensive."
+order: 1
+duration: "8 min"
+track: board
+quiz:
+  - question: "What is wrong with keeping metrics you update by hand?"
+    options:
+      - "Nothing, if you are diligent"
+      - "A stale number is indistinguishable from a current one to whatever reads it next, so it produces confident advice about a business that no longer exists"
+      - "It takes too long"
+      - "Hand-typed numbers are usually wrong"
+    answer: 1
+  - question: "Why does this failure cost more than an obviously broken metric?"
+    options:
+      - "It does not"
+      - "A missing number gets noticed and asked about; a stale one gets reasoned from, and nothing in the output signals which you have"
+      - "Stale numbers crash the run"
+      - "It only affects revenue"
+    answer: 1
+  - question: "What is the minimum honest fix before connecting anything?"
+    options:
+      - "Update the file every day"
+      - "Record the source and the date beside every number, so a run can tell how old the figure is"
+      - "Round the numbers"
+      - "Remove the metrics file"
+    answer: 1
+  - question: "You have no number for a metric. What goes in the file?"
+    options:
+      - "Your best estimate"
+      - "Unknown, and where it will come from when you have it"
+      - "Last month's figure"
+      - "Leave the row out"
+    answer: 1
+---
+
+Everything so far has you maintaining `METRICS.md` by hand. That was correct for
+week one. This lesson is why it stops being correct, and it is the most
+dangerous failure in the whole system.
+
+## The failure
+
+You update your metrics in March. In June you are busy, and you do not.
+
+Your board runs in July. It reads the file. It sees revenue, enquiries, list
+size, all present, all formatted correctly. It reasons carefully from them and
+produces a thoughtful report recommending something sensible.
+
+Every word of that report is about your business in March.
+
+**Nothing in the output tells you this.** There is no warning, no error, no
+missing field. A number typed in March looks exactly like a number pulled this
+morning, because it is the same characters in the same cell.
+
+## Why this beats an obviously broken metric
+
+If a number is missing, someone notices. The report says it cannot answer, you
+go and find it, the loop closes.
+
+If a number is stale, the report answers confidently, you act on it, and the
+loop closes wrongly. The failure mode of a gap is a question. The failure mode
+of a stale figure is a decision.
+
+That asymmetry is why this is worth a module rather than a footnote.
+
+## The minimum fix, before connecting anything
+
+You do not need an integration to make this much safer. You need two extra
+columns:
+
+```markdown
+| Metric          | Value  | Source                          | As of  |
+|-----------------|--------|---------------------------------|--------|
+| Monthly revenue | $2,640 | Stripe dashboard, month to date | Mar 03 |
+| Enquiries       | 4      | Contact form inbox, counted     | Mar 03 |
+| Website visits  | unknown| No analytics installed          | -      |
+```
+
+Now a run in July can see the date and say so:
+
+> Revenue is dated March 3, four months ago. I am not going to reason about
+> revenue trends from it. Refresh it or tell me to proceed anyway.
+
+That is a board doing its job. The number is still hand-typed, but it is no
+longer able to lie silently, and the whole problem was the silence.
+
+## Unknown is a real value
+
+Write `unknown` where you do not have a figure. Never a placeholder, never a
+guess, never last month's number carried forward.
+
+`unknown` in a metrics table is useful information: it tells the board what it
+cannot reason about, and it tells you what is worth going to get. A guess tells
+neither of you anything, and it looks identical to a fact.
+
+## What connecting actually buys you
+
+The next lesson connects a real source. Worth being clear about what that
+changes, because it is narrower than it sounds.
+
+It does not make your board smarter. It removes one specific failure: the
+possibility that a number is older than it appears. That is all, and it is
+enough, because that failure produces confident wrong advice rather than
+obviously wrong advice.
+
+Everything else in this system works fine on hand-typed numbers, as long as they
+carry their date.
+
+<KeyPoint>A stale number reads exactly like a current one, so it produces careful advice about a business that no longer exists, with nothing in the output to warn you. Before connecting anything, put the source and the date beside every figure, and write "unknown" rather than a guess.</KeyPoint>
