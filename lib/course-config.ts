@@ -130,30 +130,65 @@ export const BUILD_LAB = {
    *  spellings of one product is two products. */
   sessionSlug: "founding-run",
 
-  /** 'waitlist' | 'scheduled' — the single switch for the whole funnel. */
-  status: "waitlist" as "waitlist" | "scheduled",
+  /**
+   * 'waitlist' | 'scheduled' — the single switch for the whole funnel.
+   *
+   * SCHEDULED 2026-09-03. Terry set the date. The waitlist era is over.
+   */
+  status: "scheduled" as "waitlist" | "scheduled",
 
   /** MUST be null while status is 'waitlist'. Enforced by check-content.mjs. */
-  dateDisplay: null as string | null,
+  dateDisplay: "Wednesdays from November 18, 2026" as string | null,
 
-  /** $497 for the founding run.
+  /**
+   * FOUR SESSIONS, NOT ONE, and the gap in the middle is the product.
    *
-   *  REPRICED when the ladder landed. $297 was set when the Lab sat directly
-   *  above a $97 course with nothing between them. The Kit now occupies $297,
-   *  and the Lab's promise grew — it is no longer "watch one feature get
-   *  built", it is "stand up your own operating company with me, live, on your
-   *  repo, Kit included". A rung cannot cost the same as the rung below it.
+   * This began as a single live session where one real feature got built end to
+   * end. Terry runs multi-week cohorts for his other business and has since
+   * 2017, which is a genuinely rare operating capability in this market: most
+   * people selling an AI course can ship a video library and cannot run a
+   * cohort. A one-day lab used none of it.
    *
-   *  Still a founding number: there is no social proof yet, and this is the
-   *  first run. Asserted against the live Stripe price at checkout — if they
-   *  disagree, checkout refuses rather than surprising someone. Changing it is
-   *  this line plus a new Stripe price id plus the ccc_lab_sessions row. */
-  priceDisplay: "$497",
-  priceCents: 49700,
+   * THANKSGIVING IS WHY IT IS FOUR AND NOT FIVE. Five consecutive Wednesdays
+   * from Nov 18 puts week two on Nov 25, the night before Thanksgiving, and
+   * pushes the last session to Dec 23. Both would be empty rooms. Skipping the
+   * holiday week leaves Nov 18, Dec 2, Dec 9, Dec 16.
+   *
+   * The skip is not a compromise, it is the best session in the program. Their
+   * board runs TWO WEEKS UNATTENDED over the holiday, and Dec 2 opens with what
+   * died. That is the failure this whole system is about: scheduled work does
+   * not error when it stops, it just produces nothing, and nothing looks
+   * exactly like a quiet week. No single-day format can teach it, because the
+   * lesson takes two weeks of real time to happen to you.
+   */
+  sessions: [
+    { date: "2026-11-18", focus: "Your first board", module: "00-start-here" },
+    { date: "2026-12-02", focus: "What died, and the four files that fix it", module: "20-memory" },
+    { date: "2026-12-09", focus: "Seats and the meeting", module: "21-seats" },
+    { date: "2026-12-16", focus: "Real data and the review loop", module: "24-real-data" },
+  ],
+
+  /** $997 for the founding run.
+   *
+   *  REPRICED $497 -> $997 when the Lab became a four-week cohort. $497 was
+   *  priced for one live session. Four weeks of live time with the Kit included
+   *  at $497 is cheap enough to signal the wrong thing and cheap enough that
+   *  the person delivering it resents it by week three, which is its own
+   *  failure mode.
+   *
+   *  Still a founding number, and for the same reason as before: there is no
+   *  social proof, and this is the first run. With proof it is a $1,500 to
+   *  $2,000 program.
+   *
+   *  Asserted against the live Stripe price at checkout — if they disagree,
+   *  checkout refuses rather than surprising someone. Changing it is this line
+   *  plus a new Stripe price id plus the ccc_lab_sessions row. */
+  priceDisplay: "$997",
+  priceCents: 99700,
   priceIdEnvVar: "NEXT_PUBLIC_STRIPE_BUILD_LAB_PRICE_ID",
 
   description:
-    "A live, small-group session where we build one real feature end to end and you watch every decision, including the ones that go wrong.",
+    "A four-week live cohort, in a small group, where you stand up your own AI board on your own numbers and watch every decision, including the ones that go wrong.",
 
   waitlistNote:
     "No date is set yet. Join the list and you'll hear when there is one, before it goes anywhere else. The waitlist costs nothing and holds nothing, no deposit.",
