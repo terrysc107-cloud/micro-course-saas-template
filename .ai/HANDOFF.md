@@ -439,9 +439,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-28 23:18:31 EDT
+- Updated: 2026-08-28 23:28:27 EDT
 - Branch: main
-- Last commit: 8d21bae feat(check): two guards so the board vocabulary cannot drift again
+- Last commit: 5467374 feat(template): publish ai-board and teach the private-copy flow
 - Working tree: clean
 
 <!-- END AUTO-STATE -->
