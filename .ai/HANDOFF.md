@@ -439,9 +439,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-08-28 23:28:27 EDT
+- Updated: 2026-09-04 09:12:09 EDT
 - Branch: main
-- Last commit: 5467374 feat(template): publish ai-board and teach the private-copy flow
+- Last commit: 406f200 docs(ladder): the Kit and Board Room prices exist; availability does not
 - Working tree: clean
 
 <!-- END AUTO-STATE -->

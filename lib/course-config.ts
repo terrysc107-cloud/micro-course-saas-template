@@ -685,6 +685,17 @@ export const FAQ: FaqItem[] = [
  * `available: false` until NEXT_PUBLIC_STRIPE_DEV_PACK_PRICE_ID exists. The
  * checkout route reads this flag, so the config is the release gate and hiding
  * the button is only presentation.
+ *
+ * ⚠️ THAT CONDITION IS NOW MET (2026-09-04). The env var is set in Vercel
+ * production against a live $97 price under its own "The Dev Pack" product, and
+ * the developer lessons are written and shipped. So this flag is the only thing
+ * left, and flipping it starts selling.
+ *
+ * It stays false pending Terry's call, because "the plumbing works" is not the
+ * same decision as "start selling it". Retiring the old $97 price is what
+ * forced this product to exist: the Dev Pack used to have no price of its own,
+ * and the only live $97 belonged to "Claude Code Mastery", a retired name that
+ * would have appeared on the buyer's receipt.
  */
 export const DEV_PACK = {
   id: "dev-pack",
