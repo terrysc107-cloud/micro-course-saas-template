@@ -809,6 +809,20 @@ export const LADDER: readonly LadderRung[] = [
     priceDisplay: "$297",
     priceCents: 29700,
     priceIdEnvVar: "NEXT_PUBLIC_STRIPE_KIT_PRICE_ID",
+    /**
+     * The Stripe price and the env var both EXIST as of 2026-09-04, so this is
+     * one line away from selling. It stays false because the product does not
+     * exist yet.
+     *
+     * The promise above is "three months of meetings it actually produced" and
+     * "the archive". The boards that would supply that archive started running
+     * on 2026-08-27, so today there is roughly one week of history. Flipping
+     * this now would sell a three-month archive that is seven days deep.
+     *
+     * FLIP IT when the archive is genuinely three months old, which is late
+     * November. That is also when the Build Lab needs it, because the Lab
+     * bundles the Kit.
+     */
     available: false,
     href: "/ladder#kit",
     ctaLabel: "Get the Kit, $297",
@@ -871,6 +885,17 @@ export const LADDER: readonly LadderRung[] = [
     priceDisplay: "$29/mo",
     priceCents: 2900,
     priceIdEnvVar: "NEXT_PUBLIC_STRIPE_BOARD_ROOM_PRICE_ID",
+    /**
+     * Recurring Stripe price and env var both EXIST as of 2026-09-04. Still
+     * false, and deliberately so: the note above already decided this is not
+     * sold at checkout, because the constraint is the first sale rather than
+     * revenue per customer, and attaching a subscription at the $57 moment adds
+     * friction where we can least afford it.
+     *
+     * It also has nothing to deliver on month one until a board has been
+     * running long enough to have an archive worth subscribing to. Revisit when
+     * there are customers, not before.
+     */
     available: false,
     href: "/ladder#board-room",
     ctaLabel: "Join the Board Room",
