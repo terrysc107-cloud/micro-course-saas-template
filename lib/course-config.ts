@@ -187,6 +187,33 @@ export const BUILD_LAB = {
   priceCents: 99700,
   priceIdEnvVar: "NEXT_PUBLIC_STRIPE_BUILD_LAB_PRICE_ID",
 
+  /**
+   * BUNDLED, and the bundle is a prerequisite gate rather than a discount.
+   *
+   * $997 includes the course and the Kit so that every seat arrives having
+   * finished `00-start-here` with a board that has run once. Without that,
+   * session one becomes group tech support for whoever installed nothing while
+   * everyone who did the work watches, which is how a cohort loses the room in
+   * its first hour.
+   */
+  bundles: ["course", "kit"] as const,
+
+  /** Seats. Mirrors ccc_lab_sessions.capacity, which is the number that
+   *  actually gates checkout. This one is for copy only. */
+  seatsDisplay: 8,
+
+  /**
+   * ONLY THE TEACHING BLOCKS ARE RECORDED, and this is a privacy decision, not
+   * a production one.
+   *
+   * These boards read real revenue, real pipeline and real customer names, and
+   * the work block is exactly when those are on screen. Recording it would put
+   * eight people's numbers into a file we then hand to seven other people. So
+   * the recording stops, audibly, before the work block starts.
+   */
+  recordingPolicy:
+    "The teaching blocks are recorded and shared with the cohort. The working sessions are not, because your real numbers are on screen during them.",
+
   description:
     "A four-week live cohort, in a small group, where you stand up your own AI board on your own numbers and watch every decision, including the ones that go wrong.",
 
@@ -810,10 +837,10 @@ export const LADDER: readonly LadderRung[] = [
     href: "/build-lab",
     ctaLabel: "Join the Build Lab list",
     includes: [
-      "Live small-group sessions, working on your repo",
-      "Your board configured against your real numbers",
-      "The Kit included",
-      "Recordings and the working files afterward",
+      "Four live sessions in a group of eight, working on your own board",
+      "The course and the Kit included, so there is nothing else to buy",
+      "A two-week unattended run in the middle, and the session that unpacks it",
+      "Recordings of the teaching blocks, and the working files afterward",
     ],
   },
   {

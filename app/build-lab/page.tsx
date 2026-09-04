@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { CalendarClock, Users, Video } from "lucide-react";
-import { BUILD_LAB, BRAND, DISCLAIMER } from "@/lib/course-config";
+import { BUILD_LAB, BRAND, DISCLAIMER, getRung } from "@/lib/course-config";
 import { getLabAvailability } from "@/lib/build-lab";
 import MarketingNav from "@/components/marketing/MarketingNav";
 import MarketingFooter from "@/components/marketing/MarketingFooter";
@@ -169,6 +169,29 @@ export default async function BuildLabPage() {
             </p>
           </div>
         )}
+
+        {/* How it runs. These are the two things a buyer at this price will ask
+            before they ask anything else, and both are commitments rather than
+            features: the bundle is what makes the pre-work gate enforceable,
+            and the recording line is a privacy promise we have to keep in the
+            room. Both render from config so the run book and the sales page
+            cannot drift. */}
+        <div className="mt-12">
+          <h3 className="text-slate-50 font-semibold text-sm mb-4">How it runs</h3>
+          <ul className="space-y-3">
+            {(getRung("build-lab")?.includes ?? []).map((item) => (
+              <li key={item} className="flex gap-3 text-slate-400 text-sm leading-relaxed">
+                <span className="text-brand-400 shrink-0" aria-hidden="true">
+                  &rarr;
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="text-slate-500 text-xs leading-relaxed mt-4">
+            {BUILD_LAB.recordingPolicy}
+          </p>
+        </div>
 
         <div className="mt-10 rounded-xl border-l-2 border-gold bg-gold/[0.06] border-y border-r border-slate-800 px-6 py-5">
           <p className="text-slate-300 text-sm leading-relaxed">
