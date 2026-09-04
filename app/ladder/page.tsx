@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
-import { LADDER, BRAND, DISCLAIMER } from "@/lib/course-config";
+import { LADDER, BRAND, DISCLAIMER, DEV_PACK } from "@/lib/course-config";
+import LadderBuyButton from "@/components/marketing/LadderBuyButton";
 import MarketingNav from "@/components/marketing/MarketingNav";
 import MarketingFooter from "@/components/marketing/MarketingFooter";
 
@@ -124,6 +125,63 @@ export default function LadderPage() {
               );
             })}
           </ol>
+
+          {/* The Dev Pack.
+              OFF THE SPINE ON PURPOSE, and visually separated for the reason
+              DEV_PACK's own comment gives: the ladder is what a solopreneur
+              climbs, and their next step after building a board is the Kit, not
+              learning Next.js and SQL. Rendering it as rung six would say
+              beginners graduate into writing software, which is the exact
+              mistake that made the original course unsellable to the people
+              actually asking for it.
+
+              It still needs to live here, because DEV_PACK.href points at
+              #dev-pack and DevPackGate sends locked-lesson readers to it. Until
+              this section existed that link landed at the top of the ladder
+              with no Dev Pack anywhere on the page. */}
+          <div
+            id="dev-pack"
+            className="mt-8 scroll-mt-24 rounded-2xl border border-slate-800 bg-slate-900/40 p-8 sm:p-10"
+          >
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+              Off the ladder, for people who write software
+            </p>
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-50">
+              {DEV_PACK.name}
+            </h2>
+            <p className="mt-3 max-w-[56ch] leading-relaxed text-slate-400">
+              {DEV_PACK.promise}
+            </p>
+
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+              {DEV_PACK.includes.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm text-slate-300">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold-ink" aria-hidden />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-5 text-sm text-slate-500">{DEV_PACK.forWho}</p>
+
+            <div className="mt-7 flex flex-wrap items-baseline gap-4">
+              {DEV_PACK.available ? (
+                <LadderBuyButton
+                  rung="dev-pack"
+                  label={DEV_PACK.ctaLabel}
+                  next="/ladder#dev-pack"
+                  className="rounded-full bg-gold px-6 py-3 text-sm text-slate-50 hover:brightness-110 active:scale-[0.98]"
+                />
+              ) : (
+                <span className="rounded-full border border-slate-700 px-5 py-2.5 text-sm text-slate-400">
+                  Not on sale yet
+                </span>
+              )}
+              <span className="text-sm text-slate-500">
+                One-time. Unlocks inside the course you already have.
+              </span>
+            </div>
+          </div>
         </div>
       </main>
 

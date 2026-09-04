@@ -439,9 +439,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-09-04 09:12:09 EDT
+- Updated: 2026-09-04 09:23:53 EDT
 - Branch: main
-- Last commit: 406f200 docs(ladder): the Kit and Board Room prices exist; availability does not
+- Last commit: 01365e3 chore(stripe): retire the Claude Code Mastery price, give the Dev Pack its own
 - Working tree: clean
 
 <!-- END AUTO-STATE -->

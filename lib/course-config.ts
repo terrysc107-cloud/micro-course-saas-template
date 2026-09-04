@@ -691,8 +691,7 @@ export const FAQ: FaqItem[] = [
  * the developer lessons are written and shipped. So this flag is the only thing
  * left, and flipping it starts selling.
  *
- * It stays false pending Terry's call, because "the plumbing works" is not the
- * same decision as "start selling it". Retiring the old $97 price is what
+ * FLIPPED TRUE on 2026-09-04, on Terry's call. Retiring the old $97 price is what
  * forced this product to exist: the Dev Pack used to have no price of its own,
  * and the only live $97 belonged to "Claude Code Mastery", a retired name that
  * would have appeared on the buyer's receipt.
@@ -706,7 +705,8 @@ export const DEV_PACK = {
   priceDisplay: "$97",
   priceCents: 9700,
   priceIdEnvVar: "NEXT_PUBLIC_STRIPE_DEV_PACK_PRICE_ID",
-  available: false,
+  /** ON SALE since 2026-09-04, on Terry's call. */
+  available: true,
   href: "/ladder#dev-pack",
   ctaLabel: "Add the Dev Pack, $97",
   kind: "onetime" as const,
