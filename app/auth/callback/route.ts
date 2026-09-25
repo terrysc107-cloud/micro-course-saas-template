@@ -1,3 +1,4 @@
+import { safeRedirect } from "@/lib/labs/intake";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
 
   // Only ever redirect to a path on this site.
   const nextRaw = searchParams.get("next") ?? "/dashboard";
-  const next = nextRaw.startsWith("/") ? nextRaw : "/dashboard";
+  const next = safeRedirect(nextRaw);
 
   if (code || (tokenHash && type)) {
     const cookieStore = await cookies();

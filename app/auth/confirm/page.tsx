@@ -1,3 +1,4 @@
+import { safeRedirect } from "@/lib/labs/intake";
 import HashSession from "./HashSession";
 
 /**
@@ -13,6 +14,6 @@ export default async function ConfirmPage(props: {
 }) {
   const sp = await props.searchParams;
   const raw = Array.isArray(sp.next) ? sp.next[0] : sp.next;
-  const next = raw?.startsWith("/") ? raw : "/dashboard";
+  const next = safeRedirect(raw);
   return <HashSession next={next} />;
 }

@@ -49,7 +49,7 @@ export async function POST() {
     // advertised the new one. Refusing is the only acceptable behaviour when
     // the two disagree. The Lab and ladder checkouts already do this.
     const price = await getStripe().prices.retrieve(config.priceId);
-    if (price.unit_amount !== PRODUCT.priceCents) {
+    if (!price.active || price.type !== "one_time" || price.currency !== "usd" || price.unit_amount !== PRODUCT.priceCents) {
       console.error(
         `[stripe/checkout] price mismatch: stripe=${price.unit_amount} ` +
           `config=${PRODUCT.priceCents} (price ${config.priceId}). Refusing to charge.`
@@ -73,7 +73,7 @@ export async function POST() {
       // payload, so metadata set here can't be tampered with in transit.
       // userId only when we have one. Its absence is the webhook's signal to
       // provision an account from customer_details.email.
-      metadata: user ? { userId: user.id } : {},
+      metadata: user ? { product: "course", userId: user.id } : { product: "course" },
       client_reference_id: user?.id,
       customer_email: user?.email,
       // Required for anonymous checkout: this is the address the account gets

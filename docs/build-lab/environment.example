@@ -1,0 +1,12 @@
+# Merge with existing deployment settings. Never commit real values.
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_SITE_URL=https://runyouraiboard.com
+LAB_INSTRUCTOR_USER_IDS=
+STRIPE_SECRET_KEY=
+LAB_STRIPE_WEBHOOK_SECRET=
+LAB_CHECKOUT_ENABLED=false
+# Optional; manual preparation works without these.
+OPENAI_API_KEY=
+LAB_AI_MODEL=

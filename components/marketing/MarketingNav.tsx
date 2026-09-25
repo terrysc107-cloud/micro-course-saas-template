@@ -29,10 +29,10 @@ export default function MarketingNav() {
           {/* Absolute, not bare "#curriculum". These render on /ladder,
               /proof and /build-lab too, where a bare hash scrolls nowhere. */}
           <Link
-            href="/ladder"
+            href="/build-lab"
             className="hidden sm:block text-slate-400 hover:text-slate-50 text-sm transition-colors"
           >
-            Ladder
+            Build Labs
           </Link>
           <Link
             href="/proof"

@@ -850,21 +850,21 @@ export const LADDER: readonly LadderRung[] = [
     rung: 3,
     name: "The Build Lab",
     promise:
-      "A live, small-group run where you stand up your own AI operating company and watch every decision, including the ones that go wrong.",
+      "Four-week live labs: build your AI operating company, then add capabilities for content, leads, websites, and operations.",
     forWho: "You want it built with you, in your business, not adapted from a template alone.",
     kind: "onetime",
     // Derived, not repeated. BUILD_LAB is what checkout asserts against, so it
     // stays the authority for the Lab's price; this rung only displays it.
-    priceDisplay: BUILD_LAB.priceDisplay,
-    priceCents: BUILD_LAB.priceCents,
+    priceDisplay: "$1,995",
+    priceCents: 199500,
     priceIdEnvVar: BUILD_LAB.priceIdEnvVar,
     available: false,
     href: "/build-lab",
-    ctaLabel: "Join the Build Lab list",
+    ctaLabel: "Explore the Build Lab series",
     includes: [
-      "Four live sessions in a group of eight, working on your own board",
-      "The course and the Kit included, so there is nothing else to buy",
-      "A two-week unattended run in the middle, and the session that unpacks it",
+      "Four live working sessions with reviewed weekly deliverables",
+      "The foundation course and a reviewed preparation plan included",
+      "A business questionnaire that shapes your objectives and guides",
       "Recordings of the teaching blocks, and the working files afterward",
     ],
   },
