@@ -29,7 +29,7 @@ import {
 import { generatePlan } from "@/lib/labs/plan";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 300; // Claude plan drafts run ~100s at high effort.
 type Context = { params: Promise<{ action: string }> };
 export async function GET(_request: Request, context: Context) {
   try {
@@ -303,8 +303,7 @@ export async function POST(request: Request, context: Context) {
       if (
         complete &&
         body.aiConsent === true &&
-        process.env.OPENAI_API_KEY &&
-        process.env.LAB_AI_MODEL
+        process.env.ANTHROPIC_API_KEY
       )
         after(async () => {
           try {

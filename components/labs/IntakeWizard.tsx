@@ -139,7 +139,7 @@ export default function IntakeWizard({
             />
             <span>
               Use AI-assisted preparation. I agree to share my business answers
-              with OpenAI to draft my learning plan for instructor review. I can
+              with Anthropic (Claude) to draft my learning plan for instructor review. I can
               leave this unchecked for manual preparation.
             </span>
           </label>

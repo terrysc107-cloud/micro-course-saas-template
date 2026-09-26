@@ -46,7 +46,8 @@ export async function syncLabCheckout(session: Stripe.Checkout.Session) {
       expand: ["latest_charge"],
     });
     const charge = intent.latest_charge as Stripe.Charge | null;
-    if (charge && typeof charge !== "string" && charge.refunded) {
+    // Any refund ends access; see the refund terms on the cohort.
+    if (charge && typeof charge !== "string" && charge.amount_refunded > 0) {
       checkDb(
         (
           await db.rpc("ccc_bl_refund", {

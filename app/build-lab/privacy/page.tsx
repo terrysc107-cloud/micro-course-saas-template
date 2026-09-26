@@ -17,7 +17,7 @@ export default function Page() {
           </p>
           <h3>AI-assisted preparation is optional</h3>
           <p className="lab-prose">
-            If you opt in, your business answers are sent to OpenAI to draft
+            If you opt in, your business answers are sent to Anthropic (Claude) to draft
             objectives and guides. Your account email and instructor notes are
             excluded from that request. The instructor reviews the draft before
             publishing it to you. You may choose a manually prepared plan

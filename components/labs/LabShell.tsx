@@ -26,6 +26,7 @@ export default function LabShell({ children }: { children: React.ReactNode }) {
           <nav aria-label="Build Lab">
             <Link href="/build-lab#the-method">The method</Link>
             <Link href="/build-lab#labs">Explore labs</Link>
+            <a href="https://aixdesign.dev/guide">Free guide</a>
             <Link className="lab-nav-studio" href="/lab-studio">
               My workspace <ArrowUpRight size={15} />
             </Link>

@@ -8,5 +8,6 @@ STRIPE_SECRET_KEY=
 LAB_STRIPE_WEBHOOK_SECRET=
 LAB_CHECKOUT_ENABLED=false
 # Optional; manual preparation works without these.
-OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+# Defaults to claude-opus-5.
 LAB_AI_MODEL=

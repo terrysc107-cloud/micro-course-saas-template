@@ -110,7 +110,7 @@ Use real Stripe **test-mode** sessions for an accepted staging account. Verify:
 4. Successful signed webhook grants one enrollment. Duplicate events and retries remain one enrollment.
 5. Last-seat concurrency cannot oversell. A cancelled browser navigation leaves its hold until Stripe confirms expiration.
 6. Expiration releases capacity, but a timestamp alone does not free an uncertain checkout.
-7. Full refund revokes lab access and bundled course access unless an independent course purchase exists. Partial refunds intentionally retain access. A delayed payment event must not restore a refunded enrollment.
+7. Full refund revokes lab access and bundled course access unless an independent course purchase exists. Any refund (full, or the 75% pre-start withdrawal refund) revokes access. A delayed payment event must not restore a refunded enrollment.
 8. Wrong signatures, amounts, currency, session identity, and user identity cannot grant access.
 9. An interrupted session-creation request retries with the same reservation idempotency key. Unknown sessions need reconciliation, not blind capacity release.
 10. Run an existing course purchase and legacy lab purchase through their own endpoints to check for regressions. Do not make live charges for testing.

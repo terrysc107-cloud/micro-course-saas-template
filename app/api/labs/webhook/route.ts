@@ -55,7 +55,9 @@ export async function POST(request: Request) {
           intent.metadata.product === "build-lab-series" &&
           current &&
           typeof current !== "string" &&
-          current.refunded
+          // Any refund ends access: tuition refunds only happen on withdrawal
+          // (75% before the first session) or cancellation (100%).
+          current.amount_refunded > 0
         ) {
           checkDb(
             (

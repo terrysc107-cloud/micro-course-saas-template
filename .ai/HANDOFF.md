@@ -1,3 +1,136 @@
+---
+## Handoff — 2026-09-26 evening (Claude) — Claude drafting, refund rule, Nov 11 dates (local)
+
+- aixdesign.dev: PR #27 MERGED (Terry: "merge it") → 25e4d25; verified live /education has no $997 / Nov 18.
+- AI drafting switched OpenAI → Claude (Terry: Claude is his most connected system). lib/labs/plan.ts uses @anthropic-ai/sdk 0.128 (new dep), beta.messages.stream + finalMessage, model LAB_AI_MODEL || claude-opus-5, adaptive thinking, effort high, output_config json_schema (same schema), fallbacks "default" (server-side-fallback-2026-07-01), stop_reason must be end_turn. Env: ANTHROPIC_API_KEY (+ optional LAB_AI_MODEL). Consent copy (IntakeWizard, privacy page) now names Anthropic (Claude).
+- Real Claude run locally (crcst's key borrowed for the local server ONLY — prod needs its own key): 20KB plan, 4 weeks, specific to the test business; ~104s. So maxDuration 120→300, SDK timeout 280s, stale-claim window 3→5 min.
+- Refund rule (Terry): 75% before first session, none after, full refund if AI by Design cancels/moves. Code: ANY refund (amount_refunded > 0) now revokes access (webhook + payments.ts). Was: only full refunds.
+- Local cohort: Nov 11/18/25, Dec 2 at 7:00 PM America/New_York (TIME IS A PLACEHOLDER — Terry has not confirmed), terms text above, live price id price_1UJvwiCaFl8xeTFMitPBFtqF. Student checkout screen verified showing dates + terms + consent box.
+- Checks: tsc clean; test:labs 14/14; test:labs:ui 7/7.
+- Open: session time; Nov 25 = Thanksgiving eve; whether Terry wants student business data reused beyond their own lab (privacy copy currently says no); hello@aixdesign.dev placeholder; archive $997 price; blog reel still says Nov 18.
+
+---
+## Handoff — 2026-09-26 later (Claude) — $997 run CLOSED; local staging chosen
+- 2026-09-26 LOCAL STAGING PASSED (practice DB + local site on :3100, fake users instructor/student@staging.local): apply → accept → (simulated paid webhook: 1 enrollment, replay = still 1) → 4-part questionnaire (AI consent off ⇒ "Prepare with AI" disabled) → template plan → publish → student sees plan + Markdown download → week 1 submit → revision requested → resubmit (v3) → approved (1/4) → full refund revokes to ACCEPTED; late payment replay refused ("Reservation no longer payable"). Private notes never reach student API/download; other account gets 404. Last-seat race 25/25. test:labs:http PASS (needs build with NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3199 — harness quirk), test:labs:browser PASS. Screenshots in scratchpad/staging/*.png.
+- Minor: private instructor notes are STORED inside published_plan (filtered on output only).
+- Stripe LIVE: NEW price price_1UJvwiCaFl8xeTFMitPBFtqF ($1,995 one_time, on prod_VCB3xXth71vkTP) created per Terry. Old $997 price still active + still product default — archiving was blocked by permissions; Terry to do in dashboard.
+- NOT done: real Stripe checkout (no test mode available to CLI), prod migration, Vercel env, new webhook, commits/PRs, deploys.
+
+- 2026-09-26 staging progress: OrbStack + Stripe CLI installed (brew). Local Supabase "buildlab-staging" running from scratchpad/staging (NOT in repo). course-schema.sql + all 4 migrations applied OK. Last-seat race via 2 real connections: 25/25 runs = exactly 1 reservation. Waiting on Terry: `stripe login`.
+
+
+- Terry: "close the $997 run, use local Supabase for staging".
+- PROD DATA CHANGE (authorized): ccc_lab_sessions founding-run scheduled → cancelled (guarded on 0 registrations). Verified live: runyouraiboard.com/build-lab shows "No date set yet" + waitlist; POST /api/build-lab/checkout → 503 "Registration is not open." Revert = set status back to 'scheduled'.
+- Stripe $997 price left ACTIVE (unchanged); checkout is refused before Stripe is reached.
+- Branch feat/build-lab-intake (uncommitted): BUILD_LAB.status → "waitlist", dateDisplay → null; Five Things reel REMOVED from legacy page (VO sells the cancelled Nov 18 date). Component + mp4 kept untracked for a re-cut. tsc clean, check:content passes.
+- STILL LIVE AND STALE: aixdesign.dev/education ($997 / November 18 / Take a seat) and the blog reel (TheBoardReel, Nov 18 VO) — both need a parent deploy; awaiting Terry.
+- Local staging blockers: no Docker, no Stripe CLI, no psql. Supabase CLI 2.116 present. Base course tables are not in migrations; load course-schema.sql first, then 4 migrations, outside supabase/migrations.
+- Next: Terry installs OrbStack + Stripe CLI and runs `stripe login`; Claude runs supabase init/start and the staging checks.
+
+---
+## Handoff — 2026-09-26 (Claude) — Build Lab series patches imported, read-only launch audit
+
+### Active task
+Import the Codex/ChatGPT Build Lab package (~/Downloads/aixdesign-build-lab-handoff, sha256 verified vs manifest) and run the read-only reconciliation from its CLAUDE-HANDOFF.md step 1. NO migration, Stripe change, email, commit or deploy done.
+
+### What changed
+- micro-course-saas-template: branch `feat/build-lab-intake` = fa954cd + 2 patch commits (b9fdd57, 27a1862). Uncommitted Five Things work re-applied on top, still uncommitted.
+  - Conflict `app/build-lab/page.tsx`: kept the patch's new series page. The reel's VO says "Starting November eighteenth. Eight people." (old $997 run), so the hero-video placement moved to `app/build-lab/legacy/page.tsx` (the old run's page) instead of the date-free new page.
+  - Conflict `lib/course-config.ts`: kept `available: true` (patch left it false, which stamps "Not open yet" and hides the CTA while applications are open) + patch's CTA "Explore the Build Lab series"; comment rewritten.
+- by-design-ai-: branch `feat/build-lab-series-marketing` = 656a6f6 + patch commit. AIxDesign 7-phase work re-applied, uncommitted. `package.json` conflict: patch's `check:claims` + all 8 `ax:*` scripts kept.
+- Safety copies: `git stash list` in both repos keeps the pre-import stash (applied, not dropped).
+
+### Checks (exact)
+- Course: npm ci; tsc clean; check:content "✓ Content checks passed"; test:labs 14/14; test:labs:ui 7/7; next build OK. test:labs:http / :browser NOT run.
+- Parent: npm ci; tsc clean; check:claims ALL OK; ax:check 42 OK / 8/8 / 19 OK / PLAN CLEAN; tests 43/43; next build OK.
+
+### Read-only audit findings
+- Supabase for the course = `acouuzccqkcpyrckrgwg` ("supabase-crimson-ladder"), SHARED with plaid_tokens/transactions/clarix/resume/bda tables. ccc_bl_* tables absent.
+- Legacy run: ccc_lab_sessions `founding-run` status scheduled, $997, cap 8, starts 2026-11-19T00:00Z. ccc_lab_registrations 0, waitlist 0. course_purchases 2, both Terry's own manual grants.
+- Stripe (course key) is LIVE mode: 0 charges, 0 completed checkout sessions ever. Build Lab price $997 one_time active on prod_VCB3xXth71vkTP. One webhook: claude-code-platform.vercel.app/api/stripe/webhook (completed, refunded).
+- Vercel claude-code-platform: prod = main @ fa954cd; domains runyouraiboard.com (+www), claudecodeclass.com. Prod origin is runyouraiboard.com; .env.local says claudecodeclass.com.
+- Live now: runyouraiboard.com/build-lab and aixdesign.dev/education both sell $997 / Nov 18 / "Take a seat".
+- aixdesign.dev and runyouraiboard.com have NO MX records → hello@aixdesign.dev cannot receive mail.
+- Instructor UUID candidate: 41263902-2dfc-459f-8906-01e1a480f137 (terrysc107@gmail.com); c8fb0fd7-… is the +claudecodeqa QA account.
+
+### Owner decisions pending (Terry)
+1. Close the $997 Nov 18 run, or run it alongside the new series?
+2. Staging DB: Supabase branch vs local; never migrate straight onto the shared project.
+3. Mailbox for hello@aixdesign.dev.
+4. AI drafting: patch uses OpenAI (optional); keep, or manual only.
+5. Real cohort dates, terms, refund policy.
+
+### Exact next step
+Terry answers the decisions above; then staging migration + test-mode Stripe per CLAUDE-HANDOFF.md steps 2–5.
+---
+## Handoff — 2026-09-05 (Claude) — Build Lab price flag + the Five Things reel
+
+### Active task
+Terry: "ai x design prices for the build lab still says not available and we just made a
+video can we add it to the site somewhere thats good content."
+
+### What changed
+1. **`lib/course-config.ts`** — the `build-lab` LADDER rung was `available: false` while
+   `/build-lab` was live and selling. `/ladder` therefore stamped "Not open yet" on the one
+   rung above the course a visitor could actually buy, and hid its CTA, while the Lab's own
+   page two clicks away showed $997, a date, and a live checkout. Flipped to `true` and
+   changed `ctaLabel` from the waitlist-era "Join the Build Lab list" to "Take a seat" to
+   match the button on /build-lab.
+   PRESENTATIONAL ONLY: `build-lab` is not in SELLABLE_HERE in
+   app/api/ladder/checkout/route.ts, because the Lab has its own checkout at
+   /api/build-lab/checkout with its own status, seat and Stripe-price assertions. This does
+   not open a second way to pay.
+2. **`components/marketing/FiveThingsVideo.tsx`** (new) — click-to-play 9:16 player,
+   `preload="none"`, poster frame, lucide `Play`, `bg-gold`/`text-slate-50` money-button
+   pairing. The reel is dark and this repo is the warm-paper theme; that is deliberate and
+   documented in the file.
+3. **`app/build-lab/page.tsx`** — hero is now a split, pitch left and reel right,
+   `md:items-center`. Copy stays first in the DOM so on mobile the price and CTA come
+   before the video.
+4. **`public/video/five-things.mp4`** (3.1MB) + `five-things-poster.jpg` (56KB) — web
+   encode of the master render in the by-design-ai repo.
+
+### 🔴 Blocker found and fixed in the video itself
+The reel's opening chat mock read: *"Here's my business again — we sell CRCST exam prep,
+roughly 500 users, and I need this week's priorities…"* That is a cross-brand leak (this
+repo's own scripts/check-content.mjs and by-design-ai's lib/content-guardrail.ts both
+refuse `CRCST` by name) plus a user-count claim about a real business, on four public
+surfaces. Fixed at source in the composition, not by cropping: the line now reads *"same
+context as last week, same numbers"*. Narration was untouched, so no VO regeneration.
+Re-rendered, re-encoded, redeployed, and verified in the served file.
+
+### Checks run — exact results
+- `npx tsc --noEmit` — clean.
+- `node scripts/check-content.mjs` — "✓ Content checks passed."
+- Playwright (headless chromium, both repos' dev servers on :3010 / :3011):
+  - `/ladder` — rung 3 shows "$997" with NO "Not open yet" badge and a "Take a seat" CTA.
+    Rungs 2, 4, 5 still correctly show "Not open yet".
+  - `/build-lab` at 1280 and 390 — hero split renders, mobile stacks copy/price/CTA then reel.
+  - Player: 0 requests for the mp4 before the click (preload="none" works), then 1 after;
+    video reaches `paused:false, currentTime 2.7, duration 67, controls:true`.
+  - Served frame at t=2.4s screenshotted from the browser: shows the corrected line.
+  - No console errors on any page.
+- Full 24-frame sweep of the re-rendered master: no brand names, no unredacted metrics.
+- Audio unchanged at **-13.8 LUFS** integrated.
+- `npm run build` NOT run: the sandbox classifier denied it. tsc and the content check both pass.
+
+### Decisions
+- Video duplicated into both repos rather than cross-linked, so a marketing page does not
+  depend on the other domain being up.
+- Click-to-play, not muted autoplay: the reel is narrated, and autoplay would show the
+  argument with the argument switched off at 3.1MB per visitor.
+
+### Blockers / open
+1. **Nothing is committed or pushed** in either repo. Terry's call.
+2. The reel bakes in "14 meetings" (true 2026-09-04). It will drift as the archive grows.
+   It understates rather than overstates, so it is not urgent, but it is a re-render trigger
+   eventually.
+3. The master render still has no music bed (carried over from the 2026-09-04 handoff).
+
+### Exact next step
+Terry reviews the four placements, then `git push` both repos to deploy. If he wants the
+reel pulled from any surface, it is one `<FiveThingsVideo />` line per page.
+
 # Handoff — 2026-08-28 · AI board built, system modules written, page repositioned
 
 **Branch:** `feat/board-track`, 10 commits, **NOT pushed.** `npm run check` exit 0.
@@ -439,9 +572,9 @@ Terry's call between:
 _Current repo state, refreshed automatically. This block is replaced, never appended —
 it is not a handoff. Real checkpoints live above, newest first._
 
-- Updated: 2026-09-04 09:23:53 EDT
-- Branch: main
-- Last commit: 01365e3 chore(stripe): retire the Claude Code Mastery price, give the Dev Pack its own
-- Working tree: clean
+- Updated: 2026-09-26 10:45:19 EDT
+- Branch: feat/build-lab-intake
+- Last commit: 27a1862 feat(labs): build foundation cohort intake and reviewed learning workspace
+- Working tree: 15 uncommitted file(s)
 
 <!-- END AUTO-STATE -->

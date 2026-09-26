@@ -133,12 +133,14 @@ export const BUILD_LAB = {
   /**
    * 'waitlist' | 'scheduled' — the single switch for the whole funnel.
    *
-   * SCHEDULED 2026-09-03. Terry set the date. The waitlist era is over.
+   * CLOSED 2026-09-26. Terry closed the $997 November founding run with zero
+   * registrations; ccc_lab_sessions.founding-run is 'cancelled'. The Build Lab
+   * series (lib/labs, /api/labs/checkout) replaces it.
    */
-  status: "scheduled" as "waitlist" | "scheduled",
+  status: "waitlist" as "waitlist" | "scheduled",
 
   /** MUST be null while status is 'waitlist'. Enforced by check-content.mjs. */
-  dateDisplay: "Wednesdays from November 18, 2026" as string | null,
+  dateDisplay: null as string | null,
 
   /**
    * FOUR SESSIONS, NOT ONE, and the gap in the middle is the product.
@@ -858,7 +860,18 @@ export const LADDER: readonly LadderRung[] = [
     priceDisplay: "$1,995",
     priceCents: 199500,
     priceIdEnvVar: BUILD_LAB.priceIdEnvVar,
-    available: false,
+    /**
+     * TRUE since 2026-09-03. `false` made the ladder stamp "Not open yet" on
+     * this rung while /build-lab was open (then for sale, now for
+     * applications), and hid the CTA. A ladder that contradicts the Lab's own
+     * page costs more than a missing rung.
+     *
+     * Purely presentational: `build-lab` is not in SELLABLE_HERE in
+     * app/api/ladder/checkout/route.ts. The rung links to the series page;
+     * payment only happens after an accepted application, through
+     * /api/labs/checkout. Flip to false if applications close.
+     */
+    available: true,
     href: "/build-lab",
     ctaLabel: "Explore the Build Lab series",
     includes: [
