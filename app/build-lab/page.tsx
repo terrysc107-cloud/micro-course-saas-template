@@ -1,209 +1,386 @@
 import type { Metadata } from "next";
-import { CalendarClock, Users, Video } from "lucide-react";
-import { BUILD_LAB, BRAND, DISCLAIMER, getRung } from "@/lib/course-config";
-import { getLabAvailability } from "@/lib/build-lab";
-import MarketingNav from "@/components/marketing/MarketingNav";
-import MarketingFooter from "@/components/marketing/MarketingFooter";
-import Section from "@/components/marketing/Section";
-import WaitlistForm from "@/components/marketing/WaitlistForm";
-import LabBuyButton from "@/components/marketing/LabBuyButton";
-
+import Link from "next/link";
+import {
+  ArrowRight,
+  Check,
+  FileText,
+  SlidersHorizontal,
+  Users,
+  CheckCircle2,
+  CornerDownRight,
+} from "lucide-react";
+import LabShell from "@/components/labs/LabShell";
+import InterestForm from "@/components/labs/InterestForm";
+import { FOUNDATION, LABS, LAB_FAQ, formatPrice } from "@/lib/labs/catalog";
+import { publicCohorts } from "@/lib/labs/server";
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: `${BUILD_LAB.name} — ${BRAND.name}`,
-  description: BUILD_LAB.description + " " + DISCLAIMER,
+  title: "The Build Lab — Build your AI operating company | AIxDesign",
+  description:
+    "Four-week live labs for business owners. Build your AI CEO and board with personalized preparation, live reviews, and working business deliverables.",
+  alternates: { canonical: "/build-lab" },
+  openGraph: {
+    title: "Your business. Your AI team. Built together.",
+    description: "The Build Lab series by AIxDesign.",
+    url: "/build-lab",
+  },
 };
 
-/**
- * The Build Lab page.
- *
- * Dynamic on purpose: seats-remaining is counted per request. A cached seat
- * count is a wrong seat count, and a wrong seat count is exactly the invented
- * scarcity this whole design refuses.
- *
- * Everything conditional below keys off real data. There is no date to show
- * until ccc_lab_sessions.starts_at exists, and no seat count until capacity
- * does — so while the run is a waitlist, the page simply says so.
- */
-export const dynamic = "force-dynamic";
-
-/**
- * Rewritten 2026-09-03 when the Lab became a four-week cohort.
- *
- * The old copy sold the developer product: "one real feature, start to finish"
- * through "inspect, plan, build, review, test, ship". That is the Dev Pack's
- * loop, not the board path's, and the buyer here has never written code. It
- * also described a single session, which is no longer what this is.
- */
-const WHAT_HAPPENS = [
-  {
-    icon: Video,
-    title: "Your board, not a worked example",
-    body: "You build it on your own business, with your own numbers, in the session. Not a demo you watch and adapt later.",
-  },
-  {
-    icon: CalendarClock,
-    title: "Two weeks where it runs without you",
-    body: "We skip the holiday week on purpose. Your board runs unattended, and we open the next session with what died. Scheduled work does not error when it stops; it just quietly produces nothing.",
-  },
-  {
-    icon: Users,
-    title: "Small enough to interrupt",
-    body: "You can stop me and ask why. That is the entire reason to be there live rather than read the course.",
-  },
-];
-
-export default async function BuildLabPage() {
-  const { session, seatsLeft, soldOut, open } = await getLabAvailability();
-
-  // Both sources must agree before ANY run detail renders. Gating each line
-  // separately let the page show "12 of 12 seats left" directly above "No date
-  // set yet" when the row was scheduled but config was not — a state that
-  // cannot happen in practice, but the page should not be able to describe a
-  // run it is simultaneously denying the existence of.
-  const live = BUILD_LAB.status === "scheduled" && session?.status === "scheduled";
-
-  const showDate = live && !!BUILD_LAB.dateDisplay;
-  const showSeats = live && seatsLeft !== null && !soldOut;
-  const showSoldOut = live && soldOut;
-
+export default async function Page() {
+  const cohort = (await publicCohorts()).find(
+    (c) => c.program_slug === FOUNDATION.slug,
+  );
+  const start = cohort?.starts_at
+    ? new Intl.DateTimeFormat("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        timeZone: cohort.timezone,
+      }).format(new Date(cohort.starts_at))
+    : null;
   return (
-    <>
-      <MarketingNav />
-
-      <Section width="narrow" className="pt-14">
-        <p className="text-brand-400 text-xs font-semibold uppercase tracking-[0.2em] mb-3">
-          A four-week live AI by Design cohort
-        </p>
-        <h1 className="text-4xl sm:text-5xl font-bold text-slate-50 tracking-tight text-balance">
-          {BUILD_LAB.name}
-        </h1>
-        <p className="text-slate-400 mt-4 text-lg leading-relaxed text-pretty">
-          {BUILD_LAB.description}
-        </p>
-
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-6 text-sm">
-          <span className="text-slate-50 font-semibold text-2xl">{BUILD_LAB.priceDisplay}</span>
-          {/* Renders only from real data: dateDisplay is null until a run is
-              scheduled, and seatsLeft is null until a capacity exists. */}
-          {showDate ? (
-            <span className="text-slate-300">{BUILD_LAB.dateDisplay}</span>
-          ) : (
-            <span className="text-slate-500">No date set yet</span>
-          )}
-          {showSeats && (
-            <span className="text-brand-400">
-              {seatsLeft} of {session?.capacity} seats left
-            </span>
-          )}
-          {showSoldOut && <span className="text-slate-400">Sold out</span>}
+    <LabShell>
+      <section className="lab-container lab-hero">
+        <div>
+          <p className="lab-eyebrow">
+            The Build Lab · Live, four-week programs
+          </p>
+          <h1>
+            Your business.
+            <br />
+            Your AI team.
+            <br />
+            <em>Built together.</em>
+          </h1>
+          <p className="lab-lead">
+            Give your agent an identity. Teach it your business. Build a system
+            you can lead—with Terry in the room, working through the decisions
+            with you.
+          </p>
+          <div className="lab-actions">
+            <Link className="lab-button" href="#foundation">
+              Start with your AI company <ArrowRight size={17} />
+            </Link>
+            <Link className="lab-text-link" href="#labs">
+              Explore the series
+            </Link>
+          </div>
+          <div className="lab-small lab-hero-note">
+            {["Beginner-friendly", "Your own business", "Live review"].map(
+              (t) => (
+                <span key={t}>
+                  <Check size={13} />
+                  {t}
+                </span>
+              ),
+            )}
+          </div>
         </div>
-
-        <div className="mt-8">
-          {/* Unreachable until a run is genuinely scheduled — `open` requires
-              config AND the row to agree, with a real date, price, and seat
-              left. That is what lets the checkout ship cold: live, testable,
-              and unable to take a cent until Terry flips the switch. */}
-          {open ? (
-            <LabBuyButton className="bg-gold text-slate-50 px-6 py-3 rounded-md hover:bg-gold/90" />
-          ) : (
-            <>
-              <WaitlistForm source="build-lab-page" />
-              <p className="text-slate-500 text-xs leading-relaxed mt-3">
-                {BUILD_LAB.waitlistNote}
-              </p>
-            </>
-          )}
-        </div>
-      </Section>
-
-      <Section width="narrow" className="border-t border-slate-800/60 pt-12">
-        <h2 className="text-2xl font-bold text-slate-50 tracking-tight mb-8">What happens in the room</h2>
-        <div className="space-y-6">
-          {WHAT_HAPPENS.map(({ icon: Icon, title, body }) => (
-            <div key={title} className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-gold/10 border border-gold/25 flex items-center justify-center shrink-0">
-                <Icon className="w-4 h-4 text-brand-400" />
-              </div>
-              <div>
-                <h3 className="text-slate-50 font-semibold text-sm mb-1">{title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{body}</p>
-              </div>
+        <div
+          className="lab-artifact"
+          aria-label="Illustrative workspace, not an actual student result"
+        >
+          <div className="lab-artifact-top">
+            <span>YOUR OPERATING COMPANY</span>
+            <div className="lab-dots">
+              <i />
+              <i />
+              <i />
             </div>
+          </div>
+          <div className="lab-artifact-body">
+            <span className="lab-chip blue">AN EXAMPLE OF WHAT YOU BUILD</span>
+            <h3>
+              From your knowledge
+              <br />
+              to a working system.
+            </h3>
+            {[
+              [
+                "01",
+                "Business context",
+                "Customers, offers, tools, and goals",
+                "VERIFIED",
+              ],
+              [
+                "02",
+                "Agent identity",
+                "Values, voice, and decision rights",
+                "DEFINED",
+              ],
+              [
+                "03",
+                "Your CEO & board",
+                "Roles that examine real decisions",
+                "WORKING",
+              ],
+              [
+                "04",
+                "Standing work",
+                "One workflow, with your review",
+                "TESTED",
+              ],
+            ].map(([n, title, detail, status]) => (
+              <div className="lab-artifact-row" key={n}>
+                <span className="lab-small">{n}</span>
+                <div style={{ flex: 1 }}>
+                  <strong>{title}</strong>
+                  <small>{detail}</small>
+                </div>
+                <span className="lab-chip">{status}</span>
+              </div>
+            ))}
+          </div>
+          <div className="lab-artifact-foot">
+            <CornerDownRight size={16} />
+            You set the direction. Your system carries the context.
+          </div>
+        </div>
+      </section>
+      <div className="lab-container lab-method-strip">
+        {[
+          "Prepare for your business",
+          "Build in the session",
+          "Review real deliverables",
+          "Leave knowing how to run it",
+        ].map((s, i) => (
+          <div key={s}>
+            <span>0{i + 1}</span>
+            <strong>{s}</strong>
+          </div>
+        ))}
+      </div>
+      <section id="the-method" className="lab-container lab-section">
+        <div className="lab-section-heading">
+          <div>
+            <p className="lab-eyebrow">The method</p>
+            <h2>
+              One shared path.
+              <br />
+              Your business at every step.
+            </h2>
+          </div>
+          <p>
+            We learn where you’re starting before the first session. Then we
+            work toward the same capabilities, using your own tools and
+            decisions.
+          </p>
+        </div>
+        <div className="lab-grid">
+          {[
+            {
+              icon: FileText,
+              title: "Before we meet",
+              body: "Your business questionnaire becomes a preparation plan: what to bring, what to set up, and what to build first.",
+            },
+            {
+              icon: Users,
+              title: "While we build",
+              body: "Bring your work to class. See how others approach theirs. Review, correct, and make the next decision together.",
+            },
+            {
+              icon: SlidersHorizontal,
+              title: "As you progress",
+              body: "Weekly deliverables show what works and where you need help. Your instructor adjusts your objectives with you.",
+            },
+          ].map(({ icon: Icon, title, body }) => (
+            <article className="lab-card" key={title}>
+              <div className="lab-card-icon">
+                <Icon size={20} />
+              </div>
+              <h3>{title}</h3>
+              <p>{body}</p>
+            </article>
           ))}
         </div>
-
-        {/* The four dates, rendered from BUILD_LAB.sessions rather than typed
-            here, so a date can only ever exist in one place. Shown only when
-            the run is genuinely scheduled: while status is 'waitlist' there is
-            nothing to show, which is the same rule the date and seat count
-            above already follow. */}
-        {live && BUILD_LAB.sessions.length > 0 && (
-          <div className="mt-12">
-            <h3 className="text-slate-50 font-semibold text-sm mb-4">The four sessions</h3>
-            <ol className="border border-slate-800 rounded-xl overflow-hidden">
-              {BUILD_LAB.sessions.map((s, i) => (
-                <li
-                  key={s.date}
-                  className={`flex flex-wrap items-baseline gap-x-4 gap-y-1 px-5 py-4 ${
-                    i > 0 ? "border-t border-slate-800" : ""
-                  }`}
-                >
-                  <span className="text-brand-400 font-mono text-xs shrink-0 w-6">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <time dateTime={s.date} className="text-slate-50 text-sm font-medium w-32 shrink-0">
-                    {new Date(s.date + "T12:00:00Z").toLocaleDateString("en-US", {
-                      weekday: "short",
-                      month: "short",
-                      day: "numeric",
-                      timeZone: "UTC",
-                    })}
-                  </time>
-                  <span className="text-slate-400 text-sm">{s.focus}</span>
-                </li>
-              ))}
-            </ol>
-            <p className="text-slate-500 text-xs leading-relaxed mt-3">
-              Thanksgiving week is skipped on purpose. Your board runs unattended
-              through it, and session two starts with what that turned up.
+      </section>
+      <section className="lab-dark lab-section">
+        <div className="lab-container">
+          <p className="lab-eyebrow">The foundation lab</p>
+          <div className="lab-section-heading">
+            <h2>
+              Four weeks to build
+              <br />
+              your operating foundation.
+            </h2>
+            <p>
+              Each week ends with something you can demonstrate, review, and use
+              again.
             </p>
           </div>
-        )}
-
-        {/* How it runs. These are the two things a buyer at this price will ask
-            before they ask anything else, and both are commitments rather than
-            features: the bundle is what makes the pre-work gate enforceable,
-            and the recording line is a privacy promise we have to keep in the
-            room. Both render from config so the run book and the sales page
-            cannot drift. */}
-        <div className="mt-12">
-          <h3 className="text-slate-50 font-semibold text-sm mb-4">How it runs</h3>
-          <ul className="space-y-3">
-            {(getRung("build-lab")?.includes ?? []).map((item) => (
-              <li key={item} className="flex gap-3 text-slate-400 text-sm leading-relaxed">
-                <span className="text-brand-400 shrink-0" aria-hidden="true">
-                  &rarr;
+          <div className="lab-week-grid">
+            {FOUNDATION.weeks.map((w, i) => (
+              <article className="lab-week" key={w.title}>
+                <span className="lab-week-num">
+                  WEEK 0{i + 1} / {w.theme.toUpperCase()}
                 </span>
-                {item}
-              </li>
+                <h3>{w.title}</h3>
+                <p>{w.deliverable}</p>
+                <small>Build → Review → Adjust</small>
+              </article>
             ))}
-          </ul>
-          <p className="text-slate-500 text-xs leading-relaxed mt-4">
-            {BUILD_LAB.recordingPolicy}
+          </div>
+        </div>
+      </section>
+      <section id="labs" className="lab-container lab-section">
+        <div className="lab-section-heading">
+          <div>
+            <p className="lab-eyebrow">Build your next capability</p>
+            <h2>
+              A foundation first.
+              <br />
+              Then, your next lab.
+            </h2>
+          </div>
+          <p>
+            The series grows with your business. Future topics open as cohorts
+            are scheduled. Join the list for what you want to build next.
           </p>
         </div>
-
-        <div className="mt-10 rounded-xl border-l-2 border-gold bg-gold/[0.06] border-y border-r border-slate-800 px-6 py-5">
-          <p className="text-slate-300 text-sm leading-relaxed">
-            <span className="text-slate-50 font-medium">You don&rsquo;t need this to finish the course.</span>{" "}
-            The {BRAND.name} course is self-paced, complete on its own, and costs a
-            fraction of this. The Lab is for people who want to watch the decisions
-            get made in real time and ask about their own situation while it happens.
+        <article
+          id="foundation"
+          className="lab-foundation"
+          style={{ scrollMarginTop: 110 }}
+        >
+          <div className="lab-foundation-copy">
+            <span className="lab-chip blue">01 · START HERE</span>
+            <h3>{FOUNDATION.title}</h3>
+            <p>{LABS[0].description}</p>
+            <p style={{ marginTop: 20 }}>
+              For owners with an existing business or a clearly defined offer,
+              and time to practice between sessions. No coding experience
+              required.
+            </p>
+            <div className="lab-actions">
+              <Link href="/lab-studio" className="lab-text-link">
+                Already applied? Open your workspace <ArrowRight size={15} />
+              </Link>
+            </div>
+          </div>
+          <div className="lab-price-panel">
+            <p className="lab-small">
+              {cohort ? "FOUNDING COHORT TUITION" : "PLANNED FOUNDING TUITION"}
+            </p>
+            <div className="lab-price">
+              {formatPrice(
+                cohort?.price_cents ?? FOUNDATION.suggestedPriceCents,
+              )}
+            </div>
+            <p className="lab-small">One payment · software costs separate</p>
+            {cohort && (
+              <p className="lab-small" style={{ marginTop: 10 }}>
+                Up to {cohort.capacity} owners in this cohort, with time for
+                live review.
+              </p>
+            )}
+            <ul>
+              {[
+                "Four live working sessions",
+                "A reviewed plan for your business",
+                "Agent charter and operating guide",
+                "Weekly deliverable feedback",
+                "My AI Board foundation course",
+              ].map((s) => (
+                <li key={s}>
+                  <CheckCircle2 size={16} color="#175ed0" />
+                  {s}
+                </li>
+              ))}
+            </ul>
+            <p className="lab-small" style={{ marginBottom: 17 }}>
+              {start
+                ? `Starts ${start}. Full schedule and terms are shown before payment.`
+                : "Dates will be confirmed before enrollment. Applying does not reserve a seat or charge you."}
+            </p>
+            <Link className="lab-button" href="/lab-studio?apply=true">
+              Start your application <ArrowRight size={16} />
+            </Link>
+            <p className="lab-small" style={{ marginTop: 13 }}>
+              Create a free account to save your application.
+            </p>
+          </div>
+        </article>
+        <div className="lab-catalog-grid">
+          {LABS.slice(1).map((lab) => (
+            <article className="lab-catalog-card" key={lab.slug}>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span className="lab-small">
+                  {lab.number} / {lab.category}
+                </span>
+                <span className="lab-chip">FUTURE LAB · INTEREST LIST</span>
+              </div>
+              <h3>{lab.title}</h3>
+              <p>{lab.description}</p>
+              <p className="lab-small">
+                <strong>Starting point:</strong> {lab.prerequisite}
+              </p>
+              <InterestForm program={lab.slug} />
+            </article>
+          ))}
+        </div>
+      </section>
+      <section
+        className="lab-section"
+        style={{
+          background: "#edf3fb",
+          borderTop: "1px solid #e3eaf3",
+          borderBottom: "1px solid #e3eaf3",
+        }}
+      >
+        <div className="lab-container" style={{ display: "grid", gap: 22 }}>
+          <p className="lab-eyebrow" style={{ marginBottom: 0 }}>
+            Your instructor
+          </p>
+          <h2>
+            Built from operating.
+            <br />
+            Taught through doing.
+          </h2>
+          <p className="lab-lead">
+            Terry Scott brings his experience leading operations, teaching
+            adults through Aseptic Technical Solutions, and building AI systems
+            for his own businesses. The lab puts that approach into practice:
+            clear standards, working deliverables, and feedback you can act on.
+          </p>
+          <Link href="https://aixdesign.dev" className="lab-text-link">
+            Explore AIxDesign <ArrowRight size={16} />
+          </Link>
+        </div>
+      </section>
+      <section className="lab-container lab-section lab-faq">
+        <div>
+          <p className="lab-eyebrow">Before you begin</p>
+          <h2>
+            Good questions.
+            <br />
+            Clear expectations.
+          </h2>
+          <p className="lab-small" style={{ marginTop: 22 }}>
+            Already enrolled in the earlier founding run?{" "}
+            <Link href="/build-lab/legacy" className="lab-text-link">
+              View that run.
+            </Link>
           </p>
         </div>
-      </Section>
-
-      <MarketingFooter />
-    </>
+        <div>
+          {LAB_FAQ.map((item) => (
+            <details key={item.question}>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+      <section className="lab-container lab-section" style={{ paddingTop: 0 }}>
+        <div className="lab-panel">
+          <p className="lab-eyebrow">Keep your place in the conversation</p>
+          <h2>Not ready to apply yet?</h2>
+          <p>Get updates when the next foundation cohort is scheduled.</p>
+          <div style={{ maxWidth: 570 }}>
+            <InterestForm program={FOUNDATION.slug} />
+          </div>
+        </div>
+      </section>
+    </LabShell>
   );
 }

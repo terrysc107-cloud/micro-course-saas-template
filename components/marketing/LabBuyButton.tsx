@@ -26,7 +26,7 @@ export default function LabBuyButton({ className }: { className?: string }) {
       const res = await fetch("/api/build-lab/checkout", { method: "POST" });
 
       if (res.status === 401) {
-        window.location.href = "/sign-up?next=/build-lab";
+        window.location.href = "/sign-up?redirect=/build-lab/legacy";
         return;
       }
 

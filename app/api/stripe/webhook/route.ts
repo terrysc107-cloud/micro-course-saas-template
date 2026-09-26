@@ -176,6 +176,14 @@ export async function POST(request: NextRequest) {
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
+  // New lab payments belong to the dedicated signed lab webhook. Never fall
+  // through into the historical default course grant.
+  if (session.metadata?.product === "build-lab-series") {
+    return NextResponse.json({ received: true, handledBy: "labs/webhook" });
+  }
+  if (session.metadata?.product && !["course", "build-lab", "kit", "board-room", "dev-pack"].includes(session.metadata.product)) {
+    return NextResponse.json({ received: true, ignored: "unrecognized product" });
+  }
   let userId = session.metadata?.userId ?? session.client_reference_id ?? null;
 
   // A completed session is not necessarily a paid one (e.g. async payment

@@ -1,23 +1,21 @@
-# Claude Code Class
+# My AI Board and the Build Lab series
 
-The course platform behind **[claudecodeclass.com](https://claudecodeclass.com)** — a self-paced Claude Code course, $97 one-time, lifetime access. An **AI by Design** product ([aixdesign.dev](https://aixdesign.dev)).
+The course and cohort platform for [runyouraiboard.com](https://runyouraiboard.com), an AI by Design product.
 
-**This is a private repository containing paid course content.** It is not a template and not a public example. It was previously published as `micro-course-saas-template`; that role has been retired.
+## Build Lab implementation — September 2026
 
-> **Live and selling.** Changes here move real money. Read [Working on this repo](#working-on-this-repo) before touching the payment path.
+The new series is implemented locally. **Remote setup and launch verification remain:** read [the Claude Code handoff](docs/build-lab/CLAUDE-HANDOFF.md), [program and price recommendation](docs/build-lab/PROGRAM.md), and [verification record](docs/build-lab/VERIFICATION.md).
 
----
+| Offer | Delivery | Configuration |
+| --- | --- | --- |
+| My AI Board | Existing self-paced course, 73 lessons / 16 modules | `lib/course-config.ts` |
+| Your AI Operating Company | Four-week foundation lab with business intake and reviewed plans | `lib/labs/catalog.ts`, `ccc_bl_cohorts` |
+| Advanced Build Labs | Separate topic interest lists; not yet sold | `lib/labs/catalog.ts` |
+| Earlier founding run | Preserved at `/build-lab/legacy` | Existing `BUILD_LAB` config and `ccc_lab_*` records |
 
-## The two products
+The new seed uses recommended founding tuition of $1,995 and eight working seats. It opens applications only; no dates or Stripe price are invented. `/lab-studio` holds the owner workspace and `/lab-studio/instructor` holds the authorized instructor workspace.
 
-| | Self-paced course | The Build Lab |
-|---|---|---|
-| What | 48 lessons, 10 modules, MDX | Live single session, small group |
-| Price | $97 one-time, lifetime | $297 (working number) |
-| Status | **Live, selling** | **Waitlist only — no date set** |
-| Checkout | Here | Here, gated behind `BUILD_LAB.status` |
-
-`aixdesign.dev/education` is a marketing/referral surface only — it takes no payment and holds no enrollment state. It links here with UTM tags. See `docs/CLAUDE-CODE-COURSE-INTEGRATION.md` in the `by-design-ai-` repo for that boundary.
+`aixdesign.dev/education` remains the referral surface. This repo owns enrollment and payment state. Do not transfer or alter existing paid registrations when importing the feature branch.
 
 ---
 
@@ -25,7 +23,7 @@ The course platform behind **[claudecodeclass.com](https://claudecodeclass.com)*
 
 | Layer | Tool |
 |-------|------|
-| Framework | Next.js 16.2.4 (App Router, TypeScript) — see `AGENTS.md`, the APIs have breaking changes |
+| Framework | Next.js 16.3.6 (App Router, TypeScript) — see `AGENTS.md`, the APIs have breaking changes |
 | Styling | Tailwind CSS v4 (`@theme` in `app/globals.css`) + Typography plugin |
 | Auth | Supabase native (no Clerk) |
 | Database | Supabase Postgres + RLS — project `supabase-crimson-ladder` (`acouuzccqkcpyrckrgwg`) |
@@ -66,13 +64,13 @@ This exists because V1 of this course shipped three testimonials from students w
 
 ### Scarcity must be real
 
-The Build Lab has a genuine seat cap, because it's a live session. Real caps, real countdowns, real sold-out states are fine and wanted. **Numbers the database can't back are not.** Seat counts come from `ccc_lab_sessions.capacity` minus actual registrations — never from a literal in a component.
+The Build Lab has a genuine seat cap, because it's a live session. Real caps, real countdowns, real sold-out states are fine and wanted. **Numbers the database can't back are not.** Legacy seat counts come from `ccc_lab_sessions`. New cohorts use `ccc_bl_cohorts.capacity` and atomic reservations counting held and paid seats. Never invent remaining-seat counts.
 
 `ccc_lab_sessions` carries a CHECK constraint making this structural: a run cannot be `scheduled` without a real `starts_at` **and** a real price.
 
 ### The payment path
 
-`app/api/stripe/webhook/route.ts` is the only thing standing between a customer's money and their access. It is deliberately conservative — signature verification, `payment_status` check, a 200 on missing `userId`, a 500 on DB error so Stripe retries. **Do not tidy it.** Changes there ship alone.
+`app/api/stripe/webhook/route.ts` handles existing products; `/api/labs/webhook` handles the new series. It is deliberately conservative — signature verification, `payment_status` check, a 200 on missing `userId`, a 500 on DB error so Stripe retries. **Do not tidy it.** Changes there ship alone.
 
 Never grant entitlement from the client. `course_purchases` is service-role-write-only; the RLS migration in `supabase/migrations/` documents the exploit that made that necessary.
 
@@ -84,7 +82,7 @@ Never grant entitlement from the client. `course_purchases` is service-role-writ
 npm ci
 ```
 
-Create `.env.local` (there is no example file to copy — this is the list):
+Create `.env.local` with the existing settings below. New lab settings are documented in `docs/build-lab/environment.example`:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=

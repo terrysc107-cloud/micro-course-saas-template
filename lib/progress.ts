@@ -8,7 +8,9 @@ export async function hasPurchased(userId: string): Promise<boolean> {
     .eq("user_id", userId)
     .eq("is_active", true)
     .single();
-  return !!data;
+  if (data) return true;
+  const { data: lab } = await supabase.from("ccc_bl_enrollments").select("id").eq("user_id", userId).eq("status", "paid").limit(1);
+  return !!lab?.length;
 }
 
 export async function getCompletedLessons(userId: string): Promise<string[]> {

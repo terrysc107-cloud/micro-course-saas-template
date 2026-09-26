@@ -29,10 +29,10 @@ export default function MarketingNav() {
           {/* Absolute, not bare "#curriculum". These render on /ladder,
               /proof and /build-lab too, where a bare hash scrolls nowhere. */}
           <Link
-            href="/ladder"
+            href="/build-lab"
             className="hidden sm:block text-slate-400 hover:text-slate-50 text-sm transition-colors"
           >
-            Ladder
+            Build Labs
           </Link>
           <Link
             href="/proof"
@@ -46,6 +46,18 @@ export default function MarketingNav() {
           >
             Pricing
           </Link>
+          <a
+            href="https://aixdesign.dev/guide"
+            className="hidden lg:block text-slate-400 hover:text-slate-50 text-sm transition-colors"
+          >
+            Free guide
+          </a>
+          <a
+            href="https://aixdesign.dev/education"
+            className="hidden lg:block text-slate-400 hover:text-slate-50 text-sm transition-colors"
+          >
+            AI by Design
+          </a>
           <Link
             href="/sign-in"
             className="text-slate-400 hover:text-slate-50 text-sm transition-colors"

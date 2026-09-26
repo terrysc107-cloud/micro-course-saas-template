@@ -46,6 +46,7 @@ export interface LabAvailability {
 
 /** The current run. Returns null if the seed row is missing. */
 export async function getLabSession(): Promise<LabSession | null> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
   const db = createServiceClient();
   const { data, error } = await db
     .from("ccc_lab_sessions")

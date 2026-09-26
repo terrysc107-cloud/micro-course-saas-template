@@ -79,6 +79,7 @@ export default async function DashboardPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        <Link href="/lab-studio" className="inline-flex mb-6 text-brand-400 font-semibold text-sm">Open your Build Lab workspace →</Link>
         {/*
           ONE PRIMARY ACTION, FIRST. A dashboard answers "where am I, what do I
           do next, is it working" in that order. The previous version opened

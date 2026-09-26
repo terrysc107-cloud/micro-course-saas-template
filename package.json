@@ -7,9 +7,14 @@
     "build": "next build",
     "start": "next start",
     "check:content": "node scripts/check-content.mjs",
-    "check": "npm run check:content && npm run build"
+    "check": "npm run check:content && npm run build",
+    "test:labs": "node --import tsx --test tests/labs.test.mjs",
+    "test:labs:ui": "TSX_TSCONFIG_PATH=tests/tsconfig.json node --import tsx --test tests/labs-ui.test.mjs",
+    "test:labs:http": "node tests/labs-http.mjs",
+    "test:labs:browser": "node tests/labs-browser.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
     "@stripe/stripe-js": "^9.2.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.3",
@@ -17,7 +22,7 @@
     "clsx": "^2.1.1",
     "gray-matter": "^4.0.3",
     "lucide-react": "^1.8.0",
-    "next": "16.2.4",
+    "next": "16.3.6",
     "next-mdx-remote": "^6.0.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -25,12 +30,16 @@
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/react": "^16.3.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "jsdom": "^26.1.0",
     "playwright": "^1.62.1",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }

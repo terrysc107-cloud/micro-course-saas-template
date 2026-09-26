@@ -111,8 +111,8 @@ export async function POST() {
       // async_payment_succeeded handling that does not exist.
       payment_method_types: ["card"],
       line_items: [{ price: config.priceId, quantity: 1 }],
-      success_url: `${config.siteUrl}/build-lab?registered=true`,
-      cancel_url: `${config.siteUrl}/build-lab?checkout=cancelled`,
+      success_url: `${config.siteUrl}/build-lab/legacy?registered=true`,
+      cancel_url: `${config.siteUrl}/build-lab/legacy?checkout=cancelled`,
       // Stripe signs the webhook payload, so metadata set here cannot be
       // tampered with in transit. `product` is what the webhook branches on;
       // `labSessionId` pins the seat to THIS run, so a seat bought for the

@@ -92,7 +92,10 @@ export async function proxy(request: NextRequest) {
     .eq("is_active", true)
     .single();
 
-  if (!purchase) {
+  const { data: labEnrollment } = purchase ? { data: [] } : await serviceSupabase
+    .from("ccc_bl_enrollments").select("id").eq("user_id", user.id).eq("status", "paid").limit(1);
+
+  if (!purchase && !labEnrollment?.length) {
     // No purchase → landing page with upgrade prompt
     return NextResponse.redirect(new URL("/?upgrade=true", request.url));
   }

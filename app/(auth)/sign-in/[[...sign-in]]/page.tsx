@@ -1,16 +1,19 @@
 "use client";
 
 import { BRAND } from "@/lib/course-config";
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { safeRedirect } from "@/lib/labs/intake";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Zap } from "lucide-react";
 
-export default function SignInPage() {
+function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/dashboard";
+  const redirect = safeRedirect(
+    searchParams.get("redirect") || searchParams.get("next"),
+  );
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +26,10 @@ export default function SignInPage() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
     if (error) {
       setError(error.message);
@@ -38,12 +44,17 @@ export default function SignInPage() {
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-slate-50 font-bold text-lg mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-slate-50 font-bold text-lg mb-6"
+          >
             <Zap className="w-5 h-5 text-brand-400" />
             {BRAND.name}
           </Link>
           <h1 className="text-2xl font-bold text-slate-50">Welcome back</h1>
-          <p className="text-slate-400 mt-1 text-sm">Sign in to continue your course</p>
+          <p className="text-slate-400 mt-1 text-sm">
+            Sign in to continue your course
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -53,7 +64,9 @@ export default function SignInPage() {
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -64,7 +77,9 @@ export default function SignInPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              Password
+            </label>
             <input
               type="password"
               value={password}
@@ -85,11 +100,22 @@ export default function SignInPage() {
 
         <p className="text-center text-slate-500 text-sm mt-6">
           Don&apos;t have an account?{" "}
-          <Link href="/sign-up" className="text-brand-400 hover:text-brand-300 transition-colors">
+          <Link
+            href={`/sign-up?redirect=${encodeURIComponent(redirect)}`}
+            className="text-brand-400 hover:text-brand-300 transition-colors"
+          >
             Sign up
           </Link>
         </p>
       </div>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<p>Loading sign in…</p>}>
+      <SignInForm />
+    </Suspense>
   );
 }
